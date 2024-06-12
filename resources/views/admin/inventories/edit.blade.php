@@ -1,0 +1,40 @@
+@extends('layout.admin')
+
+@section('content')
+    <div class="container">
+        <h1>Edit Inventory</h1>
+        <form method="POST" action="{{ route('admin.inventories.update', $inventory->id) }}">
+            @csrf
+            @method('PATCH')
+            <div class="form-group">
+                <label for="nama_barang">Nama Barang:</label>
+                <input type="text" class="form-control" id="nama_barang" name="nama_barang" value="{{ $inventory->nama_barang }}">
+            </div>
+            <div class="form-group">
+                <label for="kategori">Kategori:</label>
+                <input type="text" class="form-control" id="kategori" name="kategori" value="{{ $inventory->kategori }}">
+            </div>
+            <div class="form-group">
+                <label for="jumlah">Jumlah:</label>
+                <input type="number" class="form-control" id="jumlah" name="jumlah" value="{{ $inventory->jumlah }}">
+            </div>
+            <div class="form-group">
+                <label for="satuan">Satuan:</label>
+                <input type="text" class="form-control" id="satuan" name="satuan" value="{{ $inventory->satuan }}">
+            </div>
+            <div class="form-group">
+                <label for="kondisi">Kondisi:</label>
+                <input type="text" class="form-control" id="kondisi" name="kondisi" value="{{ $inventory->kondisi }}">
+            </div>
+            <div class="form-group">
+                <label for="tanggal_pembelian">Tanggal Pembelian:</label>
+                <input type="date" class="form-control" id="tanggal_pembelian" name="tanggal_pembelian" value="{{ $inventory->tanggal_pembelian }}">
+            </div>
+            <div class="form-group">
+                <label for="harga_satuan">Harga Satuan:</label>
+                <input type="number" class="form-control" id="harga_satuan" name="harga_satuan" value="{{ $inventory->harga_satuan }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+    </div>
+@endsection
