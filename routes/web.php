@@ -67,10 +67,10 @@ Route::middleware(['auth'])->group(function () {
             Route::resource('menus', MenuController::class);
             Route::resource('inventories', InventoryController::class);
             Route::resource('bahan_masakan', BahanMasakanController::class);
-    Route::get('bahan_masakan/{id}/barang_masuk', [BahanMasakanController::class, 'barangMasuk'])->name('bahan_masakan.barang_masuk');
-    Route::post('bahan_masakan/{id}/barang_masuk', [BahanMasakanController::class, 'storeBarangMasuk'])->name('bahan_masakan.store_barang_masuk');
-    Route::get('bahan_masakan/{id}/barang_keluar', [BahanMasakanController::class, 'barangKeluar'])->name('bahan_masakan.barang_keluar');
-    Route::post('bahan_masakan/{id}/barang_keluar', [BahanMasakanController::class, 'storeBarangKeluar'])->name('bahan_masakan.store_barang_keluar');
+            Route::get('bahan_masakan/{id}/barang_masuk', [BahanMasakanController::class, 'barangMasuk'])->name('bahan_masakan.barang_masuk');
+            Route::post('bahan_masakan/{id}/barang_masuk', [BahanMasakanController::class, 'storeBarangMasuk'])->name('bahan_masakan.store_barang_masuk');
+            Route::get('bahan_masakan/{id}/barang_keluar', [BahanMasakanController::class, 'barangKeluar'])->name('bahan_masakan.barang_keluar');
+            Route::post('bahan_masakan/{id}/barang_keluar', [BahanMasakanController::class, 'storeBarangKeluar'])->name('bahan_masakan.store_barang_keluar');
         });
         Route::get('/admin/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
         Route::get('/order/failure', [OrderController::class, 'failure'])->name('order.failure');
