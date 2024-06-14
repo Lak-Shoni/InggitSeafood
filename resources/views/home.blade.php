@@ -137,61 +137,28 @@
     {{-- favorit menu section --}}
     <section class="fav-menu" data-aos="fade-up" data-aos-delay="300">
       <div class="container">
-        <div class="section-header ">
-          <p>Menu  <span>Populer</span></p>
-        </div>
-        <div class="wrapper">
-          <i id="left" class="fa-solid fa-angle-left"></i>
-          <ul class="carousel">          
-            <li class="card">
-              <div class="img"><img src="{{ asset('img/menu.png') }}" alt="img" draggable="false"></div>
-              <h2>Rp 20.000</h2>
-              <h1>Paket Rizka 1</h1>
-              <p>Nasi liwet, Sate manis, Udang crispy, sambel goreng kentang, mie sayur, capjay, sambal, kerupuk, buah jeruk, anggur, pisang.</p>
-            </li>
-            <li class="card">
-              <div class="img"><img src="{{ asset('img/menu.png') }}" alt="img" draggable="false"></div>
-              <h2>Rp 20.000</h2>
-              <h1>Paket Rizka 1</h1>
-              <p>Nasi liwet, Sate manis, Udang crispy, sambel goreng kentang, mie sayur, capjay, sambal, kerupuk, buah jeruk, anggur, pisang.</p>
-            </li>
-            <li class="card">
-              <div class="img"><img src="{{ asset('img/menu.png') }}" alt="img" draggable="false"></div>
-              <h2>Rp 20.000</h2>
-              <h1>Paket Rizka 1</h1>
-              <p>Nasi liwet, Sate manis, Udang crispy, sambel goreng kentang, mie sayur, capjay, sambal, kerupuk, buah jeruk, anggur, pisang.</p>
-            </li>
-            <li class="card">
-              <div class="img"><img src="{{ asset('img/menu.png') }}" alt="img" draggable="false"></div>
-              <h2>Rp 20.000</h2>
-              <h1>Paket Rizka 1</h1>
-              <p>Nasi liwet, Sate manis, Udang crispy, sambel goreng kentang, mie sayur, capjay, sambal, kerupuk, buah jeruk, anggur, pisang.</p>
-            </li>
-            <li class="card">
-              <div class="img"><img src="{{ asset('img/menu.png') }}" alt="img" draggable="false"></div>
-              <h2>Rp 20.000</h2>
-              <h1>Paket Rizka 1</h1>
-              <p>Nasi liwet, Sate manis, Udang crispy, sambel goreng kentang, mie sayur, capjay, sambal, kerupuk, buah jeruk, anggur, pisang.</p>
-            </li>
-            <li class="card">
-              <div class="img"><img src="{{ asset('img/menu.png') }}" alt="img" draggable="false"></div>
-              <h2>Rp 20.000</h2>
-              <h1>Paket Rizka 1</h1>
-              <p>Nasi liwet, Sate manis, Udang crispy, sambel goreng kentang, mie sayur, capjay, sambal, kerupuk, buah jeruk, anggur, pisang.</p>
-            </li>
-            <li class="card">
-              <div class="img"><img src="{{ asset('img/menu.png') }}" alt="img" draggable="false"></div>
-              <h2>Rp 20.000</h2>
-              <h1>Paket Rizka 1</h1>
-              <p>Nasi liwet, Sate manis, Udang crispy, sambel goreng kentang, mie sayur, capjay, sambal, kerupuk, buah jeruk, anggur, pisang.</p>
-            </li>
-            
-          </ul>
-          <i id="right" class="fa-solid fa-angle-right"></i>
-        </div>
+          <div class="section-header">
+              <p>Menu <span>Populer</span></p>
+          </div>
+          <div class="wrapper">
+              <i id="left" class="fa-solid fa-angle-left"></i>
+              <ul class="carousel">
+                  @foreach($menus as $menu)
+                  <li class="card">
+                      <div class="img">
+                          <img src="{{ asset('storage/images/' . $menu->gambar_menu) }}" alt="{{ $menu->nama_menu }}" draggable="false">
+                      </div>
+                      <h2>Rp {{ number_format($menu->harga_menu, 0, ',', '.') }}</h2>
+                      <h1>{{ $menu->nama_menu }}</h1>
+                      <p>{{ $menu->isi_menu }}</p>
+                  </li>
+                  @endforeach
+              </ul>
+              <i id="right" class="fa-solid fa-angle-right"></i>
+          </div>
       </div>
       <button class="btn btn-primary align-items-center">Lihat Menu Lainnya</button>
-    </section>
+  </section>
     
     {{-- end --}}
 
@@ -618,6 +585,21 @@
 
   <!-- Template Main JS File -->
   <script src="{{ asset('js/main.js') }}"></script>
+  <script>
+    $(document).ready(function() {
+        var $carousel = $('.carousel');
+        var $leftButton = $('#left');
+        var $rightButton = $('#right');
+
+        $leftButton.click(function() {
+            $carousel.animate({scrollLeft: '-=300'}, 300);
+        });
+
+        $rightButton.click(function() {
+            $carousel.animate({scrollLeft: '+=300'}, 300);
+        });
+    });
+</script>
 
 </body>
 

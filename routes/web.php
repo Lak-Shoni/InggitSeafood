@@ -11,9 +11,7 @@ use App\Http\Controllers\BahanMasakanController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
-
-
-
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,9 +36,9 @@ Route::get('login', [AuthController::class, 'showLoginForm'])->name('login.form'
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+// Route::get('/', function () {
+//     return view('home');
+// })->name('home');
 
 // Rute untuk melihat menu yang bisa diakses tanpa autentikasi
 Route::resource('menus', MenuController::class)->only(['index', 'show']);
@@ -58,6 +56,8 @@ Route::middleware(['auth'])->group(function () {
         return view('order.success');
     })->name('order.success');
     Route::post('/payment/notification', [OrderController::class, 'paymentNotification'])->name('payment.notification');
+    Route::get('/profile',[UserController::class,'showProfile'])->name('profile');
+
 
 
     // Rute yang memerlukan peran admin

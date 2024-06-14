@@ -92,7 +92,7 @@
            Welcome, {{ auth()->user()->nama }}
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="/">Lihat Profil</a>
+            <a class="dropdown-item" href="{{ route('profile') }}">Lihat Profil</a>
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="dropdown-item">Logout</button>
