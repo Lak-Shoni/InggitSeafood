@@ -36,12 +36,14 @@ Route::get('login', [AuthController::class, 'showLoginForm'])->name('login.form'
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-// Route::get('/', function () {
-//     return view('home');
-// })->name('home');
+Route::get('/mennu', function () {
+    return view('menu');
+})->name('home');
 
 // Rute untuk melihat menu yang bisa diakses tanpa autentikasi
 Route::resource('menus', MenuController::class)->only(['index', 'show']);
+
+
 
 // Rute yang memerlukan autentikasi
 Route::middleware(['auth'])->group(function () {
@@ -58,7 +60,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/payment/notification', [OrderController::class, 'paymentNotification'])->name('payment.notification');
     Route::get('/profile',[UserController::class,'showProfile'])->name('profile');
 
-
+    Route::post('/order/update/{id}', [OrderController::class, 'update'])->name('order.update');
 
     // Rute yang memerlukan peran admin
     Route::middleware(['admin'])->group(function () {

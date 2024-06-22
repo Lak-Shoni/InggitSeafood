@@ -88,6 +88,17 @@
             snap.pay('{{ $snapToken }}', {
                 // Optional, add callbacks for success, pending, and error handling
                 onSuccess: function(result) {
+                    // Update status on table orders
+                    // $.ajax({
+                    //     url: '{{ url('/order/update') }}/' + id,
+                    //     method: 'POST',
+                    //     data: {
+                    //         _token: '{{ csrf_token() }}',
+                    //         status : 'success',
+                    //     },
+                    //     success: function(response) {}
+                    // })
+
                     // Handle success
                     var details = `Transaction ID: ${result.transaction_id}<br>
                                    Amount Paid: ${result.gross_amount}<br>
@@ -95,10 +106,30 @@
                     showMessage('Payment successful! Redirecting...', 'success', details);
                 },
                 onPending: function(result) {
+                    // Update status on table orders
+                    // $.ajax({
+                    //     url: '{{ url('/order/update') }}/' + id,
+                    //     method: 'POST',
+                    //     data: {
+                    //         _token: '{{ csrf_token() }}',
+                    //         status : 'pending',
+                    //     },
+                    //     success: function(response) {}
+                    // })
                     // Handle pending
                     showMessage('Payment is pending. Redirecting...', 'pending');
                 },
                 onError: function(result) {
+                    // Update status on table orders
+                    // $.ajax({
+                    //     url: '{{ url('/order/update') }}/' + id,
+                    //     method: 'POST',
+                    //     data: {
+                    //         _token: '{{ csrf_token() }}',
+                    //         status : 'error',
+                    //     },
+                    //     success: function(response) {}
+                    // })
                     // Handle error
                     showMessage('Payment failed. Redirecting...', 'error');
                 }

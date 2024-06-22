@@ -2,10 +2,23 @@
 
 @section('title', 'Keranjang')
 @section('content')
+    <style>
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
 
     <div class="container mt-5">
         <h1>Keranjang Belanja</h1>
-        @if(session('success'))
+        @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
@@ -21,25 +34,30 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($carts as $cart)
+                @foreach ($carts as $cart)
                     <tr>
                         <td>
-                            <input type="checkbox" class="form-check-input cart-checkbox" style="transform: scale(1.5);" value="{{ $cart->id }}">
-                            {{ $cart->menu->nama_menu }}
+                            <input type="checkbox" class="cart-checkbox mr-2" style="transform: scale(2);"
+                                value="{{ $cart->id }}" data-id="{{ $cart->id }}">
+                            {{ ucwords($cart->menu->nama_menu) }}
                         </td>
                         <td>
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <button class="btn btn-outline-secondary decrement" data-id="{{ $cart->id }}" type="button">-</button>
+                                    <button class="btn btn-outline-secondary decrement" data-id="{{ $cart->id }}"
+                                        type="button">-</button>
                                 </div>
-                                <input type="text" class="form-control quantity" data-id="{{ $cart->id }}" value="{{ $cart->quantity }}" readonly style="width: 1px; text-align: center;">
+                                <input type="input" class="form-control quantity" data-id="{{ $cart->id }}"
+                                    value="{{ $cart->quantity }}" style="width: 1px; text-align: center;">
                                 <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary increment" data-id="{{ $cart->id }}" type="button">+</button>
+                                    <button class="btn btn-outline-secondary increment" data-id="{{ $cart->id }}"
+                                        type="button">+</button>
                                 </div>
                             </div>
                         </td>
-                        <td>{{ $cart->menu->harga_menu }}</td>
-                        <td class="total" data-id="{{ $cart->id }}">{{ $cart->menu->harga_menu * $cart->quantity }}</td>
+                        <td>Rp. {{ number_format($cart->menu->harga_menu, 0, ',', '.') }}</td>
+                        <td class="total" data-id="{{ $cart->id }}">Rp.
+                            {{ number_format($cart->menu->harga_menu * $cart->quantity, 0, ',', '.') }}</td>
                         <td>
                             <div class="d-flex align-items-center">
                                 <form action="{{ route('cart.delete', $cart->id) }}" method="POST" class="d-inline ml-2">
@@ -101,19 +119,32 @@
                 updateCart(id, quantity);
             });
 
+            $('.quantity').on('keyup', function() {
+                var id = $(this).data('id');
+                var quantity = parseInt($(`.quantity[data-id=${id}]`).val());
+                if (quantity < 1) {
+                    quantity = 1;
+                }
+                updateCart(id, quantity);
+            });
+
             $('.cart-checkbox').change(function() {
-                updateGrandTotal();
+                // updateGrandTotal();
+                var id = $(this).data('id');
+                var quantity = parseInt($(`.quantity[data-id=${id}]`).val());
+                updateCart(id, quantity);
             });
 
             function updateCart(id, quantity) {
                 $.ajax({
-                    url: '{{ url("/cart/update") }}/' + id,
+                    url: '{{ url('/cart/update') }}/' + id,
                     method: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
                         quantity: quantity
                     },
                     success: function(response) {
+                        console.log(response)
                         if (response.success) {
                             $(`.quantity[data-id=${id}]`).val(quantity);
                             $(`.total[data-id=${id}]`).text(response.total);
@@ -130,9 +161,16 @@
                 var grandTotal = 0;
                 $('.cart-checkbox:checked').each(function() {
                     var id = $(this).val();
-                    grandTotal += parseFloat($(`.total[data-id=${id}]`).text());
+                    var total = $(`.total[data-id=${id}]`).text();
+                    total = total.replaceAll("Rp. ", "")
+                    total = parseFloat(total.replaceAll(".", ""))
+                    grandTotal += total;
+                    console.log(total);
+                    console.log(grandTotal);
                 });
-                $('#grand-total').text(grandTotal);
+                var format = grandTotal.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                format = format.replaceAll(",", ".")
+                $('#grand-total').text('Rp. ' + format);
             }
         });
     </script>

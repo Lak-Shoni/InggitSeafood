@@ -11,7 +11,9 @@ class Cart extends Model
     protected $fillable = [
         'user_id',
         'menu_id',
-        'quantity'
+        'quantity',
+        'total_per_item',
+        'status_order'
     ];
 
     public function menu()
