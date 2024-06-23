@@ -14,7 +14,13 @@ class CartController extends Controller
     {
         $user = Auth::user();
         $carts = Cart::where('user_id', $user->id)->where('status_order', 0)->get();
-        return view('client.keranjang.index', compact('carts'));
+        if($user != null){
+            $cart = Cart::where('user_id', $user->id)->where('status_order', 0)->get();
+            $notif = count($cart);
+            return view('client.keranjang.index', compact('carts', 'notif'));
+        }else{
+            return view('client.keranjang.index', compact('carts'));
+        }
     }
 
     public function addToCart(Request $request)

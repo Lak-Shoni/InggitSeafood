@@ -75,7 +75,7 @@
           <li><a href="/">Home</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="{{ route('client.menu.index') }}">Menu</a></li>
-          <li><a href="{{ route('cart.show') }}">Keranjang</a></li>
+          <li><a href="{{ route('cart.show') }}">Keranjang @auth<sup class="text-danger">{{$notif}}</sup>@endauth</a></li>
           <li><a href="#events">Events</a></li>
           <li><a href="#contact">Contact</a></li>
           @auth

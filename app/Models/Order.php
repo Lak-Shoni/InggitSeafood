@@ -19,7 +19,8 @@ class Order extends Model
         'notes',
         'items',
         'total_price',
-        'status'
+        'payment_status',
+        'order_status'
     ];
 
     protected $casts = [

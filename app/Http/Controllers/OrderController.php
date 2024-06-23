@@ -60,6 +60,7 @@ class OrderController extends Controller
         $order->notes = $request->input('notes');
         $order->items = json_encode($request->input('cart_ids'));
         $order->total_price = $grandTotal;
+        $order->order_status = 'proses';
         $order->save();
 
         // Change Status Order Cart ID
@@ -74,13 +75,7 @@ class OrderController extends Controller
             Config::$isSanitized = config('services.midtrans.is_sanitized');
             Config::$is3ds = config('services.midtrans.is_3ds');
 
-            // Logging for debugging
-            Log::info('Midtrans Config:', [
-                'server_key' => Config::$serverKey,
-                'is_production' => Config::$isProduction,
-                'is_sanitized' => Config::$isSanitized,
-                'is_3ds' => Config::$is3ds,
-            ]);
+            
 
             $params = [
                 'transaction_details' => [
@@ -95,8 +90,8 @@ class OrderController extends Controller
 
             try {
                 $snapToken = Snap::getSnapToken($params);
-                // return view('client.pesanan.pay', compact('snapToken', 'order'));
-                return view('client.checkout.payment', compact('snapToken', 'order'));
+                return view('client.pesanan.pay', compact('snapToken', 'order'));
+                // return view('client.checkout.payment', compact('snapToken', 'order'));
             } catch (\Exception $e) {
                 return redirect()->route('order.failure')->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
             }
@@ -116,41 +111,78 @@ class OrderController extends Controller
     public function paymentNotification(Request $request)
     {
         $data = $request->input('result_data');
-        $data = json_decode($data);
+        $order = Order::findOrFail($data['order_id']);
 
-        $order = Order::findOrFail($data->order_id);
-
-        switch ($data->transaction_status) {
+        switch ($data['transaction_status']) {
             case 'capture':
-                $order->status = 'paid';
+                $order->payment_status = 'paid';
                 break;
 
             case 'settlement':
-                $order->status = 'paid';
+                $order->payment_status = 'paid';
                 break;
 
             case 'pending':
-                $order->status = 'pending';
+                $order->payment_status = 'pending';
                 break;
 
             case 'deny':
             case 'expire':
             case 'cancel':
-                $order->status = 'failed';
+                $order->payment_status = 'failed';
                 break;
         }
 
         $order->save();
+        echo json_encode(['success' => true]);
     }
 
     public function update(Request $request, $id)
     {
         $order = Order::find($id);
         if ($order) {
-            $order->status = $request->input('status');
+            $order->payment_status = $request->input('status');
             $order->save();
         }
 
         return response()->json(['success' => true]);
+    }
+    public function lunas(Request $request, $id)
+    {
+        $order = Order::find($id);
+        if ($order) {
+            $order->payment_status = 'paid';
+            $order->save();
+        }
+
+        return redirect()->route('admin.orders.index')->with('success', 'Order sedang dikirim');
+    }
+    public function kirim(Request $request, $id)
+    {
+        $order = Order::find($id);
+        if ($order) {
+            $order->order_status = 'kirim';
+            $order->save();
+        }
+
+        return redirect()->route('admin.orders.index')->with('success', 'Order sedang dikirim');
+    }
+
+    public function selesai(Request $request, $id)
+    {
+        $order = Order::find($id);
+        if ($order) {
+            $order->order_status = 'selesai';
+            $order->save();
+        }
+
+        return redirect()->route('admin.orders.index')->with('success', 'Order selesai');
+    }
+
+    public function get_detail(Request $request, $id)
+    {
+        $order = Order::find($id);
+
+        echo json_encode($order);
     }
 }

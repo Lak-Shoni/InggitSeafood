@@ -61,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile',[UserController::class,'showProfile'])->name('profile');
 
     Route::post('/order/update/{id}', [OrderController::class, 'update'])->name('order.update');
+    Route::post('/order/detail/{id}', [OrderController::class, 'get_detail'])->name('order.detail');
 
     // Rute yang memerlukan peran admin
     Route::middleware(['admin'])->group(function () {
@@ -77,6 +78,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
         Route::get('/order/failure', [OrderController::class, 'failure'])->name('order.failure');
         
+        Route::get('/order/kirim/{id}', [OrderController::class, 'kirim'])->name('order.kirim');
+        Route::get('/order/selesai/{id}', [OrderController::class, 'selesai'])->name('order.selesai');
+        Route::get('/order/lunas/{id}', [OrderController::class, 'lunas'])->name('order.lunas');
     });
 });
 
