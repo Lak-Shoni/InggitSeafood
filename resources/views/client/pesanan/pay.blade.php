@@ -109,9 +109,9 @@
                 // Optional, add callbacks for success, pending, and error handling
                 onSuccess: function(result) {
                     // Handle success
-                    var details = `Transaction ID: ${result.transaction_id}<br>
-                                   Amount Paid: ${result.gross_amount}<br>
-                                   Payment Method: ${result.payment_type}`;
+                    // var details = `Transaction ID: ${result.transaction_id}<br>
+                    //                Amount Paid: ${result.gross_amount}<br>
+                    //                Payment Method: ${result.payment_type}`;
                     showMessage('Payment successful! Redirecting...', 'success', result, details);
                 },
                 onPending: function(result) {

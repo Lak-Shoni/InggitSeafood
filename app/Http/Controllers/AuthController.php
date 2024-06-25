@@ -43,6 +43,7 @@ class AuthController extends Controller
         ]);
 
         Auth::login($user);
+        $request->session()->regenerate();
 
         if ($user->is_admin) {
             return redirect()->route('dashboard');

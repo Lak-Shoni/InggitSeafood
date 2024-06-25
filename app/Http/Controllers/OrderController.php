@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cart;
+use App\Models\Hutang;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Midtrans\Config;
@@ -45,7 +46,7 @@ class OrderController extends Controller
         ]);
 
         $grandTotal = $request->input('grand_total');
-        
+
         if ($grandTotal === null) {
             return redirect()->back()->with('error', 'Total harga tidak valid.');
         }
@@ -69,13 +70,11 @@ class OrderController extends Controller
         $payment_method = $order->payment_method;
         if ($payment_method == 'bayar_langsung') {
             // Midtrans
-            // Midtrans configuration
             Config::$serverKey = config('services.midtrans.server_key');
             Config::$isProduction = config('services.midtrans.is_production');
             Config::$isSanitized = config('services.midtrans.is_sanitized');
             Config::$is3ds = config('services.midtrans.is_3ds');
 
-            
 
             $params = [
                 'transaction_details' => [
@@ -91,16 +90,26 @@ class OrderController extends Controller
             try {
                 $snapToken = Snap::getSnapToken($params);
                 return view('client.pesanan.pay', compact('snapToken', 'order'));
-                // return view('client.checkout.payment', compact('snapToken', 'order'));
             } catch (\Exception $e) {
                 return redirect()->route('order.failure')->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
             }
+        } elseif ($payment_method == 'bayar_ditempat') {
+            // Tambahkan hutang
+            $hutang = new Hutang();
+            $hutang->order_id = $order->id;
+            $hutang->user_id = Auth::id();
+            $hutang->total = $grandTotal;
+            $hutang->status = 'unpaid';
+            $hutang->save();
+
+            // Redirect ke profil pengguna setelah pesanan sukses
+            return redirect()->route('profile')->with('success', 'Pesanan berhasil dibuat. Silakan bayar saat barang diterima.');
         } else {
-            // No Midtrans
             echo json_encode("NO MIDTRANS");
             die;
         }
     }
+
 
     public function failure()
     {
@@ -137,6 +146,16 @@ class OrderController extends Controller
         echo json_encode(['success' => true]);
     }
 
+    // public function success()
+    // {
+    //     $order = Order::where('user_id', Auth::id())->latest()->first();
+    //     $hutang = Hutang::where('user_id', Auth::id())->latest()->first();
+    //     if (!$order) {
+    //         return redirect()->route('cart.show')->with('error', 'Tidak ada pesanan yang ditemukan.');
+    //     }
+    //     return redirect()->route('profile')->with('success', 'berhasil');
+    // }
+
     public function update(Request $request, $id)
     {
         $order = Order::find($id);
@@ -153,9 +172,19 @@ class OrderController extends Controller
         if ($order) {
             $order->payment_status = 'paid';
             $order->save();
+
+            // Cari hutang yang sesuai dengan order ID
+            $hutang = Hutang::where('order_id', $id)->first();
+            if ($hutang) {
+                $hutang->status = 'paid';
+                $hutang->total -= $order->total_price;
+                $hutang->save();
+            }
         }
 
         return redirect()->route('admin.orders.index')->with('success', 'Order sedang dikirim');
+
+        return redirect()->route('admin.orders.index')->with('success', 'Order sudah lunas');
     }
     public function kirim(Request $request, $id)
     {

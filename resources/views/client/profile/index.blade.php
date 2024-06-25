@@ -20,6 +20,9 @@
                             <li class="list-group-item">
                                 <strong>Alamat:</strong> {{ $user->alamat }}
                             </li>
+                            <li class="list-group-item">
+                                <strong>Total Hutang:</strong> Rp. {{ number_format($hutang, 0, ',', '.') }}
+                            </li>
                         </ul>
                         {{-- <div class="text-center mt-3">
                         <a href="{{ route('editProfile') }}" class="btn btn-primary">Edit Profile</a>

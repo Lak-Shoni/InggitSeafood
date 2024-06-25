@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Yummy Bootstrap Template - Index</title>
+  <title>Inggit Seafood Katering</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -53,7 +53,7 @@
                 <h2 data-aos="fade-up">Selamat Datang<br>Di Inggit Seafood</h2>
                 <p data-aos="fade-up" data-aos-delay="100">Melayani pemesanan katering untuk acara hajatan, nikahan, khitanan dan acara lainnya </p>
                 <div class="d-flex justify-content-center" data-aos="fade-up" data-aos-delay="200">
-                    <a href="#book-a-table" class="btn-book-a-table">Pesan Sekarang</a>
+                    <a href="{{ route('client.menu.index') }}" class="btn-book-a-table">Pesan Sekarang</a>
                 </div>
             </div>
         </div>
@@ -151,13 +151,19 @@
                       <h2>Rp {{ number_format($menu->harga_menu, 0, ',', '.') }}</h2>
                       <h1>{{ $menu->nama_menu }}</h1>
                       <p>{{ $menu->isi_menu }}</p>
+                      <form class="add-to-cart-form" data-menu-id="{{ $menu->id }}">
+                        @csrf
+                        <input type="hidden" name="menu_id" value="{{ $menu->id }}">
+                        <button type="submit" class="btn btn-primary"> Tambah ke Keranjang</button>
+                    </form>
                   </li>
                   @endforeach
               </ul>
               <i id="right" class="fa-solid fa-angle-right"></i>
           </div>
       </div>
-      <button class="btn btn-primary align-items-center">Lihat Menu Lainnya</button>
+      <a href="{{ route('client.menu.index') }}" class="btn btn-primary align-items-center">Lihat Menu Lainnya</a>
+      {{-- <button class="btn btn-primary align-items-center">Lihat Menu Lainnya</button> --}}
   </section>
     
     {{-- end --}}
@@ -600,6 +606,53 @@
         });
     });
 </script>
+<script>
+        $(document).ready(function() {
+            $('.add-to-cart-form').submit(function(event) {
+                event.preventDefault();
+
+                var form = $(this);
+                var menuId = form.data('menu-id');
+
+                $.ajax({
+                    url: '{{ route('cart.add') }}',
+                    method: 'POST',
+                    data: form.serialize(),
+                    success: function(response) {
+                        if (response.notif !== undefined) {
+                            // Update the cart badge count
+                            $('#cart-badge').text(response.notif);
+                        }
+
+                        Swal.fire({
+                            title: "Sukses",
+                            text: "Pesanan berhasil ditambahkan ke keranjang",
+                            icon: "success",
+                            showDenyButton: false,
+                            showCancelButton: true,
+                            cancelButtonText: `Tambah Pesanan Lain`,
+                            confirmButtonText: `Lihat Keranjang`,
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Redirect to the cart page
+                                window.location.href = `{{ route('cart.show') }}`;
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        var alertHtml =
+                            '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                            'Terjadi kesalahan. Silakan coba lagi.' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                            '<span aria-hidden="true">&times;</span>' +
+                            '</button>' +
+                            '</div>';
+                        $('#alert-container').html(alertHtml);
+                    }
+                });
+            });
+        });
+    </script>
 
 </body>
 

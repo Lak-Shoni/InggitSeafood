@@ -82,12 +82,12 @@
                 <input type="number" class="form-control" id="no_telpon" name="no_telpon" required>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <div class="form-group">
                 <label for="alamat">Alamat</label>
                 <input type="text-area" class="form-control" id="alamat" name="alamat" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Register</button>
             <p class="login-link text-center">Sudah punya akun? <a href="/login" style="color: #01562C; font-weight:500">Login di sini</a></p>
