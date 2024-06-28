@@ -10,11 +10,26 @@ class InventoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $inventories = Inventory::all();
-        return view('admin.inventories.index', compact('inventories'));
+        $query = Inventory::query();
+
+        // Sorting
+        if ($request->has('sort_by')) {
+            $query->orderBy($request->sort_by, $request->get('order', 'asc'));
+        }
+
+        // Searching
+        if ($request->has('search')) {
+            $query->where('nama_barang', 'like', '%' . $request->search . '%');
+        }
+
+        $inventories = $query->paginate(10); // Sesuaikan dengan jumlah data per halaman
+
+        return view('admin.inventories.index', compact('inventories'))
+            ->with('i', (request()->input('page', 1) - 1) * 10);
     }
+
 
     /**
      * Show the form for creating a new resource.

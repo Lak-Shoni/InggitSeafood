@@ -11,6 +11,7 @@ use App\Http\Controllers\BahanMasakanController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -71,10 +72,11 @@ Route::middleware(['auth'])->group(function () {
             Route::resource('menus', MenuController::class);
             Route::resource('inventories', InventoryController::class);
             Route::resource('bahan_masakan', BahanMasakanController::class);
-            Route::get('bahan_masakan/{id}/barang_masuk', [BahanMasakanController::class, 'barangMasuk'])->name('bahan_masakan.barang_masuk');
-            Route::post('bahan_masakan/{id}/barang_masuk', [BahanMasakanController::class, 'storeBarangMasuk'])->name('bahan_masakan.store_barang_masuk');
-            Route::get('bahan_masakan/{id}/barang_keluar', [BahanMasakanController::class, 'barangKeluar'])->name('bahan_masakan.barang_keluar');
-            Route::post('bahan_masakan/{id}/barang_keluar', [BahanMasakanController::class, 'storeBarangKeluar'])->name('bahan_masakan.store_barang_keluar');
+            Route::resource('keuangan', KeuanganController::class);
+            Route::get('bahan_masakan/{id}/bahan_masuk', [BahanMasakanController::class, 'bahanMasuk'])->name('bahan_masakan.bahan_masuk');
+            Route::post('bahan_masakan/{id}/bahan_masuk', [BahanMasakanController::class, 'storeBahanMasuk'])->name('bahan_masakan.store_bahan_masuk');
+            Route::get('bahan_masakan/{id}/bahan_keluar', [BahanMasakanController::class, 'bahanKeluar'])->name('bahan_masakan.bahan_keluar');
+            Route::post('bahan_masakan/{id}/bahan_keluar', [BahanMasakanController::class, 'storeBahanKeluar'])->name('bahan_masakan.store_bahan_keluar');
         });
         Route::get('/admin/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
         Route::get('/order/failure', [OrderController::class, 'failure'])->name('order.failure');
@@ -82,6 +84,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/order/kirim/{id}', [OrderController::class, 'kirim'])->name('order.kirim');
         Route::get('/order/selesai/{id}', [OrderController::class, 'selesai'])->name('order.selesai');
         Route::get('/order/lunas/{id}', [OrderController::class, 'lunas'])->name('order.lunas');
+        
+        Route::get('keuangan/{id}/edit', [KeuanganController::class, 'edit'])->name('keuangan.edit');
+
     });
 });
 

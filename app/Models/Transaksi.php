@@ -13,9 +13,9 @@ class Transaksi extends Model
     protected $fillable = [
         'bahan_masakan_id',
         'tanggal_transaksi',
-        'barang_masuk',
-        'barang_keluar',
-        'barang_sisa',
+        'bahan_masuk',
+        'bahan_keluar',
+        'bahan_sisa',
     ];
 
     public $timestamps = true;

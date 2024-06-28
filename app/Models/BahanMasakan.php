@@ -12,10 +12,10 @@ class BahanMasakan extends Model
 
     // Fillable fields untuk mass assignment
     protected $fillable = [
-        'nama_barang',
-        'barang_masuk',
-        'barang_keluar',
-        'barang_sisa'
+        'nama_bahan',
+        'bahan_masuk',
+        'bahan_keluar',
+        'bahan_sisa'
     ];
 
     // Timestamps
