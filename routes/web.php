@@ -64,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/order/update/{id}', [OrderController::class, 'update'])->name('order.update');
     Route::post('/order/detail/{id}', [OrderController::class, 'get_detail'])->name('order.detail');
     Route::get('/order/success', [OrderController::class, 'success'])->name('order.success');
+    Route::get('/order/terima/{id}', [OrderController::class, 'terima'])->name('order.terima');
 
     // Rute yang memerlukan peran admin
     Route::middleware(['admin'])->group(function () {

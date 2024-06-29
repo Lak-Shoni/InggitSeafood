@@ -169,14 +169,16 @@
                                             <td>{{ $inventory->total_harga }}</td>
                                             <td>{{ $inventory->tanggal_pembaruan_terakhir }}</td>
                                             <td>
-                                                <a href="{{ route('admin.inventories.edit', $inventory->id) }}"
-                                                    class="btn btn-warning">Edit</a>
-                                                <form action="{{ route('admin.inventories.destroy', $inventory->id) }}"
-                                                    method="POST" style="display:inline-block;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                                </form>
+                                                <div style="display: flex; gap: 10px;">
+                                                    <a href="{{ route('admin.inventories.edit', $inventory->id) }}"
+                                                        class="btn btn-warning">Edit</a>
+                                                    <form action="{{ route('admin.inventories.destroy', $inventory->id) }}"
+                                                        method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach

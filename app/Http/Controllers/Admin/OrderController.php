@@ -20,7 +20,7 @@ class OrderController extends Controller
     
         // Searching
         if ($request->has('search')) {
-            $query->where('id', 'like', '%' . $request->search . '%');
+            $query->where('order_code', 'like', '%' . $request->search . '%');
         }
     
         $orders = $query->paginate(10); // Sesuaikan dengan jumlah data per halaman

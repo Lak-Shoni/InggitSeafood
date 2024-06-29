@@ -11,6 +11,7 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'order_code',
         'address',
         'partner_name',
         'delivery_time',
@@ -36,5 +37,18 @@ class Order extends Model
     public function hutang()
     {
         return $this->hasOne(Hutang::class);
+    }
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->order_code = self::generateOrderId($model->user_id);
+        });
+    }
+
+    public static function generateOrderId($userId)
+    {
+        return $userId . date('YmdHis');
     }
 }

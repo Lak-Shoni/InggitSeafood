@@ -9,8 +9,7 @@ use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Midtrans\Config;
 use Midtrans\Snap;
-use Midtrans\Notification;
-use Illuminate\Support\Facades\Log;
+
 
 
 class OrderController extends Controller
@@ -182,8 +181,6 @@ class OrderController extends Controller
             }
         }
 
-        return redirect()->route('admin.orders.index')->with('success', 'Order sedang dikirim');
-
         return redirect()->route('admin.orders.index')->with('success', 'Order sudah lunas');
     }
     public function kirim(Request $request, $id)
@@ -206,6 +203,16 @@ class OrderController extends Controller
         }
 
         return redirect()->route('admin.orders.index')->with('success', 'Order selesai');
+    }
+    public function terima(Request $request, $id)
+    {
+        $order = Order::find($id);
+        if ($order) {
+            $order->order_status = 'terima';
+            $order->save();
+        }
+
+        return redirect()->route('profile')->with('success', 'Order diterima');
     }
 
     public function get_detail(Request $request, $id)

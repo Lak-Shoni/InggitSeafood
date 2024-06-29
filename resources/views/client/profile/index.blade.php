@@ -37,7 +37,7 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Id Pesanan</th>
+                        <th>kode Pesanan</th>
                         <th>Tanggal Pesanan</th>
                         <th>Waktu Pengiriman</th>
                         <th>Metode Pembayaran</th>
@@ -49,7 +49,7 @@
                 <tbody>
                     @foreach ($orders as $order)
                         <tr>
-                            <td>{{ $order->id }}</td>
+                            <td>{{ $order->order_code }}</td>
                             <td>{{ $order->created_at }}</td>
                             <td>{{ $order->delivery_time }}</td>
                             <td>
@@ -77,12 +77,18 @@
                                     <span class="badge badge-success">Selesai</span>
                                 @elseif ($order->order_status == 'kirim')
                                     <span class="badge badge-info">Sedang Dikirim</span>
+                                @elseif ($order->order_status == 'terima')
+                                    <span class="badge badge-info">Diterima</span>
                                 @endif
                             </td>
-                            <td>
-                                <span>
+                            <td>                                
+                                <span style="display: flex; gap: 10px;">                            
+                                    @if ($order->order_status != 'terima')
+                                        <a href="{{ url('/order/terima/' . $order->id) }}" class="btn btn-success"><i class="fa-solid fa-check"></i>                                            
+                                        </a>
+                                    @endif
                                     <button class="btn btn-primary detail_pesanan" data-bs-toggle="modal"
-                                            data-bs-target="#exampleModal" data-id="{{ $order->id }}">Detail</button>
+                                        data-bs-target="#exampleModal" data-id="{{ $order->id }}">Detail</button>
                                 </span>
                             </td>
                         </tr>
@@ -95,7 +101,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -117,8 +123,8 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function () {
-            $('.detail_pesanan').click(function () {
+        $(document).ready(function() {
+            $('.detail_pesanan').click(function() {
                 var id = $(this).data('id');
                 $.ajax({
                     url: '{{ url('/order/detail') }}/' + id,
@@ -126,13 +132,13 @@
                     data: {
                         _token: '{{ csrf_token() }}',
                     },
-                    success: function (response) {
+                    success: function(response) {
                         console.log(response);
                         var html = '';
                         html = ``;
                         $('#modal_body').html(html);
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         console.log(xhr.responseText);
                     }
                 });

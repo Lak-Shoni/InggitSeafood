@@ -9,15 +9,15 @@
                     <div class="card">
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <h1>Daftar Pesanan</h1>                        
+                            <h1>Daftar Pesanan</h1>
                             <div class="d-flex justify-content-end">
                                 <form method="GET" action="{{ route('admin.orders.index') }}" class="form-inline mb-2">
                                     <div class="form-group mb-2">
-                                        <label for="search" class="mr-2">Cari berdasarkan ID:</label>
+                                        <label for="search" class="mr-2">Cari berdasarkan Kode:</label>
                                         <input type="name" class="form-control" id="search" name="search"
                                             value="{{ request('search') }}">
-                                        </div>                            
-                                        <button type="submit" class="btn btn-primary  mb-2 ml-2">Cari</button>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary  mb-2 ml-2">Cari</button>
                                 </form>
                             </div>
                             <br>
@@ -27,7 +27,7 @@
                                         <th>
                                             <a
                                                 href="{{ route('admin.orders.index', ['sort_by' => 'id', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                ID Pesanan
+                                                Kode Pesanan
                                                 @if (request('sort_by') == 'id')
                                                     <i
                                                         class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
@@ -102,7 +102,7 @@
                                 <tbody id="dataBody">
                                     @foreach ($orders as $order)
                                         <tr>
-                                            <td>{{ $order->id }}</td>
+                                            <td>{{ $order->order_code }}</td>
                                             <td>{{ $order->created_at }}</td>
                                             <td>{{ $order->delivery_time }}</td>
                                             <td>
@@ -160,10 +160,12 @@
                                                                 class="fa-solid fa-money-bills"></i></a>
                                                     @endif
                                                     @if ($order->order_status != 'selesai')
-                                                        @if ($order->order_status != 'kirim')
-                                                            <a href="{{ url('/order/kirim/' . $order->id) }}"
-                                                                class="btn btn-info"><i
-                                                                    class="fa-solid fa-paper-plane"></i></a>
+                                                        @if ($order->order_status != 'terima')
+                                                            @if ($order->order_status != 'kirim')
+                                                                <a href="{{ url('/order/kirim/' . $order->id) }}"
+                                                                    class="btn btn-info"><i
+                                                                        class="fa-solid fa-paper-plane"></i></a>
+                                                            @endif
                                                         @endif
                                                         <a href="{{ url('/order/selesai/' . $order->id) }}"
                                                             class="btn btn-success"><i class="fa-solid fa-check"></i></a>
