@@ -7,6 +7,7 @@
     <link href="{{ asset('css/aos/aos.css') }}" rel="stylesheet">
     <link rel="icon" href="{{ asset('img/favicon.png') }}" type="image/x-icon">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         body {
             display: flex;
@@ -55,47 +56,78 @@
 <body data-aos="fade-up">
     <div class="register-container" data-aos="fade-up" data-aos-delay ="100">
         <h2 class="text-center">Register</h2>
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <!-- Alert untuk pesan sukses -->
-        @if (Session::has('success'))
-            <div class="alert alert-success">
-                {{ Session::get('success') }}
-            </div>
-        @endif
+    
         <form action="/register" method="post">
             @csrf
+        
+
+            @if (Session::has('success'))
+                <div class="alert alert-success">
+                    <strong>Pendaftaran berhasil!</strong> {{ Session::get('success') }}
+                </div>
+            @endif
+        
             <div class="form-group">
                 <label for="username">Nama</label>
-                <input type="text" class="form-control" id="nama" name="nama" required>
+                <input type="text" class="form-control" id="nama" name="nama" value="{{ old('nama') }}" required>
+                @error('nama')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
             </div>
             <div class="form-group">
                 <label for="no_telpon">Nomor Telepon</label>
-                <input type="number" class="form-control" id="no_telpon" name="no_telpon" required>
+                <input type="number" class="form-control" id="no_telpon" name="no_telpon" value="{{ old('no_telpon') }}" required>
+                @error('no_telpon')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
             </div>
             <div class="form-group">
                 <label for="alamat">Alamat</label>
-                <input type="text-area" class="form-control" id="alamat" name="alamat" required>
+                <input type="text" class="form-control" id="alamat" name="alamat" value="{{ old('alamat') }}" required>
+                @error('alamat')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" class="form-control" id="password" name="password" required>
+                @error('password')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
             </div>
             <button type="submit" class="btn btn-primary btn-block">Register</button>
             <p class="login-link text-center">Sudah punya akun? <a href="/login" style="color: #01562C; font-weight:500">Login di sini</a></p>
-        </form>
+        </form>        
     </div>
     <script src="{{ asset('js/aos/aos.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         AOS.init();
+    </script>
+    <script>
+        @if (Session::has('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{{ Session::get('error') }}',
+            });
+        @endif
+    
+        @if ($errors->any())
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                html: '<ul>@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>',
+            });
+        @endif
+    
+        @if (Session::has('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ Session::get('success') }}',
+            });
+        @endif
     </script>
 </body>
 

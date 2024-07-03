@@ -10,14 +10,14 @@ class Cart extends Model
     use HasFactory;
     protected $fillable = [
         'user_id',
-        'menu_id',
+        'paket_id',
         'quantity',
         'total_per_item',
         'status_order'
     ];
 
-    public function menu()
+    public function paket()
     {
-        return $this->belongsTo(Menu::class);
+        return $this->belongsTo(Paket::class);
     }
 }

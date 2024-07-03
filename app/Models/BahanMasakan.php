@@ -15,7 +15,8 @@ class BahanMasakan extends Model
         'nama_bahan',
         'bahan_masuk',
         'bahan_keluar',
-        'bahan_sisa'
+        'jumlah_bahan',
+        'satuan'
     ];
 
     // Timestamps

@@ -9,7 +9,7 @@
             -webkit-appearance: none;
             margin: 0;
         }
- 
+
         /* Firefox */
         input[type=number] {
             -moz-appearance: textfield;
@@ -23,10 +23,15 @@
                 {{ session('success') }}
             </div>
         @endif
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Nama Menu</th>
+                    <th>Nama Paket</th>
                     <th>Jumlah</th>
                     <th>Harga</th>
                     <th>Total</th>
@@ -39,7 +44,7 @@
                         <td>
                             <input type="checkbox" class="cart-checkbox mr-2" style="transform: scale(2);"
                                 value="{{ $cart->id }}" data-id="{{ $cart->id }}">
-                            {{ ucwords($cart->menu->nama_menu) }}
+                            {{ ucwords($cart->paket->nama_paket) }}
                         </td>
                         <td>
                             <div class="input-group">
@@ -55,15 +60,16 @@
                                 </div>
                             </div>
                         </td>
-                        <td>Rp. {{ number_format($cart->menu->harga_menu, 0, ',', '.') }}</td>
+                        <td>Rp. {{ number_format($cart->paket->harga_paket, 0, ',', '.') }}</td>
                         <td class="total" data-id="{{ $cart->id }}">Rp.
-                            {{ number_format($cart->menu->harga_menu * $cart->quantity, 0, ',', '.') }}</td>
+                            {{ number_format($cart->paket->harga_paket * $cart->quantity, 0, ',', '.') }}</td>
                         <td>
                             <div class="d-flex align-items-center">
-                                <form action="{{ route('cart.delete', $cart->id) }}" method="POST" class="d-inline ml-2">
+                                <form action="{{ route('cart.delete', $cart->id) }}" method="POST" class="delete-form"
+                                    style="display:inline;">
                                     @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                    
+                                    <button type="button" class="btn btn-danger delete-btn">Hapus</button>
                                 </form>
                             </div>
                         </td>
@@ -81,7 +87,35 @@
             </form>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteForms = document.querySelectorAll('.delete-form');
+
+            deleteForms.forEach(form => {
+                const deleteBtn = form.querySelector('.delete-btn');
+
+                deleteBtn.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    Swal.fire({
+                        title: 'Hapus Item?',
+                        text: "Apakah kamu ingin menghapus item ini?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        cancelButtonText: 'Tidak',
+                        confirmButtonText: 'Iya'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
     <script>
         $(document).ready(function() {
             $('#order-form').submit(function(event) {
@@ -93,7 +127,12 @@
                 });
 
                 if (selectedCarts.length === 0) {
-                    alert('Pilih setidaknya satu menu untuk membuat pesanan.');
+                    Swal.fire({
+                        title: 'Peringatan',
+                        text: 'Pilih setidaknya satu paket untuk membuat pesanan.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    });
                     return;
                 }
 
@@ -129,7 +168,6 @@
             });
 
             $('.cart-checkbox').change(function() {
-                // updateGrandTotal();
                 var id = $(this).data('id');
                 var quantity = parseInt($(`.quantity[data-id=${id}]`).val());
                 updateCart(id, quantity);

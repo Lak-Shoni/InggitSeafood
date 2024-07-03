@@ -7,8 +7,9 @@
     <link rel="icon" href="{{ asset('img/favicon.png') }}" type="image/x-icon">
     <link href="{{ asset('css/aos/aos.css') }}" rel="stylesheet">
     <link href="{{ asset('css/main.css') }}" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         body {
             display: flex;
@@ -54,29 +55,15 @@
         }
     </style>
 </head>
-<body data-aos="fade-up">
+<body >
     <div class="login-container" data-aos="fade-up" data-aos-delay="100">
         <h2 class="text-center">Login</h2>
-
-        <!-- Tampilkan Alert jika ada error no_telpon -->
-        @if ($errors->has('no_telpon'))
-            <div class="alert alert-danger">
-                {{ $errors->first('no_telpon') }}
-            </div>
-        @endif
-
-        <!-- Tampilkan Alert jika ada error password -->
-        @if ($errors->has('password'))
-            <div class="alert alert-danger">
-                {{ $errors->first('password') }}
-            </div>
-        @endif
 
         <form action="/login" method="post">
             @csrf
             <div class="form-group">
                 <label for="no_telpon">Nomor Telepon</label>
-                <input type="number" class="form-control" id="no_telpon" name="no_telpon" required>
+                <input type="number" class="form-control" id="no_telpon" name="no_telpon" value="{{ old('no_telpon') }}" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
@@ -86,9 +73,35 @@
             <p class="signup-link text-center">Belum punya akun? <a href="/register" style="color: #01562C; font-weight:500">Daftar di sini</a></p>
         </form>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/aos/aos.js') }}"></script>
     <script>
         AOS.init();
+
+        @if ($errors->has('no_telpon'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{{ $errors->first('no_telpon') }}',
+            });
+        @endif
+
+        @if ($errors->has('password'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{{ $errors->first('password') }}',
+            });
+        @endif
+
+        @if (Session::has('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ Session::get('success') }}',
+            });
+        @endif
     </script>
 </body>
 </html>

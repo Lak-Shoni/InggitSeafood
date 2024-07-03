@@ -43,13 +43,15 @@ class BahanMasakanController extends Controller
     {
         $request->validate([
             'nama_bahan' => 'required',
+            'satuan' => 'required|string|max:255'
         ]);
 
         $bahanMasakan = new BahanMasakan([
             'nama_bahan' => $request->get('nama_bahan'),
+            'satuan' => $request->get('satuan'),
             'bahan_masuk' => 0,
             'bahan_keluar' => 0,
-            'bahan_sisa' => 0,
+            'jumlah_bahan' => 0,
         ]);
         $bahanMasakan->save();
 
@@ -59,13 +61,28 @@ class BahanMasakanController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
-    {
-        $selectedBahan = BahanMasakan::findOrFail($id);
-        $bahanMasakanList = BahanMasakan::all();
-        $transaksiList = Transaksi::where('bahan_masakan_id', $id)->get();
-        return view('admin.bahan_masakan.show', compact('selectedBahan', 'bahanMasakanList', 'transaksiList'));
+    public function show($id, Request $request)
+{
+    $selectedBahan = BahanMasakan::findOrFail($id);
+    $bahanMasakanList = BahanMasakan::all();
+    $query = Transaksi::where('bahan_masakan_id', $id);
+
+    if ($request->has('sort_by')) {
+        $query->orderBy($request->sort_by, $request->get('order', 'asc'));
     }
+
+    // Date range filtering
+    if ($request->has('start_date') && $request->has('end_date')) {
+        $query->whereBetween('tanggal_transaksi', [$request->start_date, $request->end_date]);
+    }
+
+    $transaksiList = $query->paginate(10);
+
+    return view('admin.bahan_masakan.show', compact('selectedBahan', 'bahanMasakanList', 'transaksiList'))
+        ->with('i', (request()->input('page', 1) - 1) * 10);
+}
+
+
 
     public function bahanMasuk($id)
     {
@@ -88,14 +105,14 @@ class BahanMasakanController extends Controller
             'nama_bahan' => 'required',
             'bahan_masuk' => 'required|integer',
             'bahan_keluar' => 'required|integer',
-            'bahan_sisa' => 'required|integer',
+            'jumlah_bahan' => 'required|integer',
         ]);
 
         $bahanMasakan = BahanMasakan::findOrFail($id);
         $bahanMasakan->nama_bahan = $request->get('nama_bahan');
         $bahanMasakan->bahan_masuk = $request->get('bahan_masuk');
         $bahanMasakan->bahan_keluar = $request->get('bahan_keluar');
-        $bahanMasakan->bahan_sisa = $request->get('bahan_sisa');
+        $bahanMasakan->jumlah_bahan = $request->get('jumlah_bahan');
         $bahanMasakan->save();
 
         return redirect()->route('admin.bahan_masakan.index')->with('success', 'Bahan masakan updated!');
@@ -121,14 +138,14 @@ class BahanMasakanController extends Controller
 
         $bahanMasakan = BahanMasakan::findOrFail($id);
         $bahanMasakan->bahan_masuk += $request->bahan_masuk;
-        $bahanMasakan->bahan_sisa += $request->bahan_masuk;
+        $bahanMasakan->jumlah_bahan += $request->bahan_masuk;
 
         $transaksi = new Transaksi([
             'bahan_masakan_id' => $bahanMasakan->id,
             'tanggal_transaksi' => $request->tanggal_transaksi,
             'bahan_masuk' => $request->bahan_masuk,
             'bahan_keluar' => 0,
-            'bahan_sisa' => $bahanMasakan->bahan_sisa,
+            'jumlah_bahan' => $bahanMasakan->jumlah_bahan,
         ]);
 
         $bahanMasakan->save();
@@ -146,14 +163,14 @@ class BahanMasakanController extends Controller
 
         $bahanMasakan = BahanMasakan::findOrFail($id);
         $bahanMasakan->bahan_keluar += $request->bahan_keluar;
-        $bahanMasakan->bahan_sisa -= $request->bahan_keluar;
+        $bahanMasakan->jumlah_bahan -= $request->bahan_keluar;
 
         $transaksi = new Transaksi([
             'bahan_masakan_id' => $bahanMasakan->id,
             'tanggal_transaksi' => $request->tanggal_transaksi,
             'bahan_masuk' => 0,
             'bahan_keluar' => $request->bahan_keluar,
-            'bahan_sisa' => $bahanMasakan->bahan_sisa,
+            'jumlah_bahan' => $bahanMasakan->jumlah_bahan,
         ]);
 
         $bahanMasakan->save();

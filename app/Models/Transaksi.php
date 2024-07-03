@@ -15,7 +15,7 @@ class Transaksi extends Model
         'tanggal_transaksi',
         'bahan_masuk',
         'bahan_keluar',
-        'bahan_sisa',
+        'jumlah_bahan',
     ];
 
     public $timestamps = true;

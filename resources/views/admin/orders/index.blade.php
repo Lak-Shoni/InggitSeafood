@@ -2,6 +2,19 @@
 
 @section('title', 'Daftar Pesanan')
 @section('content')
+    <style>
+        table {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        th,
+        td {
+            width: 14.28%;
+            /* Karena ada 7 kolom, maka 100% dibagi 7 */
+            text-align: left;
+        }
+    </style>
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -10,18 +23,29 @@
                         <!-- /.card-header -->
                         <div class="card-body">
                             <h1>Daftar Pesanan</h1>
-                            <div class="d-flex justify-content-end">
-                                <form method="GET" action="{{ route('admin.orders.index') }}" class="form-inline mb-2">
-                                    <div class="form-group mb-2">
-                                        <label for="search" class="mr-2">Cari berdasarkan Kode:</label>
-                                        <input type="name" class="form-control" id="search" name="search"
+                            <div class="d-flex justify-content-end align-items-end mb-4 mr-2">
+                                <form id="searchForm" method="GET" action="{{ route('admin.orders.index') }}"
+                                    class="form-inline">
+                                    <div class="form-group mb-2 position-relative">
+                                        <label for="search" class="mr-2">Cari berdasarkan kode:</label>
+                                        <input type="text" class="form-control" id="search" name="search"
                                             value="{{ request('search') }}">
+                                        <span id="clearSearch" class="position-absolute"
+                                            style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none;">&times;</span>
                                     </div>
-                                    <button type="submit" class="btn btn-primary  mb-2 ml-2">Cari</button>
                                 </form>
                             </div>
-                            <br>
+
                             <table id="example2" class="table table-bordered table-hover">
+                                <colgroup>
+                                    <col style="width: 8%;">
+                                    <col style="width: 10%;">
+                                    <col style="width: 15%;">
+                                    <col style="width: 17%;">
+                                    <col style="width: 16%;">
+                                    <col style="width: 12%;">
+                                    <col style="width: 14%;">
+                                </colgroup>
                                 <thead>
                                     <tr>
                                         <th>
@@ -227,6 +251,44 @@
                         $('.modal-body').html(data);
                     }
                 });
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search');
+            const clearSearch = document.getElementById('clearSearch');
+            const searchForm = document.getElementById('searchForm');
+            const dataBody = document.getElementById('dataBody');
+
+            // Show clear icon if search input is not empty
+            if (searchInput.value) {
+                clearSearch.style.display = 'block';
+            }
+
+            // Listen for input changes
+            searchInput.addEventListener('input', function() {
+                const query = this.value;
+
+                // Show clear icon if search input is not empty
+                clearSearch.style.display = query ? 'block' : 'none';
+
+                // Make AJAX request to search
+                fetch(`{{ route('admin.orders.index') }}?search=${query}`)
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newBody = doc.getElementById('dataBody').innerHTML;
+                        dataBody.innerHTML = newBody;
+                    });
+            });
+
+            // Clear search input when clear icon is clicked
+            clearSearch.addEventListener('click', function() {
+                searchInput.value = '';
+                clearSearch.style.display = 'none';
+                searchInput.dispatchEvent(new Event('input'));
             });
         });
     </script>

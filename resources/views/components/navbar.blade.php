@@ -97,7 +97,7 @@
             <ul>
                 <li><a href="/">Home</a></li>
                 <li><a href="#about">About</a></li>
-                <li><a href="{{ route('client.menu.index') }}">Menu</a></li>
+                <li><a href="{{ route('client.paket.index') }}">Paket</a></li>
                 <li><a href="#events">Events</a></li>
                 <li><a href="#contact">Contact</a></li>
                 @auth
@@ -117,9 +117,9 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="{{ route('profile') }}">Lihat Profil</a>
-                        <form action="{{ route('logout') }}" method="POST">
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST">
                             @csrf
-                            <button type="submit" class="dropdown-item">Logout</button>
+                            <button type="button" class="dropdown-item" id="logout-btn">Logout</button>
                         </form>
                     </div>
                 </li>
@@ -149,6 +149,7 @@
 
 </header><!-- End Header -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).ready(function() {
         $('.dropdown-toggle').click(function() {
@@ -162,6 +163,7 @@
             }
         });
     });
+
     $(document).ready(function() {
         // Ketika halaman dimuat
         if ($(window).scrollTop() > 0) {
@@ -175,6 +177,51 @@
             } else {
                 $('.header').removeClass('scrolled');
             }
+        });
+
+        $('#logout-btn').click(function(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Logout?',
+                text: "Apakah Anda yakin ingin logout?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Tidak',
+                confirmButtonText: 'Iya'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#logout-form').submit();
+                }
+            });
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteForms = document.querySelectorAll('.delete-form');
+
+        deleteForms.forEach(form => {
+            const deleteBtn = form.querySelector('.delete-btn');
+
+            deleteBtn.addEventListener('click', function(event) {
+                event.preventDefault();
+                Swal.fire({
+                    title: 'Hapus Item?',
+                    text: "Apakah kamu ingin menghapus item ini?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    cancelButtonText: 'Tidak',
+                    confirmButtonText: 'Iya'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
         });
     });
 </script>

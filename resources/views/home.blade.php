@@ -53,7 +53,7 @@
                 <h2 data-aos="fade-up">Selamat Datang<br>Di Inggit Seafood</h2>
                 <p data-aos="fade-up" data-aos-delay="100">Melayani pemesanan katering untuk acara hajatan, nikahan, khitanan dan acara lainnya </p>
                 <div class="d-flex justify-content-center" data-aos="fade-up" data-aos-delay="200">
-                    <a href="{{ route('client.menu.index') }}" class="btn-book-a-table">Pesan Sekarang</a>
+                    <a href="{{ route('client.paket.index') }}" class="btn-book-a-table">Pesan Sekarang</a>
                 </div>
             </div>
         </div>
@@ -138,22 +138,22 @@
     <section class="fav-menu" data-aos="fade-up" data-aos-delay="300">
       <div class="container">
           <div class="section-header">
-              <p>Menu <span>Populer</span></p>
+              <p>Paket <span>Populer</span></p>
           </div>
           <div class="wrapper">
               <i id="left" class="fa-solid fa-angle-left"></i>
               <ul class="carousel">
-                  @foreach($menus as $menu)
+                  @foreach($pakets as $paket)
                   <li class="card">
                       <div class="img">
-                          <img src="{{ asset('storage/images/' . $menu->gambar_menu) }}" alt="{{ $menu->nama_menu }}" draggable="false">
+                          <img src="{{ asset('storage/images/' . $paket->gambar_paket) }}" alt="{{ $paket->nama_paket }}" draggable="false">
                       </div>
-                      <h2>Rp {{ number_format($menu->harga_menu, 0, ',', '.') }}</h2>
-                      <h1>{{ $menu->nama_menu }}</h1>
-                      <p>{{ $menu->isi_menu }}</p>
-                      <form class="add-to-cart-form" data-menu-id="{{ $menu->id }}">
+                      <h2>Rp {{ number_format($paket->harga_paket, 0, ',', '.') }}</h2>
+                      <h1>{{ $paket->nama_paket }}</h1>
+                      <p>{{ $paket->isi_paket }}</p>
+                      <form class="add-to-cart-form" data-paket-id="{{ $paket->id }}">
                         @csrf
-                        <input type="hidden" name="menu_id" value="{{ $menu->id }}">
+                        <input type="hidden" name="paket_id" value="{{ $paket->id }}">
                         <button type="submit" class="btn btn-primary"> Tambah ke Keranjang</button>
                     </form>
                   </li>
@@ -162,7 +162,7 @@
               <i id="right" class="fa-solid fa-angle-right"></i>
           </div>
       </div>
-      <a href="{{ route('client.menu.index') }}" class="btn btn-primary align-items-center">Lihat Menu Lainnya</a>
+      <a href="{{ route('client.paket.index') }}" class="btn btn-primary align-items-center">Lihat paket Lainnya</a>
       {{-- <button class="btn btn-primary align-items-center">Lihat Menu Lainnya</button> --}}
   </section>
     
@@ -612,7 +612,7 @@
                 event.preventDefault();
 
                 var form = $(this);
-                var menuId = form.data('menu-id');
+                var paketId = form.data('paket-id');
 
                 $.ajax({
                     url: '{{ route('cart.add') }}',

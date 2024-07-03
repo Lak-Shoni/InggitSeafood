@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cart;
-use App\Models\Menu;
+use App\Models\Paket;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
@@ -21,19 +20,19 @@ class CartController extends Controller
     public function addToCart(Request $request)
     {
         $request->validate([
-            'menu_id' => 'required|exists:menus,id',
+            'paket_id' => 'required|exists:pakets,id',
         ]);
 
         $user = Auth::user();
         $cart = Cart::where('user_id', $user->id)
-            ->where('menu_id', $request->menu_id)
+            ->where('paket_id', $request->paket_id)
             ->where('status_order', 0)
             ->first();
-        $menu = Menu::find($request->menu_id);
+        $paket = Paket::find($request->paket_id);
         if ($cart) {
             // Jika item sudah ada di keranjang, tambahkan quantity-nya
             $cart->quantity += 1;
-            $total_per_item = $cart->quantity * $menu->harga_menu;
+            $total_per_item = $cart->quantity * $paket->harga_paket;
             $cart->total_per_item = $total_per_item;
             $cart->status_order = 0;
             $cart->save();
@@ -41,9 +40,9 @@ class CartController extends Controller
             // Jika item belum ada di keranjang, buat item baru di keranjang
             Cart::create([
                 'user_id' => $user->id,
-                'menu_id' => $request->menu_id,
+                'paket_id' => $request->paket_id,
                 'quantity' => 1,
-                'total_per_item' => 1 * $menu->harga_menu,
+                'total_per_item' => 1 * $paket->harga_paket,
                 'status_order' => 0,
             ]);
         }
@@ -55,15 +54,15 @@ class CartController extends Controller
     public function update(Request $request, $id)
     {
         $cart = Cart::find($id);
-        $menu = Menu::find($cart->menu_id);
-        $total_per_item = $request->input('quantity', 1) * $menu->harga_menu;
+        $paket = Paket::find($cart->paket_id);
+        $total_per_item = $request->input('quantity', 1) * $paket->harga_paket;
         if ($cart) {
             $cart->quantity = $request->input('quantity', 1);
             $cart->total_per_item = $total_per_item;
             $cart->save();
         }
 
-        return response()->json(['success' => true, 'total' => 'Rp. ' . number_format($cart->menu->harga_menu * $cart->quantity, 0, ",", ".")]);
+        return response()->json(['success' => true, 'total' => 'Rp. ' . number_format($cart->paket->harga_paket * $cart->quantity, 0, ",", ".")]);
     }
 
     public function delete($id)
@@ -74,6 +73,6 @@ class CartController extends Controller
             $cart->delete();
         }
 
-        return redirect()->route('cart.show')->with('success', 'Item removed from cart');
+        return redirect()->route('cart.show')->with('success', 'Paket Berhasil Dihapus');
     }
 }

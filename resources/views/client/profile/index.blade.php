@@ -34,16 +34,91 @@
         <br><br>
         <div class="col-md-12">
             <h3>Riwayat Pesanan</h3>
-            <table class="table table-bordered">
+            <table id="example2" class="table table-bordered table-hover">
+                <colgroup>
+                    <col style="width: 8%;">
+                    <col style="width: 10%;">
+                    <col style="width: 15%;">
+                    <col style="width: 17%;">
+                    <col style="width: 16%;">
+                    <col style="width: 12%;">
+                    <col style="width: 14%;">
+                </colgroup>
                 <thead>
                     <tr>
-                        <th>kode Pesanan</th>
-                        <th>Tanggal Pesanan</th>
-                        <th>Waktu Pengiriman</th>
-                        <th>Metode Pembayaran</th>
-                        <th>Status Pembayaran</th>
-                        <th>Status Pesanan</th>
-                        <th>Aksi</th>
+                        <th>
+                            <a
+                                href="{{ route('profile', ['sort_by' => 'id', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                Kode Pesanan
+                                @if (request('sort_by') == 'id')
+                                    <i
+                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                @else
+                                    <i class="fas fa-sort"></i>
+                                @endif
+                            </a>
+                        </th>
+                        <th>
+                            <a
+                                href="{{ route('profile', ['sort_by' => 'created_at', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                Tanggal Pesanan
+                                @if (request('sort_by') == 'created_at')
+                                    <i
+                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                @else
+                                    <i class="fas fa-sort"></i>
+                                @endif
+                            </a>
+                        </th>
+                        <th>
+                            <a
+                                href="{{ route('profile', ['sort_by' => 'delivery_time', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                Waktu Pengiriman
+                                @if (request('sort_by') == 'delivery_time')
+                                    <i
+                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                @else
+                                    <i class="fas fa-sort"></i>
+                                @endif
+                            </a>
+                        </th>
+                        <th>
+                            <a
+                                href="{{ route('profile', ['sort_by' => 'payment_method', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                Metode Pembayaran
+                                @if (request('sort_by') == 'payment_method')
+                                    <i
+                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                @else
+                                    <i class="fas fa-sort"></i>
+                                @endif
+                            </a>
+                        </th>
+                        <th>
+                            <a
+                                href="{{ route('profile', ['sort_by' => 'payment_status', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                Status Pembayaran
+                                @if (request('sort_by') == 'payment_status')
+                                    <i
+                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                @else
+                                    <i class="fas fa-sort"></i>
+                                @endif
+                            </a>
+                        </th>
+                        <th>
+                            <a
+                                href="{{ route('profile', ['sort_by' => 'order_status', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                Status Pesanan
+                                @if (request('sort_by') == 'order_status')
+                                    <i
+                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                @else
+                                    <i class="fas fa-sort"></i>
+                                @endif
+                            </a>
+                        </th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -86,8 +161,11 @@
                                     @if ($order->order_status != 'terima')
                                         <a href="{{ url('/order/terima/' . $order->id) }}" class="btn btn-success"><i class="fa-solid fa-check"></i>                                            
                                         </a>
-                                    @endif
-                                    <button class="btn btn-primary detail_pesanan" data-bs-toggle="modal"
+                                        @endif
+                                        <a href="{{ route('orders.pdf', $order->id) }}" class="btn btn-success">
+                                            <i class="fa-solid fa-file-pdf"></i> Download Invoice
+                                        </a>
+                                        <button class="btn btn-primary detail_pesanan" data-bs-toggle="modal"
                                         data-bs-target="#exampleModal" data-id="{{ $order->id }}">Detail</button>
                                 </span>
                             </td>
@@ -95,7 +173,7 @@
                     @endforeach
                 </tbody>
             </table>
-            {{ $orders->links() }} <!-- This will display the pagination links -->
+            {!! $orders->appends(request()->query())->links() !!}
         </div>
     </div>
 

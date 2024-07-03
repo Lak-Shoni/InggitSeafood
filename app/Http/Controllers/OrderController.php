@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\Hutang;
 use App\Models\Order;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Illuminate\Support\Facades\Auth;
 use Midtrans\Config;
 use Midtrans\Snap;
+use Carbon\Carbon;
+use PDF;
 
 
 
@@ -40,7 +43,7 @@ class OrderController extends Controller
             'partner_name' => 'required|string',
             'delivery_time' => 'required|date',
             'payment_method' => 'required|string',
-            'due_date' => 'nullable|date',
+            'tenggat_bulan' => 'nullable|numeric',
             'grand_total' => 'required|numeric',
         ]);
 
@@ -50,23 +53,29 @@ class OrderController extends Controller
             return redirect()->back()->with('error', 'Total harga tidak valid.');
         }
 
-        $order = new Order();
-        $order->user_id = Auth::id();
-        $order->address = $request->input('address');
-        $order->partner_name = $request->input('partner_name');
-        $order->delivery_time = $request->input('delivery_time');
-        $order->payment_method = $request->input('payment_method');
-        $order->due_date = $request->input('due_date');
-        $order->notes = $request->input('notes');
-        $order->items = json_encode($request->input('cart_ids'));
-        $order->total_price = $grandTotal;
-        $order->order_status = 'proses';
-        $order->save();
+        $deliveryTime = Carbon::parse($request->input('delivery_time'));
+        $tenggatBulan = $request->input('tenggat_bulan', 0); // Jika null, default ke 0
+        $dueDate = $deliveryTime->copy()->addMonths($tenggatBulan);
 
-        // Change Status Order Cart ID
-        Cart::whereIn('id', $request->input('cart_ids'))->update(['status_order' => 1]);
+        // Simpan data pesanan sementara di sesi
+        session([
+            'order_data' => [
+                'user_id' => Auth::id(),
+                'address' => $request->input('address'),
+                'partner_name' => $request->input('partner_name'),
+                'delivery_time' => $deliveryTime,
+                'payment_method' => $request->input('payment_method'),
+                'due_date' => $dueDate,
+                'notes' => $request->input('notes'),
+                'items' => json_encode($request->input('cart_ids')),
+                'total_price' => $grandTotal,
+                'order_status' => 'proses',
+                'payment_status' => 'pending',
+            ],
+            'cart_ids' => $request->input('cart_ids')
+        ]);
 
-        $payment_method = $order->payment_method;
+        $payment_method = $request->input('payment_method');
         if ($payment_method == 'bayar_langsung') {
             // Midtrans
             Config::$serverKey = config('services.midtrans.server_key');
@@ -74,11 +83,13 @@ class OrderController extends Controller
             Config::$isSanitized = config('services.midtrans.is_sanitized');
             Config::$is3ds = config('services.midtrans.is_3ds');
 
+            // Generate unique order_id
+            $unique_order_id = 'ORDER-' . uniqid();
 
             $params = [
                 'transaction_details' => [
-                    'order_id' => $order->id,
-                    'gross_amount' => (int) $order->total_price,
+                    'order_id' => $unique_order_id,
+                    'gross_amount' => (int) $grandTotal,
                 ],
                 'customer_details' => [
                     'first_name' => Auth::user()->nama,
@@ -88,52 +99,69 @@ class OrderController extends Controller
 
             try {
                 $snapToken = Snap::getSnapToken($params);
-                return view('client.pesanan.pay', compact('snapToken', 'order'));
+                return view('client.pesanan.pay', compact('snapToken', 'unique_order_id'));
             } catch (\Exception $e) {
                 return redirect()->route('order.failure')->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
             }
         } elseif ($payment_method == 'bayar_ditempat') {
-            // Tambahkan hutang
-            $hutang = new Hutang();
-            $hutang->order_id = $order->id;
-            $hutang->user_id = Auth::id();
-            $hutang->total = $grandTotal;
-            $hutang->status = 'unpaid';
-            $hutang->save();
-
-            // Redirect ke profil pengguna setelah pesanan sukses
-            return redirect()->route('profile')->with('success', 'Pesanan berhasil dibuat. Silakan bayar saat barang diterima.');
+            // Tambahkan hutang dan buat order
+            return $this->createOrder();
         } else {
-            echo json_encode("NO MIDTRANS");
-            die;
+            // Tambahkan hutang dan buat order
+            return $this->createOrder();
         }
     }
 
-
-    public function failure()
+    private function createOrder()
     {
-        return view('client.pesanan.failure')->with('error', 'Pembayaran gagal diproses. Silakan coba lagi.');
-    }
+        $order_data = session('order_data');
+        $cart_ids = session('cart_ids');
 
+        if ($order_data && $cart_ids) {
+            $order = Order::create($order_data);
+            Cart::whereIn('id', $cart_ids)->update(['status_order' => 1]);
+
+            if ($order_data['payment_method'] == 'bayar_ditempat' || $order_data['payment_method'] == 'lainnya') {
+                $hutang = new Hutang();
+                $hutang->order_id = $order->id;
+                $hutang->user_id = Auth::id();
+                $hutang->total = $order_data['total_price'];
+                $hutang->status = 'unpaid';
+                $hutang->save();
+            }
+
+            // Clear session data
+            session()->forget(['order_data', 'cart_ids']);
+
+            return redirect()->route('profile')->with('success', 'Pesanan berhasil dibuat. Silakan bayar saat barang diterima.');
+        }
+
+        return redirect()->route('cart.show')->with('error', 'Gagal membuat pesanan.');
+    }
 
     public function paymentNotification(Request $request)
     {
         $data = $request->input('result_data');
-        $order = Order::findOrFail($data['order_id']);
+        $order_data = session('order_data');
+        $cart_ids = session('cart_ids');
+
+        if (!$order_data || !$cart_ids) {
+            return response()->json(['success' => false, 'message' => 'Order data not found.']);
+        }
+
+        $order = new Order($order_data);
+        $order->save();
+
+        Cart::whereIn('id', $cart_ids)->update(['status_order' => 1]);
 
         switch ($data['transaction_status']) {
             case 'capture':
-                $order->payment_status = 'paid';
-                break;
-
             case 'settlement':
                 $order->payment_status = 'paid';
                 break;
-
             case 'pending':
                 $order->payment_status = 'pending';
                 break;
-
             case 'deny':
             case 'expire':
             case 'cancel':
@@ -142,18 +170,20 @@ class OrderController extends Controller
         }
 
         $order->save();
+
+        // Clear session data
+        session()->forget(['order_data', 'cart_ids']);
+
         echo json_encode(['success' => true]);
     }
 
-    // public function success()
-    // {
-    //     $order = Order::where('user_id', Auth::id())->latest()->first();
-    //     $hutang = Hutang::where('user_id', Auth::id())->latest()->first();
-    //     if (!$order) {
-    //         return redirect()->route('cart.show')->with('error', 'Tidak ada pesanan yang ditemukan.');
-    //     }
-    //     return redirect()->route('profile')->with('success', 'berhasil');
-    // }
+
+
+    public function failure()
+    {
+        return view('client.pesanan.failure')->with('error', 'Pembayaran gagal diproses. Silakan coba lagi.');
+    }
+
 
     public function update(Request $request, $id)
     {
@@ -220,5 +250,15 @@ class OrderController extends Controller
         $order = Order::find($id);
 
         echo json_encode($order);
+    }
+
+    public function generatePDF($id)
+    {
+        $order = Order::findOrFail($id);
+        $user = $order->user;  // Assuming you have a relationship defined in your Order model
+        $carts = Cart::whereIn('id', json_decode($order->items))->get();
+
+        $pdf = FacadePdf::loadView('client.pesanan.invoice', compact('order', 'user', 'carts'));
+        return $pdf->download('invoice_' . $order->id . '.pdf');
     }
 }

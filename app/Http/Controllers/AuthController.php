@@ -15,18 +15,25 @@ class AuthController extends Controller
         return view('register');
     }
 
-    
+
 
     public function register(Request $request)
     {
+        $messages = [
+            'no_telpon.unique' => 'Nomor telepon sudah terdaftar. Silakan gunakan nomor lain.',
+            'nama.required' => 'Nama wajib diisi.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password harus memiliki minimal :min karakter.',
+            // Tambahkan pesan khusus untuk field lainnya jika diperlukan
+        ];
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
             'no_telpon' => 'required|string|max:15|unique:users',
             'password' => 'required|string|min:8',
             'alamat' => 'required|string',
             'is_admin' => 'boolean',
-        ]);
-    
+        ],$messages);
+
         // Cek apakah validasi gagal
         if ($validator->fails()) {
             return redirect()->back()
@@ -34,6 +41,7 @@ class AuthController extends Controller
                 ->withInput()
                 ->with('error', 'Pendaftaran gagal. Mohon isi semua kolom dengan benar.');
         }
+
         $user = User::create([
             'nama' => $request->nama,
             'no_telpon' => $request->input('no_telpon'),
@@ -51,6 +59,7 @@ class AuthController extends Controller
 
         return redirect()->route('home')->with('success', 'Pendaftaran berhasil!');
     }
+
 
     public function showLoginForm()
     {

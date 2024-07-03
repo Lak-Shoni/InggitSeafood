@@ -16,17 +16,16 @@ class KeuanganController extends Controller
         $query->orderBy($request->sort_by, $request->get('order', 'asc'));
     }
 
-    // Searching
-    if ($request->has('search')) {
-        $query->where('transaction_date', 'like', '%' . $request->search . '%');
+    // Date range filtering
+    if ($request->has('start_date') && $request->has('end_date')) {
+        $query->whereBetween('transaction_date', [$request->start_date, $request->end_date]);
     }
 
-    $dataKeuangan = $query->paginate(10); // Sesuaikan dengan jumlah data per halaman
+    $dataKeuangan = $query->paginate(10); // Adjust the number of items per page as needed
 
     return view('admin.keuangan.index', compact('dataKeuangan'))
         ->with('i', (request()->input('page', 1) - 1) * 10);
 }
-
 
     public function store(Request $request)
     {
