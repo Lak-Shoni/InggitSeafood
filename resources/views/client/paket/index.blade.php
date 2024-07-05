@@ -48,7 +48,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $paket->nama_paket }}</h5>
                                     <p class="card-text">{{ $paket->isi_paket }}</p>
-                                    <p class="card-text">Price: ${{ $paket->harga_paket }}</p>
+                                    <p class="card-text">Harga: Rp. {{ $paket->harga_paket }}</p>
                                     <form class="add-to-cart-form" data-paket-id="{{ $paket->id }}">
                                         @csrf
                                         <input type="hidden" name="paket_id" value="{{ $paket->id }}">

@@ -67,7 +67,7 @@ class InventoryController extends Controller
         ]);
         $inventory->save();
 
-        return redirect()->route('admin.inventories.index')->with('success', 'Inventory saved!');
+        return redirect()->route('admin.inventories.index')->with('success', 'Barang inventaris berhasil ditambahkan');
     }
 
     /**
@@ -111,7 +111,7 @@ class InventoryController extends Controller
         $inventory->tanggal_pembaruan_terakhir = now();
         $inventory->save();
 
-        return redirect()->route('admin.inventories.index')->with('success', 'Inventory updated!');
+        return redirect()->route('admin.inventories.index')->with('success', 'Barang inventaris berhasil diperbarui');
     }
 
     /**
@@ -122,6 +122,6 @@ class InventoryController extends Controller
         $inventory = Inventory::findOrFail($id);
         $inventory->delete();
 
-        return redirect()->route('admin.inventories.index')->with('success', 'Inventory deleted!');
+        return redirect()->route('admin.inventories.index')->with('success', 'Barang inventaris berhasil dihapus');
     }
 }

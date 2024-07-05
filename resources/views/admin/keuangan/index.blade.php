@@ -7,6 +7,17 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
+                            @if (session('success'))
+                                <script>
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Berhasil!',
+                                        text: '{{ session('success') }}',
+                                        showConfirmButton: false,
+                                        timer: 3000
+                                    });
+                                </script>
+                            @endif
                             <h2>Data Keuangan</h2>
                             <!-- Form untuk menambahkan dan mengedit data -->
                             <form method="POST" action="{{ route('admin.keuangan.store') }}" id="dataForm">
@@ -188,13 +199,14 @@
                                             <td>{{ $data->sewa_alat }}</td>
                                             <td>{{ $data->profit }}</td>
                                             <td>
-                                                <form action="{{ route('admin.keuangan.destroy', $data->id) }}" method="POST" class="delete-form"
-                                                    style="display:inline;">
+                                                <form action="{{ route('admin.keuangan.destroy', $data->id) }}"
+                                                    method="POST" class="delete-form" style="display:inline;">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="button" class="btn btn-danger delete-btn">Hapus</button>
+                                                    <button type="button"
+                                                        class="btn btn-danger delete-btn">Hapus</button>
                                                 </form>
-                                            
+
                                                 <button class="btn btn-primary editButton"
                                                     data-id="{{ $data->id }}">Edit</button>
                                             </td>
@@ -203,7 +215,7 @@
                                 </tbody>
                             </table>
                             <div class="d-flex justify-content-center">
-                                {!! $dataKeuangan->appends(request()->query())->links() !!}
+                                {!! $dataKeuangan->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
                             </div>
                         </div>
                     </div>

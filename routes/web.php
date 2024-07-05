@@ -43,7 +43,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
     Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::post('/cart/delete/{id}', [CartController::class, 'delete'])->name('cart.delete');
-    
+
 
     Route::get('/checkout', [OrderController::class, 'showCheckoutForm'])->name('checkout.form');
     Route::post('/checkout', [OrderController::class, 'processCheckout'])->name('checkout.process');
@@ -52,6 +52,9 @@ Route::middleware(['auth'])->group(function () {
     })->name('order.success');
     Route::post('/payment/notification', [OrderController::class, 'paymentNotification'])->name('payment.notification');
     Route::get('/profile', [UserController::class, 'showProfile'])->name('profile');
+    Route::get('/profile/edit', [UserController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
+
 
     Route::post('/order/update/{id}', [OrderController::class, 'update'])->name('order.update');
     Route::post('/order/detail/{id}', [OrderController::class, 'get_detail'])->name('order.detail');

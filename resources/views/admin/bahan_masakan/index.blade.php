@@ -11,7 +11,15 @@
                                 <h1>Daftar Bahan Masakan</h1>
                             </div>
                             @if (session('success'))
-                                <div class="alert alert-success">{{ session('success') }}</div>
+                                <script>
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Berhasil!',
+                                        text: '{{ session('success') }}',
+                                        showConfirmButton: false,
+                                        timer: 3000
+                                    });
+                                </script>
                             @endif
 
                             @if ($errors->any())
@@ -101,11 +109,12 @@
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-danger ">Hapus</button>
                                                     </form> --}}
-                                                    <form action="{{ route('admin.bahan_masakan.destroy', $bahan->id) }}" method="POST" class="delete-form"
-                                                        style="display:inline;">
+                                                    <form action="{{ route('admin.bahan_masakan.destroy', $bahan->id) }}"
+                                                        method="POST" class="delete-form" style="display:inline;">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="button" class="btn btn-danger delete-btn">Hapus</button>
+                                                        <button type="button"
+                                                            class="btn btn-danger delete-btn">Hapus</button>
                                                     </form>
                                                 </td>
                                             </tr>
@@ -113,8 +122,10 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="d-flex justify-content-center">
-                                {!! $bahanMasakan->appends(request()->query())->links() !!}
+                            <div class="d-flex justify-content-center m-3">
+                                {!! $bahanMasakan->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
+                                
+
                             </div>
                         </div>
                     </div>

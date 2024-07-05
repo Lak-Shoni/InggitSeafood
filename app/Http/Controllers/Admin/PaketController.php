@@ -55,7 +55,7 @@ class PaketController extends Controller
             'harga_paket' => $request->harga_paket,
         ]);
 
-        return redirect()->route('admin.pakets.index')->with('success', 'paket created successfully.');
+        return redirect()->route('admin.pakets.index')->with('success', 'Paket Berhasil Ditambahkan');
     }
 
     public function show($id)
@@ -96,7 +96,7 @@ class PaketController extends Controller
 
         $paket->save();
 
-        return redirect()->route('admin.pakets.index')->with('success', 'paket updated successfully.');
+        return redirect()->route('admin.pakets.index')->with('success', 'Paket Berhasil Diperbarui');
     }
 
     public function destroy($id)
@@ -104,6 +104,6 @@ class PaketController extends Controller
         $paket = paket::findOrFail($id);
         $paket->delete();
 
-        return redirect()->route('admin.pakets.index')->with('success', 'paket deleted successfully.');
+        return redirect()->route('admin.pakets.index')->with('success', 'Paket Berhasil Dihapus');
     }
 }

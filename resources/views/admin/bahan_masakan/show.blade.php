@@ -7,6 +7,17 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
+                            @if (session('success'))
+                                <script>
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Berhasil!',
+                                        text: '{{ session('success') }}',
+                                        showConfirmButton: false,
+                                        timer: 3000
+                                    });
+                                </script>
+                            @endif
                             <h1>Detail Bahan Masakan</h1>
                             <div class="col-lg-6">
                                 <div class="form-group">
@@ -79,8 +90,8 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                            <div class="d-flex justify-content-center">
-                                {!! $transaksiList->appends(request()->query())->links() !!}
+                            <div class="d-flex justify-content-center m-3">
+                                {!! $transaksiList->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
                             </div>
                         </div>
                     </div>

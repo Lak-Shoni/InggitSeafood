@@ -14,6 +14,37 @@
             /* Karena ada 7 kolom, maka 100% dibagi 7 */
             text-align: left;
         }
+
+        .custom-pagination .page-item {
+            margin: 0 5px;
+        }
+
+        .custom-pagination .page-item .page-link {
+            color: #007bff;
+            border-radius: 50%;
+            padding: 10px 15px;
+            border: none;
+        }
+
+        .custom-pagination .page-item.active .page-link {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+        .custom-pagination .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+
+        .custom-pagination .page-link {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .custom-pagination .page-link:hover {
+            background-color: #0056b3;
+            color: white;
+        }
     </style>
     <section class="content">
         <div class="container-fluid">
@@ -203,8 +234,8 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                            <div class="d-flex justify-content-center">
-                                {!! $orders->appends(request()->query())->links() !!}
+                            <div class="d-flex justify-content-center m-3">
+                                {!! $orders->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
                             </div>
                         </div>
                         <!-- /.card-body -->

@@ -55,7 +55,7 @@ class BahanMasakanController extends Controller
         ]);
         $bahanMasakan->save();
 
-        return redirect()->route('admin.bahan_masakan.index')->with('success', 'Bahan masakan saved!');
+        return redirect()->route('admin.bahan_masakan.index')->with('success', 'Bahan Masakan Berhasil Ditambahkan');
     }
 
     /**
@@ -115,7 +115,7 @@ class BahanMasakanController extends Controller
         $bahanMasakan->jumlah_bahan = $request->get('jumlah_bahan');
         $bahanMasakan->save();
 
-        return redirect()->route('admin.bahan_masakan.index')->with('success', 'Bahan masakan updated!');
+        return redirect()->route('admin.bahan_masakan.index')->with('success', 'Bahan Masakan Berhasil Diperbarui');
     }
 
     /**
@@ -126,7 +126,7 @@ class BahanMasakanController extends Controller
         $bahanMasakan = BahanMasakan::findOrFail($id);
         $bahanMasakan->delete();
 
-        return redirect()->route('admin.bahan_masakan.index')->with('success', 'Bahan masakan deleted!');
+        return redirect()->route('admin.bahan_masakan.index')->with('success', 'Bahan Masakan Berhasil Dihapus');
     }
 
     public function storeBahanMasuk(Request $request, $id)
@@ -151,7 +151,7 @@ class BahanMasakanController extends Controller
         $bahanMasakan->save();
         $transaksi->save();
 
-        return redirect()->route('admin.bahan_masakan.show', $bahanMasakan->id)->with('success', 'Bahan masuk recorded!');
+        return redirect()->route('admin.bahan_masakan.show', $bahanMasakan->id)->with('success', 'Bahan Masakan Berhasil Dimasukkan');
     }
 
     public function storeBahanKeluar(Request $request, $id)
@@ -176,6 +176,6 @@ class BahanMasakanController extends Controller
         $bahanMasakan->save();
         $transaksi->save();
 
-        return redirect()->route('admin.bahan_masakan.show', $bahanMasakan->id)->with('success', 'Bahan keluar recorded!');
+        return redirect()->route('admin.bahan_masakan.show', $bahanMasakan->id)->with('success', 'Bahan Masakan Berhasil Dikeluarkan');
     }
 }

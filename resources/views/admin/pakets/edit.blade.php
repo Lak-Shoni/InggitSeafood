@@ -27,10 +27,10 @@
                                     <select name="jenis_paket" class="form-control" required>
                                         <option value="">Pilih jenis</option>
                                         @foreach($jenis as $data)
-                                            <option value="{{ $data->id }}" {{ $paket->jenis_paket == $data->id ? 'selected' : '' }}>{{ $data->nama_paket}}</option>
+                                            <option value="{{ $data->nama_jenis }}" {{ $paket->jenis_paket == $data->id ? 'selected' : '' }}>{{ $data->nama_jenis}}</option>
                                         @endforeach
-                                    </select>
-                                </div>
+                                    </select>            
+                                </div>                                
                                 <div class="form-group">
                                     <label for="nama_paket">Nama paket</label>
                                     <input type="text" name="nama_paket" class="form-control" value="{{ $paket->nama_paket }}" required>

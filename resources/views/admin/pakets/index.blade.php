@@ -14,15 +14,26 @@
 
                             </div>
                             @if (session('success'))
-                                <div class="alert alert-success">{{ session('success') }}</div>
+                                <script>
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Berhasil!',
+                                        text: '{{ session('success') }}',
+                                        showConfirmButton: false,
+                                        timer: 3000
+                                    });
+                                </script>
                             @endif
                             <div class="d-flex justify-content-between align-items-end mb-4">
                                 <a href="{{ route('admin.pakets.create') }}" class="btn btn-primary mb-2">Tambah paket</a>
-                                <form id="searchForm" method="GET" action="{{ route('admin.pakets.index') }}" class="form-inline">
+                                <form id="searchForm" method="GET" action="{{ route('admin.pakets.index') }}"
+                                    class="form-inline">
                                     <div class="form-group mb-2 position-relative">
                                         <label for="search" class="mr-2">Cari berdasarkan nama:</label>
-                                        <input type="text" class="form-control" id="search" name="search" value="{{ request('search') }}">
-                                        <span id="clearSearch" class="position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none;">&times;</span>
+                                        <input type="text" class="form-control" id="search" name="search"
+                                            value="{{ request('search') }}">
+                                        <span id="clearSearch" class="position-absolute"
+                                            style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none;">&times;</span>
                                     </div>
                                 </form>
                             </div>
@@ -101,7 +112,7 @@
                                 </tbody>
                             </table>
                             <div class="d-flex justify-content-center">
-                                {!! $pakets->appends(request()->query())->links() !!}
+                                {!! $pakets->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
                             </div>
                         </div>
                         <!-- /.card-body -->
@@ -115,68 +126,68 @@
         <!-- /.container-fluid -->
     </section>
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-          const deleteForms = document.querySelectorAll('.delete-form');
-  
-          deleteForms.forEach(form => {
-              const deleteBtn = form.querySelector('.delete-btn');
-  
-              deleteBtn.addEventListener('click', function (event) {
-                  event.preventDefault();
-                  Swal.fire({
-                      title: 'Hapus Item?',
-                      text: "Apakah kamu ingin menghapus item ini?",
-                      icon: 'warning',
-                      showCancelButton: true,
-                      confirmButtonColor: '#3085d6',
-                      cancelButtonColor: '#d33',
-                      cancelButtonText: 'Tidak',
-                      confirmButtonText: 'Iya'
-                  }).then((result) => {
-                      if (result.isConfirmed) {
-                          form.submit();
-                      }
-                  });
-              });
-          });
-      });
-  </script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('search');
-        const clearSearch = document.getElementById('clearSearch');
-        const searchForm = document.getElementById('searchForm');
-        const dataBody = document.getElementById('dataBody');
-    
-        // Show clear icon if search input is not empty
-        if (searchInput.value) {
-            clearSearch.style.display = 'block';
-        }
-    
-        // Listen for input changes
-        searchInput.addEventListener('input', function() {
-            const query = this.value;
-    
-            // Show clear icon if search input is not empty
-            clearSearch.style.display = query ? 'block' : 'none';
-    
-            // Make AJAX request to search
-            fetch(`{{ route('admin.pakets.index') }}?search=${query}`)
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newBody = doc.getElementById('dataBody').innerHTML;
-                    dataBody.innerHTML = newBody;
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteForms = document.querySelectorAll('.delete-form');
+
+            deleteForms.forEach(form => {
+                const deleteBtn = form.querySelector('.delete-btn');
+
+                deleteBtn.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    Swal.fire({
+                        title: 'Hapus Item?',
+                        text: "Apakah kamu ingin menghapus item ini?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        cancelButtonText: 'Tidak',
+                        confirmButtonText: 'Iya'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
                 });
+            });
         });
-    
-        // Clear search input when clear icon is clicked
-        clearSearch.addEventListener('click', function() {
-            searchInput.value = '';
-            clearSearch.style.display = 'none';
-            searchInput.dispatchEvent(new Event('input'));
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search');
+            const clearSearch = document.getElementById('clearSearch');
+            const searchForm = document.getElementById('searchForm');
+            const dataBody = document.getElementById('dataBody');
+
+            // Show clear icon if search input is not empty
+            if (searchInput.value) {
+                clearSearch.style.display = 'block';
+            }
+
+            // Listen for input changes
+            searchInput.addEventListener('input', function() {
+                const query = this.value;
+
+                // Show clear icon if search input is not empty
+                clearSearch.style.display = query ? 'block' : 'none';
+
+                // Make AJAX request to search
+                fetch(`{{ route('admin.pakets.index') }}?search=${query}`)
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newBody = doc.getElementById('dataBody').innerHTML;
+                        dataBody.innerHTML = newBody;
+                    });
+            });
+
+            // Clear search input when clear icon is clicked
+            clearSearch.addEventListener('click', function() {
+                searchInput.value = '';
+                clearSearch.style.display = 'none';
+                searchInput.dispatchEvent(new Event('input'));
+            });
         });
-    });
     </script>
 @endsection

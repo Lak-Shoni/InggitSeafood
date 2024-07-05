@@ -14,6 +14,17 @@
                     <div class="card">
                         <!-- /.card-header -->
                         <div class="card-body">
+                            @if (session('success'))
+                                <script>
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Berhasil!',
+                                        text: '{{ session('success') }}',
+                                        showConfirmButton: false,
+                                        timer: 3000
+                                    });
+                                </script>
+                            @endif
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h2>Inventories</h2>
                             </div>
@@ -174,12 +185,13 @@
 
                                                 <div style="display: flex; gap: 10px;">
                                                     <a href="{{ route('admin.inventories.edit', $inventory->id) }}"
-                                                        class="btn btn-warning">Edit</a>                                            
-                                                    <form action="{{ route('admin.inventories.destroy', $inventory->id) }}" method="POST" class="delete-form"
-                                                        style="display:inline;">
+                                                        class="btn btn-warning">Edit</a>
+                                                    <form action="{{ route('admin.inventories.destroy', $inventory->id) }}"
+                                                        method="POST" class="delete-form" style="display:inline;">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="button" class="btn btn-danger delete-btn">Hapus</button>
+                                                        <button type="button"
+                                                            class="btn btn-danger delete-btn">Hapus</button>
                                                     </form>
                                                 </div>
 
@@ -188,8 +200,8 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                            <div class="d-flex justify-content-center">
-                                {!! $inventories->appends(request()->query())->links() !!}
+                            <div class="d-flex justify-content-center m-3">
+                                {!! $inventories->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
                             </div>
                         </div>
                         <!-- /.card-body -->

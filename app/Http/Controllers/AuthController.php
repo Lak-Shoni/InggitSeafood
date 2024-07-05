@@ -16,7 +16,6 @@ class AuthController extends Controller
     }
 
 
-
     public function register(Request $request)
     {
         $messages = [
@@ -32,7 +31,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:8',
             'alamat' => 'required|string',
             'is_admin' => 'boolean',
-        ],$messages);
+        ], $messages);
 
         // Cek apakah validasi gagal
         if ($validator->fails()) {
@@ -67,39 +66,39 @@ class AuthController extends Controller
     }
 
     public function login(Request $request)
-{
-    $credentials = $request->only('no_telpon', 'password');
+    {
+        $credentials = $request->only('no_telpon', 'password');
 
-    // Cek apakah nomor telepon terdaftar
-    $user = User::where('no_telpon', $credentials['no_telpon'])->first();
-    if (!$user) {
-        return back()->withErrors([
-            'no_telpon' => 'Nomor telepon tidak terdaftar.',
-        ])->withInput();
-    }
-
-    // Cek apakah password benar
-    if (!Hash::check($credentials['password'], $user->password)) {
-        return back()->withErrors([
-            'password' => 'Password yang dimasukkan salah.',
-        ])->withInput();
-    }
-
-    // Jika nomor telepon dan password benar
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-
-        if (Auth::user()->is_admin) {
-            return redirect()->route('admin.dashboard');
+        // Cek apakah nomor telepon terdaftar
+        $user = User::where('no_telpon', $credentials['no_telpon'])->first();
+        if (!$user) {
+            return back()->withErrors([
+                'no_telpon' => 'Nomor telepon tidak terdaftar.',
+            ])->withInput();
         }
 
-        return redirect()->route('home');
-    }
+        // Cek apakah password benar
+        if (!Hash::check($credentials['password'], $user->password)) {
+            return back()->withErrors([
+                'password' => 'Password yang dimasukkan salah.',
+            ])->withInput();
+        }
 
-    return back()->withErrors([
-        'no_telpon' => 'The provided credentials do not match our records.',
-    ])->withInput();
-}
+        // Jika nomor telepon dan password benar
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            if (Auth::user()->is_admin) {
+                return redirect()->route('admin.dashboard');
+            }
+
+            return redirect()->route('home');
+        }
+
+        return back()->withErrors([
+            'no_telpon' => 'The provided credentials do not match our records.',
+        ])->withInput();
+    }
 
     public function logout(Request $request)
     {
