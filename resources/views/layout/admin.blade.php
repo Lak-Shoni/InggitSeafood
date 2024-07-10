@@ -67,7 +67,7 @@
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
-        <a href="{{ url()->previous() }}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i>  Back</a>
+        
         @yield('content')
       </div><!-- /.container-fluid -->
     </section>

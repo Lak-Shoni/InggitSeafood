@@ -36,8 +36,14 @@
                                     <input type="text" name="nama_paket" class="form-control" value="{{ $paket->nama_paket }}" required>
                                 </div>
                                 <div class="form-group">
+                                    {{-- <label for="gambar_paket">Gambar paket</label>
+                                    <input type="file" name="gambar_paket" class="form-control"> --}}
                                     <label for="gambar_paket">Gambar paket</label>
-                                    <input type="file" name="gambar_paket" class="form-control">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="customFile"
+                                        name="gambar_paket">
+                                        <label class="custom-file-label" for="customFile">Choose file</label>
+                                    </div>
                                     <img src="{{ asset('storage/images/' . $paket->gambar_paket) }}" alt="{{ $paket->nama_paket }}" width="100">
                                 </div>
                                 <div class="form-group">

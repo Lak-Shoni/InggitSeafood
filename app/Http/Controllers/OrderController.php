@@ -47,14 +47,20 @@ class OrderController extends Controller
         ]);
 
         $grandTotal = $request->input('grand_total');
-
         if ($grandTotal === null) {
             return redirect()->back()->with('error', 'Total harga tidak valid.');
         }
 
         $deliveryTime = Carbon::parse($request->input('delivery_time'));
-        $tenggatBulan = $request->input('tenggat_bulan', 0); // Jika null, default ke 0
+        $tenggatBulan = $request->input('tenggat_bulan', 0);
         $dueDate = $deliveryTime->copy()->addMonths($tenggatBulan);
+
+        $cart_ids = $request->input('cart_ids');
+
+        // Convert cart_ids to array
+        if (is_string($cart_ids)) {
+            $cart_ids = json_decode($cart_ids, true);
+        }
 
         // Simpan data pesanan sementara di sesi
         session([
@@ -66,23 +72,21 @@ class OrderController extends Controller
                 'payment_method' => $request->input('payment_method'),
                 'due_date' => $dueDate,
                 'notes' => $request->input('notes'),
-                'items' => json_encode($request->input('cart_ids')),
+                'items' => json_encode($cart_ids),
                 'total_price' => $grandTotal,
                 'order_status' => 'proses',
                 'payment_status' => 'pending',
             ],
-            'cart_ids' => $request->input('cart_ids')
+            'cart_ids' => $cart_ids,
         ]);
 
         $payment_method = $request->input('payment_method');
         if ($payment_method == 'bayar_langsung') {
-            // Midtrans
             Config::$serverKey = config('services.midtrans.server_key');
             Config::$isProduction = config('services.midtrans.is_production');
             Config::$isSanitized = config('services.midtrans.is_sanitized');
             Config::$is3ds = config('services.midtrans.is_3ds');
 
-            // Generate unique order_id
             $unique_order_id = 'ORDER-' . uniqid();
 
             $params = [
@@ -92,7 +96,7 @@ class OrderController extends Controller
                 ],
                 'customer_details' => [
                     'first_name' => Auth::user()->nama,
-                    'phone' => Auth::user()->no_telpon
+                    'phone' => Auth::user()->no_telpon,
                 ],
             ];
 
@@ -103,10 +107,8 @@ class OrderController extends Controller
                 return redirect()->route('order.failure')->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
             }
         } elseif ($payment_method == 'bayar_ditempat') {
-            // Tambahkan hutang dan buat order
             return $this->createOrder();
         } else {
-            // Tambahkan hutang dan buat order
             return $this->createOrder();
         }
     }
@@ -244,20 +246,72 @@ class OrderController extends Controller
         return redirect()->route('profile')->with('success', 'Order diterima');
     }
 
-    public function get_detail(Request $request, $id)
+    public function get_detail($id)
     {
-        $order = Order::find($id);
+        $order = Order::with(['user'])->find($id);
+        if (!$order) {
+            return response()->json(['error' => 'Order not found'], 404);
+        }
 
-        echo json_encode($order);
+        // Ambil carts_id dari order
+        $cart_ids = json_decode($order->items, true);
+
+        // Ambil data Cart berdasarkan carts_id
+        $carts = Cart::with('paket')->whereIn('id', $cart_ids)->get();
+
+        // Log carts data for debugging
+        // \Log::info('Carts Data:', ['carts' => $carts->toArray()]);
+
+        // Format data items sesuai kebutuhan
+        $items = $carts->map(function ($cart) {
+            // Log each cart and paket for debugging
+            // \Log::info('Cart Data:', ['cart' => $cart->toArray()]);
+            // \Log::info('Paket Data:', ['paket' => $cart->paket->toArray()]);
+
+            return [
+                'nama_paket' => $cart->paket->nama_paket,
+                'quantity' => $cart->quantity,
+                'total_per_item' => $cart->total_per_item,
+            ];
+        });
+
+        // Log items data for debugging
+        // \Log::info('Items Data:', ['items' => $items->toArray()]);
+
+        // Format data pesanan sesuai kebutuhan
+        $orderData = [
+            'order_code' => $order->order_code,
+            'user' => [
+                'nama' => $order->user->nama,
+                'no_telpon' => $order->user->no_telpon,
+            ],
+            'items' => $items,
+            'total_price' => $order->total_price,
+            'address' => $order->address,
+            'partner_name' => $order->partner_name,
+            'delivery_time' => $order->delivery_time,
+            'payment_method' => $order->payment_method,
+            'due_date' => $order->due_date,
+            'notes' => $order->notes,
+            'order_status' => $order->order_status,
+            'payment_status' => $order->payment_status,
+        ];
+
+        return response()->json($orderData);
     }
+
+
 
     public function generatePDF($id)
     {
         $order = Order::findOrFail($id);
-        $user = $order->user;  // Assuming you have a relationship defined in your Order model
+        $user = $order->user; // Assuming you have a relationship defined in your Order model
         $carts = Cart::whereIn('id', json_decode($order->items))->get();
 
-        $pdf = FacadePdf::loadView('client.pesanan.invoice', compact('order', 'user', 'carts'));
+        // Load the view file 'client.pesanan.invoice' and pass the data
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('client.pesanan.invoice', compact('order', 'user', 'carts'));
+
+        // Download the generated PDF file
         return $pdf->download('invoice_' . $order->id . '.pdf');
     }
 }

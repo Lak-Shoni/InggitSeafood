@@ -95,7 +95,7 @@
                                             <td>{{ $paket->isi_paket }}</td>
                                             <td>{{ $paket->harga_paket }}</td>
                                             <td>
-                                                <div class="d-flex justify-content-end">
+                                                <div class="d-flex justify-content-start">
                                                     <a href="{{ route('admin.pakets.edit', $paket->id) }}"
                                                         class="btn btn-warning mr-2">Edit</a>
                                                     <form action="{{ route('admin.pakets.destroy', $paket->id) }}"

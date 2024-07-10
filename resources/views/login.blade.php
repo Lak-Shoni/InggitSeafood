@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,11 +18,12 @@
             align-items: center;
             height: 100vh;
             background-color: #f0f0f0;
-            background-image: url('{{asset('img/login-bg-2.jpg')}}');
+            background-image: url('{{ asset('img/login-bg-2.jpg') }}');
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
         }
+
         .login-container {
             background-color: #fff;
             padding: 30px;
@@ -30,16 +32,20 @@
             width: 100%;
             max-width: 400px;
         }
+
         .login-container h2 {
             margin-bottom: 20px;
         }
+
         .signup-link {
             margin-top: 15px;
             font-size: 14px;
         }
+
         .form-control {
             border-radius: 0;
         }
+
         .btn {
             background-color: #01562C;
             border: none;
@@ -49,13 +55,26 @@
             border-radius: none;
             transition: 0.3s;
         }
+
         .btn:hover {
             color: #01562C;
             background: #CCDBD1;
         }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Hides the spinner for Firefox */
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
-<body >
+
+<body>
     <div class="login-container" data-aos="fade-up" data-aos-delay="100">
         <h2 class="text-center">Login</h2>
 
@@ -63,14 +82,16 @@
             @csrf
             <div class="form-group">
                 <label for="no_telpon">Nomor Telepon</label>
-                <input type="number" class="form-control" id="no_telpon" name="no_telpon" value="{{ old('no_telpon') }}" required>
+                <input type="number" class="form-control" id="no_telpon" name="no_telpon"
+                    value="{{ old('no_telpon') }}" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
             <button type="submit" class="btn btn-block">Login</button>
-            <p class="signup-link text-center">Belum punya akun? <a href="/register" style="color: #01562C; font-weight:500">Daftar di sini</a></p>
+            <p class="signup-link text-center">Belum punya akun? <a href="/register"
+                    style="color: #01562C; font-weight:500">Daftar di sini</a></p>
         </form>
     </div>
 
@@ -104,4 +125,5 @@
         @endif
     </script>
 </body>
+
 </html>

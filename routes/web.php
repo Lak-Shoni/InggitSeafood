@@ -11,6 +11,7 @@ use App\Http\Controllers\BahanMasakanController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\UserController;
 
@@ -29,6 +30,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Route untuk halaman client paket
 Route::get('/paket', [ClientPaketController::class, 'index'])->name('client.paket.index');
+
+Route::post('/contact', [ContactController::class, 'send']);
 
 // Rute untuk otentikasi pengguna
 Route::get('register', [AuthController::class, 'showRegisterForm'])->name('register.form');

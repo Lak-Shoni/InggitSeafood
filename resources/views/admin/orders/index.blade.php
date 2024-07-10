@@ -226,7 +226,7 @@
                                                             class="btn btn-success"><i class="fa-solid fa-check"></i></a>
                                                     @endif
                                                     <button class="btn btn-primary detail_pesanan" data-bs-toggle="modal"
-                                                        data-bs-target="#exampleModal"
+                                                        data-bs-target="#orderDetailModal"
                                                         data-id="{{ $order->id }}">Detail</button>
                                                 </span>
                                             </td>
@@ -247,39 +247,74 @@
             <!-- /.row -->
         </div>
         <!-- /.container-fluid -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+        <div class="modal fade" id="orderDetailModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Detail Pesanan</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5 class="modal-title" id="orderDetailModalLabel">Detail Pesanan</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <div class="modal-body">
-                        <!-- Konten detail pesanan akan dimuat di sini menggunakan Ajax -->
-                        <h2>hai</h2>
+                    <div class="modal-body" id="modal_body">
+                        ...
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Oke</button>
                     </div>
                 </div>
             </div>
         </div>
+
     </section>
     <!-- Modal -->
 
 @endsection
 
 @section('scripts')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('.detail_pesanan').on('click', function() {
-                var orderId = $(this).data('id');
-                // Lakukan Ajax request untuk mendapatkan detail pesanan
+            $('.detail_pesanan').click(function() {
+                var id = $(this).data('id');
                 $.ajax({
-                    url: '/order/detail/' + orderId,
-                    method: 'GET',
-                    success: function(data) {
-                        $('.modal-body').html(data);
+                    url: '{{ url('/order/detail') }}/' + id,
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log(response); // Cek response di console log
+
+                        var html = '<p>Kode Pesanan: ' + response.order_code + '</p>';
+                        html += '<p>Nama User: ' + response.user.nama + '</p>';
+                        html += '<p>No Telpon: ' + response.user.no_telpon + '</p>';
+                        html += '<p>Items:</p>';
+                        html += '<ul>';
+                        response.items.forEach(function(item) {
+                            html += '<li>' + item.nama_paket + ' (Qty: ' + item
+                                .quantity + ', Price: ' + item.price + ')</li>';
+                        });
+                        html += '</ul>';
+                        html += '<p>Total Price: ' + response.total_price + '</p>';
+                        html += '<p>Alamat: ' + response.address + '</p>';
+                        html += '<p>Nama Instansi: ' + response.partner_name + '</p>';
+                        html += '<p>Waktu Pengiriman: ' + response.delivery_time + '</p>';
+                        html += '<p>Metode Pembayaran: ' + response.payment_method + '</p>';
+                        html += '<p>Batas Pembayaran: ' + response.due_date + '</p>';
+                        html += '<p>Catatan: ' + (response.notes ? response.notes : '-') +
+                            '</p>';
+                        html += '<p>Status Pesanan: ' + response.order_status + '</p>';
+                        html += '<p>Status Pembayaran: ' + response.payment_status + '</p>';
+
+                        $('#modal_body').html(html);
+                        $('#orderDetailModal').modal('show'); // Show the modal
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
                     }
                 });
             });

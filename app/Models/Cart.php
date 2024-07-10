@@ -20,4 +20,8 @@ class Cart extends Model
     {
         return $this->belongsTo(Paket::class);
     }
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }

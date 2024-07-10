@@ -111,9 +111,9 @@
                     if ($(this).is(':checked')) {
                         $('#address').attr('readonly', false).val('');
                     } else {
-                        $('#address').attr('readonly', true).val('{{ auth()->user()->address }}');
+                        $('#address').attr('readonly', true).val('{{ auth()->user()->alamat }}');
                     }
-                });  
+                });
 
                 $('#payment_method').change(function() {
                     if ($(this).val() === 'bayar_dengan_tenggat_waktu') {

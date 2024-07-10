@@ -51,4 +51,8 @@ class Order extends Model
     {
         return $userId . date('YmdHis');
     }
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
 }

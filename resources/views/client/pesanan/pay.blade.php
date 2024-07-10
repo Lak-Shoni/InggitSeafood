@@ -128,7 +128,7 @@
                 if (className === 'success') {
                     window.location.href = '{{ route('profile') }}';
                 } else if (className === 'pending') {
-                    window.location.href = '/payment/pending';
+                    // window.location.href = '/payment/pending';
                 } else if (className === 'error') {
                     window.location.href = '/payment/error';
                 }
@@ -138,13 +138,13 @@
         function pay() {
             snap.pay('{{ $snapToken }}', {
                 onSuccess: function(result) {
-                    showMessage('Payment successful! Redirecting...', 'success', result);
+                    showMessage('Pembayaran Berhasil! Menuju halaman profil ....', 'success', result);
                 },
                 onPending: function(result) {
-                    showMessage('Payment is pending. Redirecting...', 'pending', result);
+                    showMessage('Pembayaran tertunda, Segera bayar', 'pending', result);
                 },
                 onError: function(result) {
-                    showMessage('Payment failed. Redirecting...', 'error', result);
+                    showMessage('Pembayaran gagal', 'error', result);
                 },
                 onClose: function() {
                     // Display retry button when payment popup is closed
