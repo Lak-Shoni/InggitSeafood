@@ -15,6 +15,12 @@
             text-align: left;
         }
 
+        .order-actions .btn {
+            margin-bottom: 0.5rem;
+        }
+
+
+
         .custom-pagination .page-item {
             margin: 0 5px;
         }
@@ -198,6 +204,10 @@
                                                         <span class="badge badge-warning">Sedang Diproses</span>
                                                     @break
 
+                                                    @case('terima')
+                                                    <span class="badge badge-primary">Sudah Diterima</span>
+                                                    @break
+
                                                     @case('selesai')
                                                         <span class="badge badge-success">Selesai</span>
                                                     @break
@@ -208,28 +218,28 @@
                                                 @endswitch
                                             </td>
                                             <td>
-                                                <span>
+                                                <div class="d-flex flex-column order-actions">
                                                     @if ($order->payment_status != 'paid')
                                                         <a href="{{ url('/order/lunas/' . $order->id) }}"
-                                                            class="btn btn-success"><i
-                                                                class="fa-solid fa-money-bills"></i></a>
+                                                            class="btn btn-success">Lunas</a>
                                                     @endif
                                                     @if ($order->order_status != 'selesai')
                                                         @if ($order->order_status != 'terima')
                                                             @if ($order->order_status != 'kirim')
                                                                 <a href="{{ url('/order/kirim/' . $order->id) }}"
-                                                                    class="btn btn-info"><i
-                                                                        class="fa-solid fa-paper-plane"></i></a>
+                                                                    class="btn btn-info">Kirim</a>
                                                             @endif
                                                         @endif
                                                         <a href="{{ url('/order/selesai/' . $order->id) }}"
-                                                            class="btn btn-success"><i class="fa-solid fa-check"></i></a>
+                                                            class="btn btn-success">Selesai</a>
                                                     @endif
                                                     <button class="btn btn-primary detail_pesanan" data-bs-toggle="modal"
                                                         data-bs-target="#orderDetailModal"
                                                         data-id="{{ $order->id }}">Detail</button>
-                                                </span>
+                                                </div>
                                             </td>
+
+
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -270,9 +280,7 @@
     </section>
     <!-- Modal -->
 
-@endsection
 
-@section('scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
@@ -289,26 +297,67 @@
                     success: function(response) {
                         console.log(response); // Cek response di console log
 
-                        var html = '<p>Kode Pesanan: ' + response.order_code + '</p>';
-                        html += '<p>Nama User: ' + response.user.nama + '</p>';
-                        html += '<p>No Telpon: ' + response.user.no_telpon + '</p>';
-                        html += '<p>Items:</p>';
-                        html += '<ul>';
+                        // Fungsi untuk memformat tanggal dan waktu
+                        function formatDateTime(dateTimeStr) {
+                            var options = {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            };
+                            var date = new Date(dateTimeStr);
+                            return date.toLocaleString('id-ID', options);
+                        }
+
+                        function formatPaymentMethod(method) {
+                            return method.replace(/_/g, ' ').replace(/\b\w/g, function(l) {
+                                return l.toUpperCase()
+                            });
+                        }
+
+                        var html = '<div class="order-details">';
+                        html += '<h4>Detail Pesanan</h4>';
+                        html += '<table class="custom-table">';
+                        html += '<tr><th>Kode Pesanan</th><td>' + response.order_code +
+                            '</td></tr>';
+                        html += '<tr><th>Nama User</th><td>' + response.user.nama +
+                            '</td></tr>';
+                        html += '<tr><th>No Telpon</th><td>' + response.user.no_telpon +
+                            '</td></tr>';
+                        html += '<tr><th>Total Harga</th><td>' + response.total_price +
+                            '</td></tr>';
+                        html += '<tr><th>Alamat</th><td>' + response.address + '</td></tr>';
+                        html += '<tr><th>Nama Instansi</th><td>' + response.partner_name +
+                            '</td></tr>';
+                        html += '<tr><th>Waktu Pengiriman</th><td>' + formatDateTime(response
+                            .delivery_time) + '</td></tr>';
+                        html += '<tr><th>Metode Pembayaran</th><td>' + formatPaymentMethod(
+                                response.payment_method) +
+                            '</td></tr>';
+                        html += '<tr><th>Batas Pembayaran</th><td>' + formatDateTime(response
+                            .due_date) + '</td></tr>';
+                        html += '<tr><th>Catatan</th><td>' + (response.notes ? response.notes :
+                            '-') + '</td></tr>';
+                        html += '<tr><th>Status Pesanan</th><td>' + response.order_status +
+                            '</td></tr>';
+                        html += '<tr><th>Status Pembayaran</th><td>' + response.payment_status +
+                            '</td></tr>';
+                        html += '</table>';
+
+                        html += '<h4>Items</h4>';
+                        html += '<table class="custom-table">';
+                        html += '<tr><th>Nama Paket</th><th>Jumlah</th><th>Harga</th></tr>';
                         response.items.forEach(function(item) {
-                            html += '<li>' + item.nama_paket + ' (Qty: ' + item
-                                .quantity + ', Price: ' + item.price + ')</li>';
+                            html += '<tr>';
+                            html += '<td>' + item.nama_paket + '</td>';
+                            html += '<td>' + item.quantity + '</td>';
+                            html += '<td>' + (item.total_per_item) + '</td>';
+                            html += '</tr>';
                         });
-                        html += '</ul>';
-                        html += '<p>Total Price: ' + response.total_price + '</p>';
-                        html += '<p>Alamat: ' + response.address + '</p>';
-                        html += '<p>Nama Instansi: ' + response.partner_name + '</p>';
-                        html += '<p>Waktu Pengiriman: ' + response.delivery_time + '</p>';
-                        html += '<p>Metode Pembayaran: ' + response.payment_method + '</p>';
-                        html += '<p>Batas Pembayaran: ' + response.due_date + '</p>';
-                        html += '<p>Catatan: ' + (response.notes ? response.notes : '-') +
-                            '</p>';
-                        html += '<p>Status Pesanan: ' + response.order_status + '</p>';
-                        html += '<p>Status Pembayaran: ' + response.payment_status + '</p>';
+                        html += '</table>';
+                        html += '</div>';
 
                         $('#modal_body').html(html);
                         $('#orderDetailModal').modal('show'); // Show the modal

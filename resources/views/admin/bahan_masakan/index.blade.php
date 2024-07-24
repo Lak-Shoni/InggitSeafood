@@ -9,7 +9,10 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h1>Daftar Bahan Masakan</h1>
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#tambahBahanModal">Tambah
+                                    Bahan Masakan</button>
                             </div>
+
                             @if (session('success'))
                                 <script>
                                     Swal.fire({
@@ -32,23 +35,6 @@
                                 </div>
                             @endif
 
-                            <form method="POST" action="{{ route('admin.bahan_masakan.store') }}">
-                                @csrf
-                                <div class="form-row">
-                                    <div class="form-group col-md-3">
-                                        <label for="nama_bahan">Nama Bahan:</label>
-                                        <input type="text" class="form-control" id="nama_bahan" name="nama_bahan"
-                                            value="{{ old('nama_bahan') }}" required>
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                        <label for="satuan">Satuan:</label>
-                                        <input type="text" class="form-control" id="satuan" name="satuan"
-                                            value="{{ old('satuan') }}" required>
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Tambah</button>
-                            </form>
-
                             <div class="d-flex justify-content-end align-items-end mb-4 mr-2">
                                 <form id="searchForm" method="GET" action="{{ route('admin.bahan_masakan.index') }}"
                                     class="form-inline">
@@ -61,6 +47,7 @@
                                     </div>
                                 </form>
                             </div>
+
                             <div class="col-12">
                                 <table id="example2" class="table table-bordered table-hover">
                                     <thead>
@@ -97,23 +84,19 @@
                                         @foreach ($bahanMasakan as $bahan)
                                             <tr>
                                                 <td>{{ $bahan->id }}</td>
-                                                <td>
-                                                    <a
-                                                        href="{{ route('admin.bahan_masakan.show', $bahan->id) }}">{{ $bahan->nama_bahan }}</a>
-                                                </td>
+                                                <td>{{ $bahan->nama_bahan }}</td>
                                                 <td>{{ $bahan->satuan }}</td>
                                                 <td>
-                                                    {{-- <form action="{{ route('admin.bahan_masakan.destroy', $bahan->id) }}"
-                                                        method="POST" style="display:inline-block;">
+                                                    <form action="{{ route('admin.bahan_masakan.show', $bahan->id) }}"
+                                                        method="GET" style="display:inline;">
                                                         @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger ">Hapus</button>
-                                                    </form> --}}
+                                                        <button type="submit" class="btn btn-info">Detail</button>
+                                                    </form>
                                                     <form action="{{ route('admin.bahan_masakan.destroy', $bahan->id) }}"
-                                                        method="POST" class="delete-form" style="display:inline;">
+                                                        method="POST" style="display:inline;">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="button"
+                                                        <button type="submit"
                                                             class="btn btn-danger delete-btn">Hapus</button>
                                                     </form>
                                                 </td>
@@ -124,8 +107,6 @@
                             </div>
                             <div class="d-flex justify-content-center m-3">
                                 {!! $bahanMasakan->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
-                                
-
                             </div>
                         </div>
                     </div>
@@ -133,6 +114,38 @@
             </div>
         </div>
     </section>
+
+    <!-- Modal Tambah Bahan Masakan -->
+    <div class="modal fade" id="tambahBahanModal" tabindex="-1" role="dialog" aria-labelledby="tambahBahanModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="tambahBahanForm" action="{{ route('admin.bahan_masakan.store') }}" method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tambahBahanModalLabel">Tambah Bahan Masakan</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="nama_bahan">Nama Bahan:</label>
+                            <input type="text" class="form-control" id="nama_bahan" name="nama_bahan" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="satuan">Satuan:</label>
+                            <input type="text" class="form-control" id="satuan" name="satuan" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
     <script>
@@ -165,6 +178,48 @@
                 searchInput.value = '';
                 clearSearch.style.display = 'none';
                 searchInput.dispatchEvent(new Event('input'));
+            });
+
+            document.getElementById('tambahBahanForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                fetch(this.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                            $('#tambahBahanModal').modal('hide');
+                            fetch(`{{ route('admin.bahan_masakan.index') }}`)
+                                .then(response => response.text())
+                                .then(html => {
+                                    const parser = new DOMParser();
+                                    const doc = parser.parseFromString(html, 'text/html');
+                                    const newBody = doc.getElementById('dataBody').innerHTML;
+                                    dataBody.innerHTML = newBody;
+                                });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
             });
         });
     </script>

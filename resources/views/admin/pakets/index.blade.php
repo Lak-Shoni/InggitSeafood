@@ -25,7 +25,7 @@
                                 </script>
                             @endif
                             <div class="d-flex justify-content-between align-items-end mb-4">
-                                <a href="{{ route('admin.pakets.create') }}" class="btn btn-primary mb-2">Tambah paket</a>
+                                <a href="{{ route('admin.pakets.create') }}" class="btn btn-primary mb-2">Tambah Paket</a>
                                 <form id="searchForm" method="GET" action="{{ route('admin.pakets.index') }}"
                                     class="form-inline">
                                     <div class="form-group mb-2 position-relative">
@@ -111,7 +111,7 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                            <div class="d-flex justify-content-center">
+                            <div class="d-flex justify-content-center m-3">
                                 {!! $pakets->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
                             </div>
                         </div>

@@ -99,7 +99,7 @@
     <script type="text/javascript">
         function showMessage(message, className, json_data, details) {
             $.ajax({
-                url: '{{ url('/payment/notification') }}/',
+                url: '{{ url('/payment/notification') }}',
                 method: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',
@@ -152,10 +152,14 @@
                 }
             });
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            pay();
+        });
     </script>
 </head>
 
-<body onload="pay()">
+<body>
     <div class="container">
         <h1>Processing your payment...</h1>
         <div class="loader"></div>

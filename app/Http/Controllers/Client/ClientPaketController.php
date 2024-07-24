@@ -11,28 +11,16 @@ use App\Models\Paket;
 
 class ClientPaketController extends Controller
 {
-    // public function index()
-    // {
-    //     $paket = Menu::all();
-    //     $user = Auth::user();
-    //     if($user != null){
-    //         $cart = Cart::where('user_id', $user->id)->where('status_order', 0)->get();
-    //         $notif = count($cart);
-    //         return view('client.menu.index', compact('paket', 'notif'));
-    //     }else{
-    //         return view('client.menu.index', compact('paket'));
-    //     }
-
-    // }
     public function index(Request $request)
     {
         $jenis_id = $request->query('jenis_id');
-        
+        $query = Paket::query();
+
         if ($jenis_id) {
-            $pakets = Paket::where('jenis_paket', $jenis_id)->get();
-        } else {
-            $pakets = Paket::all();
+            $query->where('jenis_paket', $jenis_id);
         }
+
+        $pakets = $query->paginate(6); // Sesuaikan dengan jumlah data per halaman       
 
         $jenis = Jenis_Paket::all();
         $user = Auth::user();
@@ -43,6 +31,7 @@ class ClientPaketController extends Controller
             $notif = count($cart);
         }
 
-        return view('client.paket.index', compact('pakets', 'jenis', 'notif'));
+        return view('client.paket.index', compact('pakets', 'jenis', 'notif'))
+            ->with('i', (request()->input('page', 1) - 1) * 9); // Sesuaikan dengan jumlah data per halaman
     }
 }

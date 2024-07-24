@@ -14,10 +14,32 @@
         input[type=number] {
             -moz-appearance: textfield;
         }
+
+        .custom-title {
+            font-size: 2.5rem;
+            /* Mengatur ukuran font */
+            color: #ffffff !important;
+            /* Warna teks menjadi putih agar kontras dengan background */
+            text-align: center;
+            /* Mengatur perataan teks */
+            padding: 20px 0;
+            /* Padding atas dan bawah */
+            margin: 0;
+            /* Margin bawah */
+            background-color: #01562C;
+            /* Warna latar belakang */
+
+            /* Membuat sudut rounded */
+            font-family: 'Roboto', sans-serif;
+            /* Font family */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            /* Efek shadow */
+        }
     </style>
 
     <div class="container mt-5">
-        <h1>Keranjang Belanja</h1>
+        <h1 class="mb-4 custom-title w-100">Keranjang Belanja</h1>
+
         {{-- @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
@@ -29,16 +51,16 @@
             </div>
         @endif --}}
         @if (session('success'))
-                                <script>
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Berhasil!',
-                                        text: '{{ session('success') }}',
-                                        showConfirmButton: false,
-                                        timer: 3000
-                                    });
-                                </script>
-                            @endif
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            </script>
+        @endif
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -79,7 +101,7 @@
                                 <form action="{{ route('cart.delete', $cart->id) }}" method="POST" class="delete-form"
                                     style="display:inline;">
                                     @csrf
-                                    
+
                                     <button type="button" class="btn btn-danger delete-btn">Hapus</button>
                                 </form>
                             </div>

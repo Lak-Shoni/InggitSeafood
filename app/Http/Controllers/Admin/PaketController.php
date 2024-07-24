@@ -23,7 +23,7 @@ class PaketController extends Controller
             $query->where('nama_paket', 'like', '%' . $request->search . '%');
         }
 
-        $pakets = $query->paginate(10); // Sesuaikan dengan jumlah data per halaman
+        $pakets = $query->paginate(5); // Sesuaikan dengan jumlah data per halaman
 
         return view('admin.pakets.index', compact('pakets'))
             ->with('i', (request()->input('page', 1) - 1) * 10);

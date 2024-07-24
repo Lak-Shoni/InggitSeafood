@@ -71,6 +71,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
         Route::prefix('admin')->name('admin.')->group(function () {
             Route::resource('pakets', paketController::class);
+            Route::get('/admin/pakets/{id}/edit', [PaketController::class, 'edit'])->name('admin.pakets.edit');
+
             Route::resource('inventories', InventoryController::class);
             Route::resource('bahan_masakan', BahanMasakanController::class);
             Route::resource('keuangan', KeuanganController::class);
@@ -87,5 +89,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/order/lunas/{id}', [OrderController::class, 'lunas'])->name('order.lunas');
 
         Route::get('keuangan/{id}/edit', [KeuanganController::class, 'edit'])->name('keuangan.edit');
+        Route::get('/admin/keuangan/getOmset/{date}', [KeuanganController::class, 'getOmset']);
     });
 });

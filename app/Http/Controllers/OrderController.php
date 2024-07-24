@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\Hutang;
 use App\Models\Order;
+use App\Models\Paket;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Illuminate\Support\Facades\Auth;
 use Midtrans\Config;
@@ -97,7 +98,8 @@ class OrderController extends Controller
                 'customer_details' => [
                     'first_name' => Auth::user()->nama,
                     'phone' => Auth::user()->no_telpon,
-                ],
+                ],            
+
             ];
 
             try {
@@ -122,6 +124,16 @@ class OrderController extends Controller
             $order = Order::create($order_data);
             Cart::whereIn('id', $cart_ids)->update(['status_order' => 1]);
 
+            // Ambil paket_id dan quantity dari Cart
+            $cart_items = Cart::whereIn('id', $cart_ids)->get();
+
+            foreach ($cart_items as $cart_item) {
+                $paket = Paket::find($cart_item->paket_id);
+                if ($paket) {
+                    $paket->increment('purchase_count', $cart_item->quantity);
+                }
+            }
+
             if ($order_data['payment_method'] == 'bayar_ditempat' || $order_data['payment_method'] == 'lainnya') {
                 $hutang = new Hutang();
                 $hutang->order_id = $order->id;
@@ -139,6 +151,7 @@ class OrderController extends Controller
 
         return redirect()->route('cart.show')->with('error', 'Gagal membuat pesanan.');
     }
+
 
     public function paymentNotification(Request $request)
     {

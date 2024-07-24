@@ -3,24 +3,84 @@
 @section('content')
     <section class="content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            @if (session('success'))
-                                <script>
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Berhasil!',
-                                        text: '{{ session('success') }}',
-                                        showConfirmButton: false,
-                                        timer: 3000
-                                    });
-                                </script>
-                            @endif
-                            <h2>Data Keuangan</h2>
-                            <!-- Form untuk menambahkan dan mengedit data -->
-                            <form method="POST" action="{{ route('admin.keuangan.store') }}" id="dataForm">
+            <!-- Modal for Adding/Editing Data -->
+            <!-- Modal -->
+            <div class="modal fade" id="dataModal" tabindex="-1" role="dialog" aria-labelledby="dataModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="dataModalLabel">Tambah Data Keuangan</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="dataForm" method="POST">
+                                @csrf
+                                <input type="hidden" id="formMethod" name="_method" value="POST">
+                                <input type="hidden" id="editId" name="id">
+                                <div class="form-group">
+                                    <label for="transaction_date">Tanggal Transaksi</label>
+                                    <input type="date" class="form-control" id="transaction_date" name="transaction_date"
+                                        required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="purchasing">Purchasing</label>
+                                    <input type="number" class="form-control" id="purchasing" name="purchasing" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tenagaKerja">Tenaga Kerja</label>
+                                    <input type="number" class="form-control" id="tenagaKerja" name="tenaga_kerja"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pln">PLN</label>
+                                    <input type="number" class="form-control" id="pln" name="pln" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="akomodasi">Akomodasi</label>
+                                    <input type="number" class="form-control" id="akomodasi" name="akomodasi" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sewaAlat">Sewa Alat</label>
+                                    <input type="number" class="form-control" id="sewaAlat" name="sewa_alat" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="omset">Omset</label>
+                                    <input type="number" class="form-control" id="omset" name="omset" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profit">Profit</label>
+                                    <input type="number" class="form-control" id="profit" name="profit" readonly>
+                                </div>
+                                <button type="submit" id="submitButton" class="btn btn-primary">Tambah Data</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                @if (session('success'))
+                                    <script>
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Berhasil!',
+                                            text: '{{ session('success') }}',
+                                            showConfirmButton: false,
+                                            timer: 3000
+                                        });
+                                    </script>
+                                @endif
+                                <h2>Data Keuangan</h2>
+                                <!-- Form untuk menambahkan dan mengedit data -->
+                                {{-- <form method="POST" action="{{ route('admin.keuangan.store') }}" id="dataForm">
                                 @csrf
                                 <input type="hidden" id="formMethod" name="_method" value="POST">
                                 <input type="hidden" id="editId" name="id">
@@ -65,165 +125,180 @@
                                             Data</button>
                                     </div>
                                 </div>
-                            </form>
+                            </form> --}}
 
-                            <div class="d-flex justify-content-end align-items-end mb-4 mr-2">
-                                <form id="searchForm" method="GET" action="{{ route('admin.keuangan.index') }}"
-                                    class="form-inline">
-                                    <div class="form-group mb-2 position-relative">
-                                        <label for="start_date" class="mr-2">Pilih tanggal:</label>
-                                        <input type="date" class="form-control" id="start_date" name="start_date"
-                                            value="{{ request('start_date') }}">
-                                    </div>
-                                    <div class="form-group mb-2 position-relative">
-                                        <label for="end_date" class="mr-2 ml-2">-</label>
-                                        <input type="date" class="form-control" id="end_date" name="end_date"
-                                            value="{{ request('end_date') }}">
-                                        <span id="clearSearch" class="position-absolute"
-                                            style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none;">&times;</span>
-                                    </div>
-                                </form>
-                            </div>
+                                <button class="btn btn-success mb-3" data-toggle="modal" data-target="#dataModal"
+                                    id="addDataButton">Tambah Data</button>
 
-                            <table id="example2" class="table table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.keuangan.index', ['sort_by' => 'transaction_date', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Tanggal Transaksi
-                                                @if (request('sort_by') == 'transaction_date')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.keuangan.index', ['sort_by' => 'omset', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Omset
-                                                @if (request('sort_by') == 'omset')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.keuangan.index', ['sort_by' => 'purchasing', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Purchasing
-                                                @if (request('sort_by') == 'purchasing')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.keuangan.index', ['sort_by' => 'tenaga_kerja', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Tenaga Kerja
-                                                @if (request('sort_by') == 'tenaga_kerja')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.keuangan.index', ['sort_by' => 'pln', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                PLN/Listrik
-                                                @if (request('sort_by') == 'pln')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.keuangan.index', ['sort_by' => 'akomodasi', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Akomodasi
-                                                @if (request('sort_by') == 'akomodasi')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.keuangan.index', ['sort_by' => 'sewa_alat', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Sewa Alat
-                                                @if (request('sort_by') == 'sewa_alat')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.keuangan.index', ['sort_by' => 'profit', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Profit
-                                                @if (request('sort_by') == 'profit')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dataBody">
-                                    @foreach ($dataKeuangan as $data)
+                                <div class="d-flex justify-content-end align-items-end mb-4 mr-2">
+                                    <form id="searchForm" method="GET" action="{{ route('admin.keuangan.index') }}"
+                                        class="form-inline">
+                                        <div class="form-group mb-2 position-relative">
+                                            <label for="start_date" class="mr-2">Pilih tanggal:</label>
+                                            <input type="date" class="form-control" id="start_date" name="start_date"
+                                                value="{{ request('start_date') }}">
+                                        </div>
+                                        <div class="form-group mb-2 position-relative">
+                                            <label for="end_date" class="mr-2 ml-2">-</label>
+                                            <input type="date" class="form-control" id="end_date" name="end_date"
+                                                value="{{ request('end_date') }}">
+                                            <span id="clearSearch" class="position-absolute"
+                                                style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none;">&times;</span>
+                                        </div>
+                                    </form>
+                                </div>
+                                @php
+                                    function formatRupiah($number)
+                                    {
+                                        return 'Rp ' . number_format($number, 0, ',', '.');
+                                    }
+                                @endphp
+
+
+                                <table id="example2" class="table table-bordered table-hover">
+                                    <thead>
                                         <tr>
-                                            <td>{{ $data->transaction_date }}</td>
-                                            <td>{{ $data->omset }}</td>
-                                            <td>{{ $data->purchasing }}</td>
-                                            <td>{{ $data->tenaga_kerja }}</td>
-                                            <td>{{ $data->pln }}</td>
-                                            <td>{{ $data->akomodasi }}</td>
-                                            <td>{{ $data->sewa_alat }}</td>
-                                            <td>{{ $data->profit }}</td>
-                                            <td>
-                                                <form action="{{ route('admin.keuangan.destroy', $data->id) }}"
-                                                    method="POST" class="delete-form" style="display:inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="button"
-                                                        class="btn btn-danger delete-btn">Hapus</button>
-                                                </form>
-
-                                                <button class="btn btn-primary editButton"
-                                                    data-id="{{ $data->id }}">Edit</button>
-                                            </td>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.keuangan.index', ['sort_by' => 'transaction_date', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Tanggal Transaksi
+                                                    @if (request('sort_by') == 'transaction_date')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
+                                                    @endif
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.keuangan.index', ['sort_by' => 'omset', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Omset
+                                                    @if (request('sort_by') == 'omset')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
+                                                    @endif
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.keuangan.index', ['sort_by' => 'purchasing', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Purchasing
+                                                    @if (request('sort_by') == 'purchasing')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
+                                                    @endif
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.keuangan.index', ['sort_by' => 'tenaga_kerja', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Tenaga Kerja
+                                                    @if (request('sort_by') == 'tenaga_kerja')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
+                                                    @endif
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.keuangan.index', ['sort_by' => 'pln', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    PLN/Listrik
+                                                    @if (request('sort_by') == 'pln')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
+                                                    @endif
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.keuangan.index', ['sort_by' => 'akomodasi', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Akomodasi
+                                                    @if (request('sort_by') == 'akomodasi')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
+                                                    @endif
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.keuangan.index', ['sort_by' => 'sewa_alat', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Sewa Alat
+                                                    @if (request('sort_by') == 'sewa_alat')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
+                                                    @endif
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.keuangan.index', ['sort_by' => 'profit', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Profit
+                                                    @if (request('sort_by') == 'profit')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
+                                                    @endif
+                                                </a>
+                                            </th>
+                                            <th>Action</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                            <div class="d-flex justify-content-center">
-                                {!! $dataKeuangan->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
+                                    </thead>
+                                    <tbody id="dataBody">
+                                        @foreach ($dataKeuangan as $data)
+                                            <tr>
+                                                <td>{{ $data->transaction_date }}</td>
+                                                <td>{{ formatRupiah($data->omset) }}</td>
+                                                <td>{{ formatRupiah($data->purchasing) }}</td>
+                                                <td>{{ formatRupiah($data->tenaga_kerja) }}</td>
+                                                <td>{{ formatRupiah($data->pln) }}</td>
+                                                <td>{{ formatRupiah($data->akomodasi) }}</td>
+                                                <td>{{ formatRupiah($data->sewa_alat) }}</td>
+                                                <td>{{ formatRupiah($data->profit) }}</td>
+                                                <td>
+                                                    <form action="{{ route('admin.keuangan.destroy', $data->id) }}"
+                                                        method="POST" class="delete-form" style="display:inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="button"
+                                                            class="btn btn-danger delete-btn">Hapus</button>
+                                                    </form>
+
+                                                    <button class="btn btn-primary btn editButton"
+                                                        data-id="{{ $data->id }}" data-toggle="modal"
+                                                        data-target="#dataModal">Edit</button>
+
+
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                <div class="d-flex justify-content-center">
+                                    {!! $dataKeuangan->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
     </section>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const dataForm = document.getElementById('dataForm');
             const submitButton = document.getElementById('submitButton');
@@ -265,7 +340,7 @@
                 submitButton.textContent = 'Tambah Data';
             });
         });
-    </script>
+    </script> --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const startDateInput = document.getElementById('start_date');
@@ -342,6 +417,64 @@
                     });
                 });
             });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Initialize the modal with empty fields
+            $('#addDataButton').click(function() {
+                $('#dataModalLabel').text('Tambah Data Keuangan');
+                $('#dataForm').attr('action', '{{ route('admin.keuangan.store') }}');
+                $('#formMethod').val('POST');
+                $('#dataForm')[0].reset();
+                $('#submitButton').text('Tambah Data');
+            });
+
+            // Populate the modal with data when editing
+            $('.editButton').click(function() {
+                var id = $(this).data('id');
+                $.get('/admin/keuangan/' + id + '/edit', function(data) {
+                    $('#dataModalLabel').text('Edit Data Keuangan');
+                    $('#dataForm').attr('action', '/admin/keuangan/' + id);
+                    $('#formMethod').val('PUT');
+                    $('#editId').val(data.id);
+                    $('#transaction_date').val(data.transaction_date);
+                    $('#omset').val(data.omset);
+                    $('#purchasing').val(data.purchasing);
+                    $('#tenagaKerja').val(data.tenaga_kerja);
+                    $('#pln').val(data.pln);
+                    $('#akomodasi').val(data.akomodasi);
+                    $('#sewaAlat').val(data.sewa_alat);
+                    $('#profit').val(data.profit);
+                    $('#submitButton').text('SImpan Perubahan');
+                    calculateFinancials();
+                });
+            });
+
+            // Calculate omset and profit automatically when relevant fields change
+            $('#transaction_date, #purchasing, #tenagaKerja, #pln, #akomodasi, #sewaAlat').on('input change',
+                function() {
+                    calculateFinancials();
+                });
+
+            function calculateFinancials() {
+                var transactionDate = $('#transaction_date').val();
+                var purchasing = parseFloat($('#purchasing').val()) || 0;
+                var tenagaKerja = parseFloat($('#tenagaKerja').val()) || 0;
+                var pln = parseFloat($('#pln').val()) || 0;
+                var akomodasi = parseFloat($('#akomodasi').val()) || 0;
+                var sewaAlat = parseFloat($('#sewaAlat').val()) || 0;
+
+                if (transactionDate) {
+                    $.get('/admin/keuangan/getOmset/' + transactionDate, function(omset) {
+                        var totalExpenses = purchasing + tenagaKerja + pln + akomodasi + sewaAlat;
+                        var profit = omset - totalExpenses;
+
+                        $('#omset').val(omset);
+                        $('#profit').val(profit);
+                    });
+                }
+            }
         });
     </script>
 @endsection

@@ -3,21 +3,11 @@
 @section('content')
     <section class="content">
         <div class="container-fluid">
+            <!-- Content -->
             <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            @if (session('success'))
-                                <script>
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Berhasil!',
-                                        text: '{{ session('success') }}',
-                                        showConfirmButton: false,
-                                        timer: 3000
-                                    });
-                                </script>
-                            @endif
                             <h1>Detail Bahan Masakan</h1>
                             <div class="col-lg-6">
                                 <div class="form-group">
@@ -32,10 +22,10 @@
                                     </select>
                                 </div>
 
-                                <a href="{{ route('admin.bahan_masakan.bahan_masuk', $selectedBahan->id) }}"
-                                    class="btn btn-success mb-2">Bahan Masuk</a>
-                                <a href="{{ route('admin.bahan_masakan.bahan_keluar', $selectedBahan->id) }}"
-                                    class="btn btn-warning mb-2">Bahan Keluar</a>
+                                <button class="btn btn-success mb-2" data-toggle="modal"
+                                    data-target="#bahanMasukModal">Bahan Masuk</button>
+                                <button class="btn btn-warning mb-2" data-toggle="modal"
+                                    data-target="#bahanKeluarModal">Bahan Keluar</button>
                             </div>
 
                             <div class="d-flex justify-content-end align-items-end mb-4 mr-2">
@@ -60,18 +50,7 @@
                             <table id="example2" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.bahan_masakan.show', ['bahan_masakan' => $selectedBahan->id, 'sort_by' => 'tanggal_transaksi', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Tanggal Transaksi
-                                                @if (request('sort_by') == 'tanggal_transaksi')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
+                                        <th>Tanggal Transaksi</th>
                                         <th>Bahan Masuk</th>
                                         <th>Bahan Keluar</th>
                                         <th>Jumlah Bahan</th>
@@ -100,6 +79,73 @@
         </div>
     </section>
 
+    <!-- Modal Bahan Masuk -->
+    <div class="modal fade" id="bahanMasukModal" tabindex="-1" role="dialog" aria-labelledby="bahanMasukModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="bahanMasukForm" action="{{ route('admin.bahan_masakan.bahan_masuk', $selectedBahan->id) }}"
+                    method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="bahanMasukModalLabel">Tambah Bahan Masuk</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="bahan_masuk">Jumlah Bahan Masuk</label>
+                            <input type="number" class="form-control" id="bahan_masuk" name="bahan_masuk" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tanggal_transaksi_masuk">Tanggal Transaksi</label>
+                            <input type="date" class="form-control" id="tanggal_transaksi_masuk" name="tanggal_transaksi"
+                                required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Bahan Keluar -->
+    <div class="modal fade" id="bahanKeluarModal" tabindex="-1" role="dialog" aria-labelledby="bahanKeluarModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="bahanKeluarForm" action="{{ route('admin.bahan_masakan.bahan_keluar', $selectedBahan->id) }}"
+                    method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="bahanKeluarModalLabel">Tambah Bahan Keluar</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="bahan_keluar">Jumlah Bahan Keluar</label>
+                            <input type="number" class="form-control" id="bahan_keluar" name="bahan_keluar" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tanggal_transaksi_keluar">Tanggal Transaksi</label>
+                            <input type="date" class="form-control" id="tanggal_transaksi_keluar"
+                                name="tanggal_transaksi" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -107,33 +153,26 @@
             const endDateInput = document.getElementById('end_date');
             const clearSearch = document.getElementById('clearSearch');
             const dataBody = document.getElementById('dataBody');
-            const selectedBahanId = '{{ $selectedBahan->id }}'; // Add this line to get the selected bahan id
+            const selectedBahanId = '{{ $selectedBahan->id }}';
 
-            // Show clear icon if search inputs are not empty
             if (startDateInput.value || endDateInput.value) {
                 clearSearch.style.display = 'block';
             }
 
-            // Listen for input changes
             [startDateInput, endDateInput].forEach(input => {
                 input.addEventListener('input', function() {
                     const startDate = startDateInput.value;
                     const endDate = endDateInput.value;
-
-                    // Show clear icon if search inputs are not empty
                     clearSearch.style.display = startDate || endDate ? 'block' : 'none';
-
-                    // Make AJAX request to search
                     fetchData(startDate, endDate);
                 });
             });
 
-            // Clear search inputs when clear icon is clicked
             clearSearch.addEventListener('click', function() {
                 startDateInput.value = '';
                 endDateInput.value = '';
                 clearSearch.style.display = 'none';
-                fetchData(); // Fetch all data when inputs are cleared
+                fetchData();
             });
 
             function fetchData(startDate = '', endDate = '') {
@@ -151,6 +190,78 @@
                     })
                     .catch(error => console.error('Error fetching data:', error));
             }
+
+            document.getElementById('bahanMasukForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+
+                fetch(this.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                            $('#bahanMasukModal').modal('hide');
+                            fetchData();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+
+            document.getElementById('bahanKeluarForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+
+                fetch(this.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                            $('#bahanKeluarModal').modal('hide');
+                            fetchData();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
         });
     </script>
 @endsection

@@ -137,6 +137,7 @@ class BreadcrumbMiddleware
             case 'admin.bahan_masakan.show':
                 $breadcrumbs = [
                     ['title' => 'Home', 'url' => url('/')],
+                    ['title' => 'Bahan Masakan', 'url' => url('/admin/bahan_masakan')],
                     ['title' => 'Detail Bahan Masakan', 'url' => url('/admin/bahan_masakan/show')],
                 ];
                 break;

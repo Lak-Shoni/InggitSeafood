@@ -2,103 +2,191 @@
 
 @section('title', 'Daftar Paket')
 @section('content')
-<style>
-    .list-group-item a {
-        text-decoration: none;
-        color: #343a40;
-    }
-
-    .list-group-item a:hover {
-        color: #007bff;
-    }
-
-    .list-group-item {
-        cursor: pointer;
-    }
-
-    .nested-list {
-        padding-left: 1.5rem;
-    }
-
-    .filter-icon {
-        display: none;
-    }
-
-    @media (max-width: 768px) {
-        .filter-icon {
-            display: block;
-            margin-bottom: 1rem;
+    <style>
+        .container h1 {
+            font-family: 'Arial', sans-serif;
+            font-size: 2rem;
+            color: #333;
         }
 
-        .filter-section {
+        .list-group-item a {
+            color: #01562C;
+            text-decoration: none;
+        }
+
+        .list-group-item a:hover {
+            text-decoration: underline;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-title {
+            font-family: 'Arial', sans-serif;
+            font-size: 1.25rem;
+            color: #333;
+        }
+
+        .card-text {
+            font-family: 'Arial', sans-serif;
+            color: #666;
+        }
+
+        .btn-block {
+            width: 100%;
+            font-size: 1rem;
+            padding: 0.5rem;
+            background-color: #01562C;
+        }
+
+        .list-group-item a {
+            text-decoration: none;
+            color: #343a40;
+        }
+
+        .list-group-item a:hover {
+            color: #01562C;
+        }
+
+        .list-group-item {
+            cursor: pointer;
+        }
+
+        .nested-list {
+            padding-left: 1.5rem;
+        }
+
+        .filter-icon {
             display: none;
         }
 
-        .filter-section.show {
-            display: block;
+        @media (max-width: 768px) {
+            .filter-icon {
+                display: block;
+                margin-bottom: 1rem;
+            }
+
+            .filter-section {
+                display: none;
+            }
+
+            .filter-section.show {
+                display: block;
+            }
         }
-    }
-</style>
+
+        .custom-title {
+            font-size: 2.5rem;
+            /* Mengatur ukuran font */
+            color: #ffffff !important;
+            /* Warna teks menjadi putih agar kontras dengan background */
+            text-align: center;
+            /* Mengatur perataan teks */
+            padding: 20px 0;
+            /* Padding atas dan bawah */
+            margin: 0;
+            /* Margin bawah */
+            background-color: #01562C;
+            /* Warna latar belakang */
+
+            /* Membuat sudut rounded */
+            font-family: 'Roboto', sans-serif;
+            /* Font family */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            /* Efek shadow */
+        }
+    </style>
     <div class="container mt-5">
-        <h1 class="mb-4">Daftar Paket</h1>
-        <div class="row">        
+        <h1 class="mb-4 custom-title w-100">Daftar Paket</h1>
+        <div class="row">
             <div class="row">
                 <div class="col-md-3">
-                    <button class="btn btn-primary filter-icon" onclick="toggleFilter()">Filter <i class="fas fa-filter"></i></button>
+
+                    <button class="btn btn-primary filter-icon" style="background-color: #01562C;"
+                        onclick="toggleFilter()">Filter <i class="fas fa-filter"></i></button>
                     <ul class="list-group filter-section">
                         <li class="list-group-item">
                             <a href="{{ url('/paket') }}">Semua</a>
                         </li>
-                        <li class="list-group-item" data-toggle="collapse" data-target="#prasmanan-list" aria-expanded="false" aria-controls="prasmanan-list">
-                            <i class="fas fa-utensils"></i> Prasmanan <span class="badge badge-primary">{{ $jenis->where('is_prasmanan', 1)->count() }}</span>
+                        <li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="collapse"
+                            data-target="#prasmanan-list" aria-expanded="false" aria-controls="prasmanan-list">
+                            <div>
+                                <i class="fas fa-utensils"></i> Prasmanan
+                            </div>
+                            <i class="fas fa-chevron-down dropdown-icon"></i>
                         </li>
                         <ul class="list-group collapse nested-list" id="prasmanan-list">
                             @foreach ($jenis as $data)
                                 @if ($data->is_prasmanan)
                                     <li class="list-group-item">
-                                        <a href="{{ url('/paket?jenis_id=' . $data->nama_jenis) }}">{{ $data->nama_jenis }}</a>
+                                        <a
+                                            href="{{ url('/paket?jenis_id=' . $data->nama_jenis) }}">{{ $data->nama_jenis }}</a>
                                     </li>
                                 @endif
                             @endforeach
                         </ul>
-                        <li class="list-group-item" data-toggle="collapse" data-target="#katering-list" aria-expanded="false" aria-controls="katering-list">
-                            <i class="fas fa-concierge-bell"></i> Katering <span class="badge badge-primary">{{ $jenis->where('is_prasmanan', 0)->count() }}</span>
+                        <li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="collapse"
+                            data-target="#katering-list" aria-expanded="false" aria-controls="katering-list">
+                            <div>
+                                <i class="fas fa-concierge-bell"></i> Katering
+                            </div>
+                            <i class="fas fa-chevron-down dropdown-icon"></i>
                         </li>
                         <ul class="list-group collapse nested-list" id="katering-list">
                             @foreach ($jenis as $data)
                                 @if (!$data->is_prasmanan)
                                     <li class="list-group-item">
-                                        <a href="{{ url('/paket?jenis_id=' . $data->nama_jenis) }}">{{ $data->nama_jenis }}</a>
+                                        <a
+                                            href="{{ url('/paket?jenis_id=' . $data->nama_jenis) }}">{{ $data->nama_jenis }}</a>
                                     </li>
                                 @endif
                             @endforeach
                         </ul>
                     </ul>
+
                 </div>
-            <!-- Main content area for packages -->
-            <div class="col-md-9">
-                <h2>Paket</h2>
-                <div class="row">
-                    @foreach ($pakets as $paket)
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100 shadow-sm">
-                                <img src="{{ asset('storage/images/' . $paket->gambar_paket) }}" class="card-img-top"
-                                    alt="{{ $paket->nama_paket }}">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ $paket->nama_paket }}</h5>
-                                    <p class="card-text">{{ $paket->isi_paket }}</p>
-                                    <p class="card-text"><strong>Harga: Rp.
-                                            {{ number_format($paket->harga_paket, 0, ',', '.') }}</strong></p>
-                                    <form class="add-to-cart-form" data-paket-id="{{ $paket->id }}">
-                                        @csrf
-                                        <input type="hidden" name="paket_id" value="{{ $paket->id }}">
-                                        <button type="submit" class="btn btn-primary btn-block">Tambah ke
-                                            Keranjang</button>
-                                    </form>
+                <!-- Main content area for packages -->
+                <div class="col-md-9">
+                    {{-- <h2>Paket</h2> --}}
+                    <div class="row">
+                        @foreach ($pakets as $paket)
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="{{ asset('storage/images/' . $paket->gambar_paket) }}" class="card-img-top"
+                                        alt="{{ $paket->nama_paket }}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ $paket->nama_paket }}</h5>
+                                        <p class="card-text">{{ $paket->isi_paket }}</p>
+                                        <p class="card-text"><strong>Harga: Rp.
+                                                {{ number_format($paket->harga_paket, 0, ',', '.') }}</strong></p>
+                                        <form class="add-to-cart-form" data-paket-id="{{ $paket->id }}">
+                                            @csrf
+                                            <input type="hidden" name="paket_id" value="{{ $paket->id }}">
+                                            <button type="submit" class="btn btn-primary btn-block">Tambah ke
+                                                Keranjang</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    </div>
+                    <div class="d-flex justify-content-center m-3">
+                        {!! $pakets->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
+                    </div>
                 </div>
             </div>
         </div>
@@ -148,8 +236,39 @@
                 });
             });
         });
+        document.addEventListener('DOMContentLoaded', function() {
+            const collapsibleItems = document.querySelectorAll('.list-group-item[data-toggle="collapse"]');
+
+            collapsibleItems.forEach(item => {
+                const dropdownIcon = item.querySelector('.dropdown-icon');
+                const targetId = item.getAttribute('data-target');
+
+                item.addEventListener('click', function() {
+                    const isCollapsed = this.getAttribute('aria-expanded') === 'true';
+
+                    if (isCollapsed) {
+                        dropdownIcon.classList.remove('fa-chevron-up');
+                        dropdownIcon.classList.add('fa-chevron-down');
+                    } else {
+                        dropdownIcon.classList.remove('fa-chevron-down');
+                        dropdownIcon.classList.add('fa-chevron-up');
+                    }
+                });
+
+                $(targetId).on('hidden.bs.collapse', function() {
+                    dropdownIcon.classList.remove('fa-chevron-up');
+                    dropdownIcon.classList.add('fa-chevron-down');
+                });
+
+                $(targetId).on('shown.bs.collapse', function() {
+                    dropdownIcon.classList.remove('fa-chevron-down');
+                    dropdownIcon.classList.add('fa-chevron-up');
+                });
+            });
+        });
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
@@ -159,55 +278,4 @@
             filterSection.style.display = filterSection.style.display === 'none' ? 'block' : 'none';
         }
     </script>
-
-    <style>
-        .container h1 {
-            font-family: 'Arial', sans-serif;
-            font-size: 2rem;
-            color: #333;
-        }
-
-        .list-group-item a {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        .list-group-item a:hover {
-            text-decoration: underline;
-        }
-
-        .card {
-            border: none;
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .card-img-top {
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .card-title {
-            font-family: 'Arial', sans-serif;
-            font-size: 1.25rem;
-            color: #333;
-        }
-
-        .card-text {
-            font-family: 'Arial', sans-serif;
-            color: #666;
-        }
-
-        .btn-block {
-            width: 100%;
-            font-size: 1rem;
-            padding: 0.5rem;
-        }
-    </style>
 @endsection

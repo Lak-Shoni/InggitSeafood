@@ -2,8 +2,33 @@
 
 @section('title', 'Buat Pesanan')
 @section('content')
+<style>
+    .custom-title {
+            font-size: 2.5rem;
+            /* Mengatur ukuran font */
+            color: #ffffff !important;
+            /* Warna teks menjadi putih agar kontras dengan background */
+            text-align: center;
+            /* Mengatur perataan teks */
+            padding: 20px 0;
+            /* Padding atas dan bawah */
+            margin: 0;
+            /* Margin bawah */
+            background-color: #01562C;
+            /* Warna latar belakang */
+            
+            /* Membuat sudut rounded */
+            font-family: 'Roboto', sans-serif;
+            /* Font family */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            /* Efek shadow */
+        }
+</style>
     <div class="container" style="margin-top: 40px">
-        <h2>Checkout</h2>
+        <h1 class="mb-4 custom-title w-100">Buat Pesanan</h1>
+
+        
+        <h2>Data Pesanan</h2>
         <br>
         @if (session()->has('error'))
             <script>
@@ -98,32 +123,30 @@
                 </tfoot>
             </table>
 
-
-
             <input type="hidden" name="grand_total" value="{{ $grandTotal }}">
             <button type="submit" class="btn btn-primary">Proses Checkout</button>
         </form>
+    </div>
 
-
-        <script>
-            $(document).ready(function() {
-                $('#use_different_address').change(function() {
-                    if ($(this).is(':checked')) {
-                        $('#address').attr('readonly', false).val('');
-                    } else {
-                        $('#address').attr('readonly', true).val('{{ auth()->user()->alamat }}');
-                    }
-                });
-
-                $('#payment_method').change(function() {
-                    if ($(this).val() === 'bayar_dengan_tenggat_waktu') {
-                        $('#due_date_container').show();
-                        $('#due_date').attr('required', true);
-                    } else {
-                        $('#due_date_container').hide();
-                        $('#due_date').attr('required', false);
-                    }
-                });
+    <script>
+        $(document).ready(function() {
+            $('#use_different_address').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#address').attr('readonly', false).val('');
+                } else {
+                    $('#address').attr('readonly', true).val('{{ auth()->user()->alamat }}');
+                }
             });
-        </script>
-    @endsection
+
+            $('#payment_method').change(function() {
+                if ($(this).val() === 'bayar_dengan_tenggat_waktu') {
+                    $('#due_date_container').show();
+                    $('#due_date').attr('required', true);
+                } else {
+                    $('#due_date_container').hide();
+                    $('#due_date').attr('required', false);
+                }
+            });
+        });
+    </script>
+@endsection

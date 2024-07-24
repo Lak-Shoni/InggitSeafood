@@ -17,6 +17,8 @@ class UserController extends Controller
         $query = Order::query();
         if ($request->has('sort_by')) {
             $query->orderBy($request->sort_by, $request->get('order', 'asc'));
+        } else {
+            $query->orderBy('created_at', 'desc'); // Default sorting by latest orders
         }
         $orders = $query->paginate(10);
         $user = Auth::user();

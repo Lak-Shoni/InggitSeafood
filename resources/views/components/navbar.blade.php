@@ -59,9 +59,14 @@
 
     /* Gaya untuk item dropdown aktif */
     .navbar .dropdown-item.active {
-        background-color: #007bff;
+        background-color: #01562C;
         color: #fff;
     }
+
+    .nav-item.dropdown:hover .dropdown-menu {
+        display: block;
+    }
+
 
 
     .cart-badge {
@@ -98,7 +103,7 @@
                 <li><a href="/">Home</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="{{ route('client.paket.index') }}">Paket</a></li>
-                <li><a href="#events">Events</a></li>
+                <li><a href="#gallery">Gallery</a></li>
                 <li><a href="#contact">Contact</a></li>
                 @auth
                     @if (auth()->user()->is_admin)

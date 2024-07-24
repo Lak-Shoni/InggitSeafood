@@ -55,32 +55,35 @@ class BahanMasakanController extends Controller
         ]);
         $bahanMasakan->save();
 
-        return redirect()->route('admin.bahan_masakan.index')->with('success', 'Bahan Masakan Berhasil Ditambahkan');
+        return response()->json([
+            'success' => true,
+            'message' => 'Bahan Masakan berhasil ditambahkan.',
+        ]);
     }
 
     /**
      * Display the specified resource.
      */
     public function show($id, Request $request)
-{
-    $selectedBahan = BahanMasakan::findOrFail($id);
-    $bahanMasakanList = BahanMasakan::all();
-    $query = Transaksi::where('bahan_masakan_id', $id);
+    {
+        $selectedBahan = BahanMasakan::findOrFail($id);
+        $bahanMasakanList = BahanMasakan::all();
+        $query = Transaksi::where('bahan_masakan_id', $id);
 
-    if ($request->has('sort_by')) {
-        $query->orderBy($request->sort_by, $request->get('order', 'asc'));
+        if ($request->has('sort_by')) {
+            $query->orderBy($request->sort_by, $request->get('order', 'asc'));
+        }
+
+        // Date range filtering
+        if ($request->has('start_date') && $request->has('end_date')) {
+            $query->whereBetween('tanggal_transaksi', [$request->start_date, $request->end_date]);
+        }
+
+        $transaksiList = $query->paginate(10);
+
+        return view('admin.bahan_masakan.show', compact('selectedBahan', 'bahanMasakanList', 'transaksiList'))
+            ->with('i', (request()->input('page', 1) - 1) * 10);
     }
-
-    // Date range filtering
-    if ($request->has('start_date') && $request->has('end_date')) {
-        $query->whereBetween('tanggal_transaksi', [$request->start_date, $request->end_date]);
-    }
-
-    $transaksiList = $query->paginate(10);
-
-    return view('admin.bahan_masakan.show', compact('selectedBahan', 'bahanMasakanList', 'transaksiList'))
-        ->with('i', (request()->input('page', 1) - 1) * 10);
-}
 
 
 
@@ -151,7 +154,7 @@ class BahanMasakanController extends Controller
         $bahanMasakan->save();
         $transaksi->save();
 
-        return redirect()->route('admin.bahan_masakan.show', $bahanMasakan->id)->with('success', 'Bahan Masakan Berhasil Dimasukkan');
+        return response()->json(['success' => true, 'message' => 'Bahan Masakan Berhasil Dimasukkan']);
     }
 
     public function storeBahanKeluar(Request $request, $id)
@@ -176,6 +179,6 @@ class BahanMasakanController extends Controller
         $bahanMasakan->save();
         $transaksi->save();
 
-        return redirect()->route('admin.bahan_masakan.show', $bahanMasakan->id)->with('success', 'Bahan Masakan Berhasil Dikeluarkan');
+        return response()->json(['success' => true, 'message' => 'Bahan Masakan Berhasil Dikeluarkan']);
     }
 }

@@ -26,7 +26,7 @@
                                 </script>
                             @endif
                             <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h2>Inventories</h2>
+                                <h2>Inventaris</h2>
                             </div>
                             <div class="d-flex justify-content-between align-items-end mb-4">
                                 <a href="{{ route('admin.inventories.create') }}" class="btn btn-primary mb-2">Tambah

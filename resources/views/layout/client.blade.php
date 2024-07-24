@@ -20,6 +20,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+    <link href="{{ asset('css/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
 
 
 </head>
@@ -39,6 +40,16 @@
             </div>
         </div>
     </div>
+    <br><br><br><br><br>
+    @include('components.footer')
+
 </body>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.all.min.js"></script>
+<script src="{{ asset('js/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('js/aos/aos.js') }}"></script>
+<script src="{{ asset('js/glightbox/js/glightbox.min.js') }}"></script>
+<script src="{{ asset('js/purecounter/purecounter_vanilla.js') }}"></script>
+<script src="{{ asset('js/swiper/swiper-bundle.min.js') }}"></script>
+<script src="{{ asset('js/php-email-form/validate.js') }}"></script>
+
 </html>

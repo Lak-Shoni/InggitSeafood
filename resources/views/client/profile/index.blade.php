@@ -41,32 +41,83 @@
             font-weight: bold;
             color: #333;
         }
+
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-card {
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-card-header {
+            background-color: #01562C;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .profile-card-header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .profile-card-body {
+            padding: 20px;
+        }
+
+        .profile-card-body ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .profile-card-body li {
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .profile-card-body li:last-child {
+            border-bottom: none;
+        }
+
+        .profile-card-body li strong {
+            display: inline-block;
+            width: 120px;
+        }
+
+        .btn-edit-profile {
+            background-color: #01562C;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
     </style>
     <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header text-center">
-                        <h1>Hello {{ auth()->user()->nama }}</h1>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <strong>Nama:</strong> {{ $user->nama }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>No Telpon:</strong> {{ $user->no_telpon }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Alamat:</strong> {{ $user->alamat }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Total Hutang:</strong> Rp. {{ number_format($hutang, 0, ',', '.') }}
-                            </li>
-                        </ul>
-                        <div class="text-center mt-3">
-                            <a href="{{ route('profile.edit') }}" class="btn btn-primary">Edit Profile</a>
-                        </div>
+        <div class="profile-container">
+            <div class="profile-card">
+                <div class="profile-card-header">
+                    <h1>Hello {{ auth()->user()->nama }}</h1>
+                </div>
+                <div class="profile-card-body">
+                    <ul>
+                        <li><strong>Nama:</strong> {{ $user->nama }}</li>
+                        <li><strong>No Telpon:</strong> {{ $user->no_telpon }}</li>
+                        <li><strong>Alamat:</strong> {{ $user->alamat }}</li>
+                        <li><strong>Total Hutang:</strong> Rp. {{ number_format($hutang, 0, ',', '.') }}</li>
+                    </ul>
+                    <div class="text-center mt-3">
+                        <a href="{{ route('profile.edit') }}" class="btn-edit-profile">Edit Profile</a>
                     </div>
                 </div>
             </div>
@@ -193,14 +244,16 @@
                                 </td>
                                 <td>
                                     <span style="display: flex; gap: 10px;">
-                                        @if ($order->order_status != 'terima')
-                                            <a href="{{ url('/order/terima/' . $order->id) }}" class="btn btn-success">
-                                                <i class="fa-solid fa-check"></i>
-                                            </a>
+                                        @if ($order->order_status != 'proses' && $order->order_status != 'selesai')
+                                            @if ($order->order_status != 'terima')
+                                                <a href="{{ url('/order/terima/' . $order->id) }}" class="btn btn-success">
+                                                    Terima
+                                                </a>
+                                            @endif
                                         @endif
-                                        <a href="{{ route('orders.pdf', $order->id) }}" class="btn btn-success">
+                                        {{-- <a href="{{ route('orders.pdf', $order->id) }}" class="btn btn-success">
                                             <i class="fa-solid fa-file-pdf"></i> Download Invoice
-                                        </a>
+                                        </a> --}}
                                         <button class="btn btn-primary detail_pesanan" data-bs-toggle="modal"
                                             data-bs-target="#orderDetailModal"
                                             data-id="{{ $order->id }}">Detail</button>
@@ -211,7 +264,10 @@
                     @endforeach
                 </tbody>
             </table>
-            {!! $orders->appends(request()->query())->links() !!}
+            <div class="d-flex justify-content-center m-3">
+                {!! $orders->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
+            </div>
+
         </div>
     </div>
 
@@ -267,23 +323,29 @@
                             return date.toLocaleString('id-ID', options);
                         }
 
+                        function formatPaymentMethod(method) {
+                            return method.replace(/_/g, ' ').replace(/\b\w/g, function(l) {
+                                return l.toUpperCase()
+                            });
+                        }
+
                         var html = '<div class="order-details">';
                         html += '<h4>Detail Pesanan</h4>';
                         html += '<table class="custom-table">';
                         html += '<tr><th>Kode Pesanan</th><td>' + response.order_code +
                             '</td></tr>';
                         html += '<tr><th>Nama User</th><td>' + response.user.nama +
-                        '</td></tr>';
+                            '</td></tr>';
                         html += '<tr><th>No Telpon</th><td>' + response.user.no_telpon +
                             '</td></tr>';
-                        html += '<tr><th>Total Price</th><td>' + response.total_price +
+                        html += '<tr><th>Total Harga</th><td>' + response.total_price +
                             '</td></tr>';
                         html += '<tr><th>Alamat</th><td>' + response.address + '</td></tr>';
                         html += '<tr><th>Nama Instansi</th><td>' + response.partner_name +
                             '</td></tr>';
                         html += '<tr><th>Waktu Pengiriman</th><td>' + formatDateTime(response
                             .delivery_time) + '</td></tr>';
-                        html += '<tr><th>Metode Pembayaran</th><td>' + response.payment_method +
+                        html += '<tr><th>Metode Pembayaran</th><td>' + formatPaymentMethod(response.payment_method) +
                             '</td></tr>';
                         html += '<tr><th>Batas Pembayaran</th><td>' + formatDateTime(response
                             .due_date) + '</td></tr>';
@@ -297,7 +359,7 @@
 
                         html += '<h4>Items</h4>';
                         html += '<table class="custom-table">';
-                        html += '<tr><th>Nama Paket</th><th>Quantity</th><th>Price</th></tr>';
+                        html += '<tr><th>Nama Paket</th><th>Jumlah</th><th>Harga</th></tr>';
                         response.items.forEach(function(item) {
                             html += '<tr>';
                             html += '<td>' + item.nama_paket + '</td>';
