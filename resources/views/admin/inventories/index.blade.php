@@ -1,18 +1,11 @@
 @extends('layout.admin')
 
 @section('content')
-    {{-- <div class="ml-2">
-        <h1>Inventories</h1>
-        <a href="{{ route('admin.inventories.create') }}" class="btn btn-primary mb-4">Add Inventory</a>
-    </div> --}}
-
-    <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <!-- /.card-header -->
                         <div class="card-body">
                             @if (session('success'))
                                 <script>
@@ -29,8 +22,8 @@
                                 <h2>Inventaris</h2>
                             </div>
                             <div class="d-flex justify-content-between align-items-end mb-4">
-                                <a href="{{ route('admin.inventories.create') }}" class="btn btn-primary mb-2">Tambah
-                                    Inventaris</a>
+                                <button class="btn btn-success mb-2" data-toggle="modal"
+                                    data-target="#addInventoryModal">Tambah Inventaris</button>
                                 <form id="searchForm" method="GET" action="{{ route('admin.inventories.index') }}"
                                     class="form-inline">
                                     <div class="form-group mb-2 position-relative">
@@ -42,6 +35,12 @@
                                     </div>
                                 </form>
                             </div>
+                            @php
+                                function formatRupiah($number)
+                                {
+                                    return 'Rp ' . number_format($number, 0, ',', '.');
+                                }
+                            @endphp
                             <table id="example2" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
@@ -178,106 +177,230 @@
                                             <td>{{ $inventory->satuan }}</td>
                                             <td>{{ $inventory->kondisi }}</td>
                                             <td>{{ $inventory->tanggal_pembelian }}</td>
-                                            <td>{{ $inventory->harga_satuan }}</td>
-                                            <td>{{ $inventory->total_harga }}</td>
+                                            <td>{{ formatRupiah($inventory->harga_satuan) }}</td>
+                                            <td>{{ formatRupiah($inventory->total_harga) }}</td>
                                             <td>{{ $inventory->tanggal_pembaruan_terakhir }}</td>
                                             <td>
-
                                                 <div style="display: flex; gap: 10px;">
-                                                    <a href="{{ route('admin.inventories.edit', $inventory->id) }}"
-                                                        class="btn btn-warning">Edit</a>
+                                                    <button class="btn btn-primary edit-btn" data-id="{{ $inventory->id }}"
+                                                        data-toggle="modal" data-target="#editInventoryModal">Edit</button>
+
+
                                                     <form action="{{ route('admin.inventories.destroy', $inventory->id) }}"
-                                                        method="POST" class="delete-form" style="display:inline;">
+                                                        method="POST"
+                                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus inventaris ini?');">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="button"
-                                                            class="btn btn-danger delete-btn">Hapus</button>
+                                                        <button type="submit" class="btn btn-danger">Hapus</button>
                                                     </form>
                                                 </div>
-
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
-                            <div class="d-flex justify-content-center m-3">
-                                {!! $inventories->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
+                            <div class="d-flex justify-content-center mt-3">
+                                {!! $inventories->appends(request()->query())->links() !!}
                             </div>
                         </div>
-                        <!-- /.card-body -->
                     </div>
-                    <!-- /.card -->
                 </div>
-                <!-- /.col -->
             </div>
-            <!-- /.row -->
         </div>
-        <!-- /.container-fluid -->
+
+        <!-- Modal Tambah Inventaris -->
+        <div class="modal fade" id="addInventoryModal" tabindex="-1" role="dialog"
+            aria-labelledby="addInventoryModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addInventoryModalLabel">Tambah Inventaris</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="POST" action="{{ route('admin.inventories.store') }}">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="nama_barang">Nama Barang:</label>
+                                <input type="text" class="form-control" id="nama_barang" name="nama_barang" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="kategori">Kategori:</label>
+                                <input type="text" class="form-control" id="kategori" name="kategori" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="jumlah">Jumlah:</label>
+                                <input type="text" inputmode="numeric" class="form-control" id="jumlah"
+                                    name="jumlah" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="satuan">Satuan:</label>
+                                <input type="text" class="form-control" id="satuan" name="satuan" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="kondisi">Kondisi:</label>
+                                <input type="text" class="form-control" id="kondisi" name="kondisi" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="tanggal_pembelian">Tanggal Pembelian:</label>
+                                <input type="date" class="form-control" id="tanggal_pembelian"
+                                    name="tanggal_pembelian" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="harga_satuan">Harga Satuan:</label>
+                                <input type="text" inputmode="numeric" class="form-control" id="harga_satuan"
+                                    name="harga_satuan" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="total_harga">Total Harga:</label>
+                                <input type="text" inputmode="numeric" class="form-control" id="total_harga"
+                                    name="total_harga" readonly>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Edit Inventaris -->
+        <div class="modal fade" id="editInventoryModal" tabindex="-1" role="dialog"
+            aria-labelledby="editInventoryModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editInventoryModalLabel">Edit Inventaris</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="POST" id="editInventoryForm">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="edit_nama_barang">Nama Barang:</label>
+                                <input type="text" class="form-control" id="edit_nama_barang" name="nama_barang"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_kategori">Kategori:</label>
+                                <input type="text" class="form-control" id="edit_kategori" name="kategori" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_jumlah">Jumlah:</label>
+                                <input type="text" inputmode="numeric" class="form-control" id="edit_jumlah"
+                                    name="jumlah" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_satuan">Satuan:</label>
+                                <input type="text" class="form-control" id="edit_satuan" name="satuan" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_kondisi">Kondisi:</label>
+                                <input type="text" class="form-control" id="edit_kondisi" name="kondisi" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_tanggal_pembelian">Tanggal Pembelian:</label>
+                                <input type="date" class="form-control" id="edit_tanggal_pembelian"
+                                    name="tanggal_pembelian" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_harga_satuan">Harga Satuan:</label>
+                                <input type="text" inputmode="numeric" class="form-control" id="edit_harga_satuan"
+                                    name="harga_satuan" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_total_harga">Total Harga:</label>
+                                <input type="text" inputmode="numeric" class="form-control" id="edit_total_harga"
+                                    name="total_harga" readonly>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </section>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('search');
-            const clearSearch = document.getElementById('clearSearch');
-            const searchForm = document.getElementById('searchForm');
-            const dataBody = document.getElementById('dataBody');
+            var jumlahInput = document.getElementById('jumlah');
+            var hargaSatuanInput = document.getElementById('harga_satuan');
+            var totalHargaInput = document.getElementById('total_harga');
 
-            // Show clear icon if search input is not empty
-            if (searchInput.value) {
-                clearSearch.style.display = 'block';
+            function updateTotalHarga() {
+                var jumlah = parseFloat(jumlahInput.value) || 0;
+                var hargaSatuan = parseFloat(hargaSatuanInput.value) || 0;
+                totalHargaInput.value = jumlah * hargaSatuan;
             }
 
-            // Listen for input changes
+            jumlahInput.addEventListener('input', updateTotalHarga);
+            hargaSatuanInput.addEventListener('input', updateTotalHarga);
+
+            var editJumlahInput = document.getElementById('edit_jumlah');
+            var editHargaSatuanInput = document.getElementById('edit_harga_satuan');
+            var editTotalHargaInput = document.getElementById('edit_total_harga');
+
+            function updateEditTotalHarga() {
+                var jumlah = parseFloat(editJumlahInput.value) || 0;
+                var hargaSatuan = parseFloat(editHargaSatuanInput.value) || 0;
+                editTotalHargaInput.value = jumlah * hargaSatuan;
+            }
+
+            editJumlahInput.addEventListener('input', updateEditTotalHarga);
+            editHargaSatuanInput.addEventListener('input', updateEditTotalHarga);
+
+            // Form search
+            var searchInput = document.getElementById('search');
+            var clearSearchBtn = document.getElementById('clearSearch');
+
             searchInput.addEventListener('input', function() {
-                const query = this.value;
-
-                // Show clear icon if search input is not empty
-                clearSearch.style.display = query ? 'block' : 'none';
-
-                // Make AJAX request to search
-                fetch(`{{ route('admin.inventories.index') }}?search=${query}`)
-                    .then(response => response.text())
-                    .then(html => {
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(html, 'text/html');
-                        const newBody = doc.getElementById('dataBody').innerHTML;
-                        dataBody.innerHTML = newBody;
-                    });
+                if (searchInput.value.trim() === '') {
+                    clearSearchBtn.style.display = 'none';
+                } else {
+                    clearSearchBtn.style.display = 'inline';
+                }
             });
 
-            // Clear search input when clear icon is clicked
-            clearSearch.addEventListener('click', function() {
+            clearSearchBtn.addEventListener('click', function() {
                 searchInput.value = '';
-                clearSearch.style.display = 'none';
-                searchInput.dispatchEvent(new Event('input'));
+                document.getElementById('searchForm').submit();
             });
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const deleteForms = document.querySelectorAll('.delete-form');
 
-            deleteForms.forEach(form => {
-                const deleteBtn = form.querySelector('.delete-btn');
+            document.querySelectorAll('.edit-btn').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var id = this.getAttribute('data-id');
 
-                deleteBtn.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    Swal.fire({
-                        title: 'Hapus Item?',
-                        text: "Apakah kamu ingin menghapus item ini?",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        cancelButtonText: 'Tidak',
-                        confirmButtonText: 'Iya'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
+                    fetch(`/admin/inventories/${id}/edit`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('editInventoryForm').setAttribute('action',
+                                `/admin/inventories/${id}`);
+                            document.getElementById('edit_nama_barang').value = data
+                                .nama_barang;
+                            document.getElementById('edit_kategori').value = data.kategori;
+                            document.getElementById('edit_jumlah').value = data.jumlah;
+                            document.getElementById('edit_satuan').value = data.satuan;
+                            document.getElementById('edit_kondisi').value = data.kondisi;
+                            document.getElementById('edit_tanggal_pembelian').value = data
+                                .tanggal_pembelian;
+                            document.getElementById('edit_harga_satuan').value = data
+                                .harga_satuan;
+                            document.getElementById('edit_total_harga').value = data
+                                .total_harga;
+                        })
+                        .catch(error => console.error('Error fetching inventory:', error));
                 });
             });
+
         });
     </script>
-    <!-- /.content -->
 @endsection

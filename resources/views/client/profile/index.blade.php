@@ -286,8 +286,8 @@
                     ...
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Oke</button>
-                    {{-- <button type="button" class="btn btn-primary">Oke</button> --}}
+                    {{-- <button type="button" class="btn btn-primary" data-dismiss="modal">Oke</button> --}}
+                    <button type="button" class="btn btn-primary">Oke</button>
                 </div>
             </div>
         </div>
@@ -329,6 +329,11 @@
                             });
                         }
 
+                        function formatRupiah(number) {
+                            return 'Rp ' + number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,
+                                '.');
+                        }
+
                         var html = '<div class="order-details">';
                         html += '<h4>Detail Pesanan</h4>';
                         html += '<table class="custom-table">';
@@ -338,14 +343,15 @@
                             '</td></tr>';
                         html += '<tr><th>No Telpon</th><td>' + response.user.no_telpon +
                             '</td></tr>';
-                        html += '<tr><th>Total Harga</th><td>' + response.total_price +
+                        html += '<tr><th>Total Harga</th><td>' + formatRupiah(response.total_price) +
                             '</td></tr>';
                         html += '<tr><th>Alamat</th><td>' + response.address + '</td></tr>';
                         html += '<tr><th>Nama Instansi</th><td>' + response.partner_name +
                             '</td></tr>';
                         html += '<tr><th>Waktu Pengiriman</th><td>' + formatDateTime(response
                             .delivery_time) + '</td></tr>';
-                        html += '<tr><th>Metode Pembayaran</th><td>' + formatPaymentMethod(response.payment_method) +
+                        html += '<tr><th>Metode Pembayaran</th><td>' + formatPaymentMethod(
+                                response.payment_method) +
                             '</td></tr>';
                         html += '<tr><th>Batas Pembayaran</th><td>' + formatDateTime(response
                             .due_date) + '</td></tr>';
@@ -364,7 +370,7 @@
                             html += '<tr>';
                             html += '<td>' + item.nama_paket + '</td>';
                             html += '<td>' + item.quantity + '</td>';
-                            html += '<td>' + (item.total_per_item) + '</td>';
+                            html += '<td>' + formatRupiah((item.total_per_item)) + '</td>';
                             html += '</tr>';
                         });
                         html += '</table>';

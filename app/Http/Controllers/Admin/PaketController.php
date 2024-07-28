@@ -12,6 +12,7 @@ class PaketController extends Controller
     public function index(Request $request)
     {
         $query = Paket::query();
+        $jenis = Jenis_Paket::all();
 
         // Sorting
         if ($request->has('sort_by')) {
@@ -25,13 +26,13 @@ class PaketController extends Controller
 
         $pakets = $query->paginate(5); // Sesuaikan dengan jumlah data per halaman
 
-        return view('admin.pakets.index', compact('pakets'))
+        return view('admin.pakets.index', compact('pakets', 'jenis'))
             ->with('i', (request()->input('page', 1) - 1) * 10);
     }
 
     public function create()
     {
-        $jenis =Jenis_Paket::all();
+        $jenis = Jenis_Paket::all();
         return view('admin.pakets.create', compact('jenis'));
     }
 
@@ -64,12 +65,13 @@ class PaketController extends Controller
         return view('admin.pakets.show', compact('paket'));
     }
 
+
     public function edit($id)
     {
-        $paket = paket::findOrFail($id);
-        $jenis = Jenis_Paket::all();
-        return view('admin.pakets.edit', compact('paket', 'jenis'));
+        $paket = Paket::findOrFail($id);
+        return response()->json($paket);
     }
+
 
 
     public function update(Request $request, $id)

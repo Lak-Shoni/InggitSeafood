@@ -9,8 +9,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h1>Daftar Bahan Masakan</h1>
-                                <button class="btn btn-primary" data-toggle="modal" data-target="#tambahBahanModal">Tambah
-                                    Bahan Masakan</button>
+
                             </div>
 
                             @if (session('success'))
@@ -35,7 +34,9 @@
                                 </div>
                             @endif
 
-                            <div class="d-flex justify-content-end align-items-end mb-4 mr-2">
+                            <div class="d-flex justify-content-between align-items-end mb-4">
+                                <button class="btn btn-success" data-toggle="modal" data-target="#tambahBahanModal">Tambah
+                                    Bahan Masakan</button>
                                 <form id="searchForm" method="GET" action="{{ route('admin.bahan_masakan.index') }}"
                                     class="form-inline">
                                     <div class="form-group mb-2 position-relative">
@@ -90,7 +91,7 @@
                                                     <form action="{{ route('admin.bahan_masakan.show', $bahan->id) }}"
                                                         method="GET" style="display:inline;">
                                                         @csrf
-                                                        <button type="submit" class="btn btn-info">Detail</button>
+                                                        <button type="submit" class="btn btn-primary">Detail</button>
                                                     </form>
                                                     <form action="{{ route('admin.bahan_masakan.destroy', $bahan->id) }}"
                                                         method="POST" style="display:inline;">

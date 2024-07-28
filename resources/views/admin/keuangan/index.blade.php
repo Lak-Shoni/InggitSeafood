@@ -28,32 +28,32 @@
                                 
                                 <div class="form-group">
                                     <label for="purchasing">Purchasing</label>
-                                    <input type="number" class="form-control" id="purchasing" name="purchasing" required>
+                                    <input type="text" inputmode="numeric" class="form-control" id="purchasing" name="purchasing" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="tenagaKerja">Tenaga Kerja</label>
-                                    <input type="number" class="form-control" id="tenagaKerja" name="tenaga_kerja"
+                                    <input type="text" inputmode="numeric" class="form-control" id="tenagaKerja" name="tenaga_kerja"
                                         required>
                                 </div>
                                 <div class="form-group">
                                     <label for="pln">PLN</label>
-                                    <input type="number" class="form-control" id="pln" name="pln" required>
+                                    <input type="text" inputmode="numeric" class="form-control" id="pln" name="pln" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="akomodasi">Akomodasi</label>
-                                    <input type="number" class="form-control" id="akomodasi" name="akomodasi" required>
+                                    <input type="text" inputmode="numeric" class="form-control" id="akomodasi" name="akomodasi" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="sewaAlat">Sewa Alat</label>
-                                    <input type="number" class="form-control" id="sewaAlat" name="sewa_alat" required>
+                                    <input type="text" inputmode="numeric" class="form-control" id="sewaAlat" name="sewa_alat" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="omset">Omset</label>
-                                    <input type="number" class="form-control" id="omset" name="omset" readonly>
+                                    <input type="text" inputmode="numeric" class="form-control" id="omset" name="omset" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label for="profit">Profit</label>
-                                    <input type="number" class="form-control" id="profit" name="profit" readonly>
+                                    <input type="text" inputmode="numeric" class="form-control" id="profit" name="profit" readonly>
                                 </div>
                                 <button type="submit" id="submitButton" class="btn btn-primary">Tambah Data</button>
                             </form>
@@ -79,54 +79,7 @@
                                     </script>
                                 @endif
                                 <h2>Data Keuangan</h2>
-                                <!-- Form untuk menambahkan dan mengedit data -->
-                                {{-- <form method="POST" action="{{ route('admin.keuangan.store') }}" id="dataForm">
-                                @csrf
-                                <input type="hidden" id="formMethod" name="_method" value="POST">
-                                <input type="hidden" id="editId" name="id">
-                                <div class="form-row">
-                                    <div class="form-group col-md-3">
-                                        <label for="transaction_date">Tanggal Transaksi</label>
-                                        <input type="date" class="form-control" id="transaction_date"
-                                            name="transaction_date" required>
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                        <label for="omset">Omset</label>
-                                        <input type="text" class="form-control" id="omset" name="omset" required>
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                        <label for="purchasing">Purchasing</label>
-                                        <input type="text" class="form-control" id="purchasing" name="purchasing"
-                                            required>
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                        <label for="tenagaKerja">Tenaga Kerja</label>
-                                        <input type="text" class="form-control" id="tenagaKerja" name="tenaga_kerja"
-                                            required>
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                        <label for="pln">PLN/Listrik</label>
-                                        <input type="text" class="form-control" id="pln" name="pln" required>
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                        <label for="akomodasi">Akomodasi</label>
-                                        <input type="text" class="form-control" id="akomodasi" name="akomodasi" required>
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                        <label for="sewaAlat">Sewa alat</label>
-                                        <input type="text" class="form-control" id="sewaAlat" name="sewa_alat" required>
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                        <label for="profit">Profit</label>
-                                        <input type="text" class="form-control" id="profit" name="profit" required>
-                                    </div>
-                                    <div class="form-group col-md-3 align-self-end">
-                                        <button type="submit" class="btn btn-primary" id="submitButton">Tambah
-                                            Data</button>
-                                    </div>
-                                </div>
-                            </form> --}}
-
+                                
                                 <button class="btn btn-success mb-3" data-toggle="modal" data-target="#dataModal"
                                     id="addDataButton">Tambah Data</button>
 
@@ -298,49 +251,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const dataForm = document.getElementById('dataForm');
-            const submitButton = document.getElementById('submitButton');
-            const formMethod = document.getElementById('formMethod');
-            const editId = document.getElementById('editId');
-            const dataFields = {
-                transaction_date: document.getElementById('transaction_date'),
-                omset: document.getElementById('omset'),
-                purchasing: document.getElementById('purchasing'),
-                tenaga_kerja: document.getElementById('tenagaKerja'),
-                pln: document.getElementById('pln'),
-                akomodasi: document.getElementById('akomodasi'),
-                sewa_alat: document.getElementById('sewaAlat'),
-                profit: document.getElementById('profit')
-            };
-
-            document.querySelectorAll('.editButton').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = this.getAttribute('data-id');
-                    fetch(`/admin/keuangan/${id}/edit`)
-                        .then(response => response.json())
-                        .then(data => {
-                            Object.keys(dataFields).forEach(key => {
-                                dataFields[key].value = data[key];
-                            });
-                            formMethod.value = 'PUT';
-                            dataForm.action = `/admin/keuangan/${id}`;
-                            editId.value = id;
-                            submitButton.textContent = 'Update Data';
-                        })
-                        .catch(error => console.error('Error:', error));
-                });
-            });
-
-            dataForm.addEventListener('reset', function() {
-                formMethod.value = 'POST';
-                dataForm.action = '{{ route('admin.keuangan.store') }}';
-                editId.value = '';
-                submitButton.textContent = 'Tambah Data';
-            });
-        });
-    </script> --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const startDateInput = document.getElementById('start_date');

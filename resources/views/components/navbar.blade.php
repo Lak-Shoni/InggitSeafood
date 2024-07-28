@@ -104,6 +104,7 @@
                 <li><a href="#about">About</a></li>
                 <li><a href="{{ route('client.paket.index') }}">Paket</a></li>
                 <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#testimonials">Testimonial</a></li>
                 <li><a href="#contact">Contact</a></li>
                 @auth
                     @if (auth()->user()->is_admin)
@@ -145,10 +146,10 @@
                     <a class="btn-book-a-table mx-2"
                         style="background-color: white; border: 2px solid #01562C; color: #01562C;"
                         href="{{ url('/register') }}">Register</a>
+                    </div>
+                    @endauth
                     <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
                     <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
-                </div>
-            @endauth
         </div>
     </div>
 

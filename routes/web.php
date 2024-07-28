@@ -74,6 +74,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/admin/pakets/{id}/edit', [PaketController::class, 'edit'])->name('admin.pakets.edit');
 
             Route::resource('inventories', InventoryController::class);
+            Route::get('/admin/inventories/{id}/edit', [InventoryController::class, 'edit'])->name('admin.inventories.edit');
+            
             Route::resource('bahan_masakan', BahanMasakanController::class);
             Route::resource('keuangan', KeuanganController::class);
             Route::get('bahan_masakan/{id}/bahan_masuk', [BahanMasakanController::class, 'bahanMasuk'])->name('bahan_masakan.bahan_masuk');

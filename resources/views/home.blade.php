@@ -166,7 +166,7 @@
                                 <form class="add-to-cart-form" data-paket-id="{{ $paket->id }}">
                                     @csrf
                                     <input type="hidden" name="paket_id" value="{{ $paket->id }}">
-                                    <button type="submit" class="btn btn-primary"> Tambah ke Keranjang</button>
+                                    <button type="submit" class="btn btn-primary">Tambah ke Keranjang</button>
                                 </form>
                             </li>
                         @endforeach
@@ -177,8 +177,6 @@
             <a href="{{ route('client.paket.index') }}" class="btn btn-primary align-items-center">Lihat paket
                 Lainnya</a>
         </section>
-
-
         {{-- end --}}
 
         <!-- ======= Testimonials Section ======= -->
@@ -200,13 +198,16 @@
                                         <div class="testimonial-content">
                                             <p>
                                                 <i class="bi bi-quote quote-icon-left"></i>
-                                                Proin iaculis purus consequat sem cure digni ssim donec porttitora entum
-                                                suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh
-                                                et. Maecen aliquam, risus at semper.
+                                                Benar-benar fantastis! Layanan katering yang disediakan untuk pernikahan
+                                                saya melebihi harapan saya. Makanannya lezat, disajikan dengan indah,
+                                                dan stafnya sangat profesional serta perhatian. Para tamu kami terus
+                                                memuji nasi goreng dan pilihan dessert yang luar biasa. Saya sangat
+                                                merekomendasikan jasa katering ini untuk acara spesial apa pun. Terima
+                                                kasih telah membuat hari kami begitu berkesan!
                                                 <i class="bi bi-quote quote-icon-right"></i>
                                             </p>
-                                            <h3>Saul Goodman</h3>
-                                            <h4>Ceo &amp; Founder</h4>
+                                            <h3>Eka Cahyani</h3>
+                                            <h4></h4>
                                             <div class="stars">
                                                 <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
                                                     class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
@@ -215,7 +216,68 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-2 text-center">
-                                        <img src="{{ asset('img/testimonials/testimonials-1.jpg') }}"
+                                        <img src="{{ asset('img/cewe.png') }}"
+                                            class="img-fluid testimonial-img" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- End testimonial item -->
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <div class="row gy-4 justify-content-center">
+                                    <div class="col-lg-6">
+                                        <div class="testimonial-content">
+                                            <p>
+                                                <i class="bi bi-quote quote-icon-left"></i>
+                                                Saya sangat puas dengan layanan katering yang diberikan untuk acara
+                                                perusahaan kami. Hidangannya sangat enak dan variasinya banyak, cocok
+                                                untuk semua selera. Stafnya ramah dan sangat membantu dalam memastikan
+                                                semuanya berjalan lancar. Kami pasti akan menggunakan jasa katering ini
+                                                lagi untuk acara mendatang. Terima kasih atas pelayanan yang luar biasa!
+                                                <i class="bi bi-quote quote-icon-right"></i>
+                                            </p>
+                                            <h3>Heri Susanto</h3>
+                                            <h4></h4>
+                                            <div class="stars">
+                                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                    class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                    class="bi bi-star-fill"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 text-center">
+                                        <img src="{{ asset('img/cowo.png') }}"
+                                            class="img-fluid testimonial-img" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- End testimonial item -->
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <div class="row gy-4 justify-content-center">
+                                    <div class="col-lg-6">
+                                        <div class="testimonial-content">
+                                            <p>
+                                                <i class="bi bi-quote quote-icon-left"></i>
+                                                Layanan katering ini sungguh luar biasa! Saya memesan untuk acara ulang
+                                                tahun anak saya, dan semua tamu sangat menikmati makanan yang disajikan.
+                                                Menu prasmanannya lengkap dan setiap hidangan terasa lezat. Stafnya juga
+                                                sangat membantu dan memastikan semua kebutuhan kami terpenuhi. Sangat
+                                                direkomendasikan untuk acara keluarga atau perayaan lainnya. Terima
+                                                kasih atas pelayanan yang hebat!
+                                                <i class="bi bi-quote quote-icon-right"></i>
+                                            </p>
+                                            <h3>Enny Kartika</h3>
+                                            <h4></h4>
+                                            <div class="stars">
+                                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                    class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                    class="bi bi-star-fill"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 text-center">
+                                        <img src="{{ asset('img/ibu.png') }}"
                                             class="img-fluid testimonial-img" alt="">
                                     </div>
                                 </div>
@@ -243,37 +305,57 @@
                 <div class="gallery-slider swiper">
                     <div class="swiper-wrapper align-items-center">
                         <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                                href="{{ asset('img/gallery/gallery-1.jpg') }}"><img
-                                    src="{{ asset('img/gallery/gallery-1.jpg') }}" class="img-fluid"
-                                    alt=""></a></div>
+                                href="{{ asset('img/galeri/foto_1.jpg') }}"><img
+                                    src="{{ asset('img/galeri/foto_1.jpg') }}" class="img-fluid gallery-image"
+                                    alt=""></a>
+                        </div>
                         <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                                href="{{ asset('img/gallery/gallery-1.jpg') }}"><img
-                                    src="{{ asset('img/gallery/gallery-2.jpg') }}" class="img-fluid"
-                                    alt=""></a></div>
+                                href="{{ asset('img/galeri/foto_2.jpg') }}"><img
+                                    src="{{ asset('img/galeri/foto_2.jpg') }}" class="img-fluid gallery-image"
+                                    alt=""></a>
+                        </div>
                         <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                                href="{{ asset('img/gallery/gallery-1.jpg') }}"><img
-                                    src="{{ asset('img/gallery/gallery-3.jpg') }}" class="img-fluid"
-                                    alt=""></a></div>
+                                href="{{ asset('img/galeri/foto_3.jpg') }}"><img
+                                    src="{{ asset('img/galeri/foto_3.jpg') }}" class="img-fluid gallery-image"
+                                    alt=""></a>
+                        </div>
                         <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                                href="{{ asset('img/gallery/gallery-1.jpg') }}"><img
-                                    src="{{ asset('img/gallery/gallery-4.jpg') }}" class="img-fluid"
-                                    alt=""></a></div>
+                                href="{{ asset('img/galeri/foto_4.jpg') }}"><img
+                                    src="{{ asset('img/galeri/foto_4.jpg') }}" class="img-fluid gallery-image"
+                                    alt=""></a>
+                        </div>
                         <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                                href="{{ asset('img/gallery/gallery-1.jpg') }}"><img
-                                    src="{{ asset('img/gallery/gallery-5.jpg') }}" class="img-fluid"
-                                    alt=""></a></div>
+                                href="{{ asset('img/galeri/foto_5.jpg') }}"><img
+                                    src="{{ asset('img/galeri/foto_5.jpg') }}" class="img-fluid gallery-image"
+                                    alt=""></a>
+                        </div>
                         <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                                href="{{ asset('img/gallery/gallery-1.jpg') }}"><img
-                                    src="{{ asset('img/gallery/gallery-6.jpg') }}" class="img-fluid"
-                                    alt=""></a></div>
+                                href="{{ asset('img/galeri/foto_6.jpg') }}"><img
+                                    src="{{ asset('img/galeri/foto_6.jpg') }}" class="img-fluid gallery-image"
+                                    alt=""></a>
+                        </div>
                         <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                                href="{{ asset('img/gallery/gallery-1.jpg') }}"><img
-                                    src="{{ asset('img/gallery/gallery-7.jpg') }}" class="img-fluid"
-                                    alt=""></a></div>
+                                href="{{ asset('img/galeri/foto_7.jpg') }}"><img
+                                    src="{{ asset('img/galeri/foto_7.jpg') }}" class="img-fluid gallery-image"
+                                    alt=""></a>
+                        </div>
                         <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                                href="{{ asset('img/gallery/gallery-1.jpg') }}"><img
-                                    src="{{ asset('img/gallery/gallery-8.jpg') }}" class="img-fluid"
-                                    alt=""></a></div>
+                                href="{{ asset('img/galeri/foto_8.jpg') }}"><img
+                                    src="{{ asset('img/galeri/foto_8.jpg') }}" class="img-fluid gallery-image"
+                                    alt=""></a>
+                        </div>
+                        <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
+                                href="{{ asset('img/galeri/foto_9.jpg') }}"><img
+                                    src="{{ asset('img/galeri/foto_9.jpg') }}" class="img-fluid gallery-image"
+                                    alt=""></a>
+                        </div>
+                        <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
+                                href="{{ asset('img/galeri/foto_10.jpg') }}"><img
+                                    src="{{ asset('img/galeri/foto_10.jpg') }}" class="img-fluid gallery-image"
+                                    alt=""></a>
+                        </div>
+
+
                     </div>
                     <div class="swiper-pagination"></div>
                 </div>

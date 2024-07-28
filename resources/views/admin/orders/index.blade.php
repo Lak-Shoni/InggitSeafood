@@ -51,6 +51,39 @@
             background-color: #0056b3;
             color: white;
         }
+
+        /* Add some basic styling */
+        .order-details {
+            padding: 20px;
+        }
+
+        .order-details h4 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .custom-table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        .custom-table th,
+        .custom-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .custom-table th {
+            background-color: #f8f9fa;
+            text-align: left;
+        }
+
+        .custom-table td {
+            background-color: #fff;
+        }
     </style>
     <section class="content">
         <div class="container-fluid">
@@ -205,7 +238,7 @@
                                                     @break
 
                                                     @case('terima')
-                                                    <span class="badge badge-primary">Sudah Diterima</span>
+                                                        <span class="badge badge-primary">Sudah Diterima</span>
                                                     @break
 
                                                     @case('selesai')
@@ -223,16 +256,15 @@
                                                         <a href="{{ url('/order/lunas/' . $order->id) }}"
                                                             class="btn btn-success">Lunas</a>
                                                     @endif
-                                                    @if ($order->order_status != 'selesai')
-                                                        @if ($order->order_status != 'terima')
-                                                            @if ($order->order_status != 'kirim')
-                                                                <a href="{{ url('/order/kirim/' . $order->id) }}"
-                                                                    class="btn btn-info">Kirim</a>
-                                                            @endif
-                                                        @endif
+                                                    @if ($order->order_status == 'proses')
+                                                        <a href="{{ url('/order/kirim/' . $order->id) }}"
+                                                            class="btn btn-info">Kirim</a>
+                                                    @endif
+                                                    @if ($order->order_status == 'terima')
                                                         <a href="{{ url('/order/selesai/' . $order->id) }}"
                                                             class="btn btn-success">Selesai</a>
                                                     @endif
+                                                    
                                                     <button class="btn btn-primary detail_pesanan" data-bs-toggle="modal"
                                                         data-bs-target="#orderDetailModal"
                                                         data-id="{{ $order->id }}">Detail</button>
@@ -317,6 +349,11 @@
                             });
                         }
 
+                        function formatRupiah(number) {
+                            return 'Rp ' + number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,
+                                '.');
+                        }
+
                         var html = '<div class="order-details">';
                         html += '<h4>Detail Pesanan</h4>';
                         html += '<table class="custom-table">';
@@ -326,7 +363,8 @@
                             '</td></tr>';
                         html += '<tr><th>No Telpon</th><td>' + response.user.no_telpon +
                             '</td></tr>';
-                        html += '<tr><th>Total Harga</th><td>' + response.total_price +
+                        html += '<tr><th>Total Harga</th><td>' + formatRupiah(response
+                                .total_price) +
                             '</td></tr>';
                         html += '<tr><th>Alamat</th><td>' + response.address + '</td></tr>';
                         html += '<tr><th>Nama Instansi</th><td>' + response.partner_name +
@@ -353,7 +391,8 @@
                             html += '<tr>';
                             html += '<td>' + item.nama_paket + '</td>';
                             html += '<td>' + item.quantity + '</td>';
-                            html += '<td>' + (item.total_per_item) + '</td>';
+                            html += '<td>' + formatRupiah(item.total_per_item) +
+                                '</td>';
                             html += '</tr>';
                         });
                         html += '</table>';

@@ -24,7 +24,7 @@
 
                                 <button class="btn btn-success mb-2" data-toggle="modal"
                                     data-target="#bahanMasukModal">Bahan Masuk</button>
-                                <button class="btn btn-warning mb-2" data-toggle="modal"
+                                <button class="btn btn-danger mb-2" data-toggle="modal"
                                     data-target="#bahanKeluarModal">Bahan Keluar</button>
                             </div>
 
@@ -96,7 +96,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="bahan_masuk">Jumlah Bahan Masuk</label>
-                            <input type="number" class="form-control" id="bahan_masuk" name="bahan_masuk" required>
+                            <input type="text" inputmode="numeric" class="form-control" id="bahan_masuk" name="bahan_masuk" required>
                         </div>
                         <div class="form-group">
                             <label for="tanggal_transaksi_masuk">Tanggal Transaksi</label>
@@ -106,7 +106,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="submit" class="btn btn-primary">Tambah</button>
                     </div>
                 </form>
             </div>
@@ -130,7 +130,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="bahan_keluar">Jumlah Bahan Keluar</label>
-                            <input type="number" class="form-control" id="bahan_keluar" name="bahan_keluar" required>
+                            <input type="text" inputmode="numeric" class="form-control" id="bahan_keluar" name="bahan_keluar" required>
                         </div>
                         <div class="form-group">
                             <label for="tanggal_transaksi_keluar">Tanggal Transaksi</label>
@@ -140,7 +140,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="submit" class="btn btn-primary">Tambah</button>
                     </div>
                 </form>
             </div>

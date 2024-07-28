@@ -79,10 +79,12 @@ class InventoryController extends Controller
         return view('admin.inventories.show', compact('inventory'));
     }
 
+
+
     public function edit($id)
     {
         $inventory = Inventory::findOrFail($id);
-        return view('admin.inventories.edit', compact('inventory'));
+        return response()->json($inventory);
     }
     /**
      * Update the specified resource in storage.

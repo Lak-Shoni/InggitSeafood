@@ -19,10 +19,14 @@
         }
 
         .card {
-            border: none;
+            
             border-radius: 10px;
             overflow: hidden;
             transition: transform 0.3s, box-shadow 0.3s;
+            background: #fff;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            /* box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); */
         }
 
         .card:hover {
@@ -31,8 +35,11 @@
         }
 
         .card-img-top {
-            height: 200px;
+            border-radius: 10px 10px 0 0;
+            padding: 10px 20px 0 20px;
+            /* margin-left: 30px; */
             object-fit: cover;
+            /* border: 4px solid #fff;   */
         }
 
         .card-title {
@@ -51,6 +58,13 @@
             font-size: 1rem;
             padding: 0.5rem;
             background-color: #01562C;
+            color: #fff;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-block:hover {
+            background-color: #013d1f;
         }
 
         .list-group-item a {
@@ -91,102 +105,86 @@
 
         .custom-title {
             font-size: 2.5rem;
-            /* Mengatur ukuran font */
             color: #ffffff !important;
-            /* Warna teks menjadi putih agar kontras dengan background */
             text-align: center;
-            /* Mengatur perataan teks */
             padding: 20px 0;
-            /* Padding atas dan bawah */
             margin: 0;
-            /* Margin bawah */
             background-color: #01562C;
-            /* Warna latar belakang */
-
-            /* Membuat sudut rounded */
             font-family: 'Roboto', sans-serif;
-            /* Font family */
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-            /* Efek shadow */
         }
     </style>
     <div class="container mt-5">
         <h1 class="mb-4 custom-title w-100">Daftar Paket</h1>
         <div class="row">
-            <div class="row">
-                <div class="col-md-3">
-
-                    <button class="btn btn-primary filter-icon" style="background-color: #01562C;"
-                        onclick="toggleFilter()">Filter <i class="fas fa-filter"></i></button>
-                    <ul class="list-group filter-section">
-                        <li class="list-group-item">
-                            <a href="{{ url('/paket') }}">Semua</a>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="collapse"
-                            data-target="#prasmanan-list" aria-expanded="false" aria-controls="prasmanan-list">
-                            <div>
-                                <i class="fas fa-utensils"></i> Prasmanan
-                            </div>
-                            <i class="fas fa-chevron-down dropdown-icon"></i>
-                        </li>
-                        <ul class="list-group collapse nested-list" id="prasmanan-list">
-                            @foreach ($jenis as $data)
-                                @if ($data->is_prasmanan)
-                                    <li class="list-group-item">
-                                        <a
-                                            href="{{ url('/paket?jenis_id=' . $data->nama_jenis) }}">{{ $data->nama_jenis }}</a>
-                                    </li>
-                                @endif
-                            @endforeach
-                        </ul>
-                        <li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="collapse"
-                            data-target="#katering-list" aria-expanded="false" aria-controls="katering-list">
-                            <div>
-                                <i class="fas fa-concierge-bell"></i> Katering
-                            </div>
-                            <i class="fas fa-chevron-down dropdown-icon"></i>
-                        </li>
-                        <ul class="list-group collapse nested-list" id="katering-list">
-                            @foreach ($jenis as $data)
-                                @if (!$data->is_prasmanan)
-                                    <li class="list-group-item">
-                                        <a
-                                            href="{{ url('/paket?jenis_id=' . $data->nama_jenis) }}">{{ $data->nama_jenis }}</a>
-                                    </li>
-                                @endif
-                            @endforeach
-                        </ul>
+            <div class="col-md-3">
+                <button class="btn btn-primary filter-icon" style="background-color: #01562C;" onclick="toggleFilter()">
+                    Filter <i class="fas fa-filter"></i>
+                </button>
+                <ul class="list-group filter-section">
+                    <li class="list-group-item">
+                        <a href="{{ url('/paket') }}">Semua</a>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="collapse"
+                        data-target="#prasmanan-list" aria-expanded="false" aria-controls="prasmanan-list">
+                        <div>
+                            <i class="fas fa-utensils"></i> Prasmanan
+                        </div>
+                        <i class="fas fa-chevron-down dropdown-icon"></i>
+                    </li>
+                    <ul class="list-group collapse nested-list" id="prasmanan-list">
+                        @foreach ($jenis as $data)
+                            @if ($data->is_prasmanan)
+                                <li class="list-group-item">
+                                    <a href="{{ url('/paket?jenis_id=' . $data->nama_jenis) }}">{{ $data->nama_jenis }}</a>
+                                </li>
+                            @endif
+                        @endforeach
                     </ul>
-
-                </div>
-                <!-- Main content area for packages -->
-                <div class="col-md-9">
-                    {{-- <h2>Paket</h2> --}}
-                    <div class="row">
-                        @foreach ($pakets as $paket)
-                            <div class="col-md-4 mb-4">
-                                <div class="card h-100 shadow-sm">
-                                    <img src="{{ asset('storage/images/' . $paket->gambar_paket) }}" class="card-img-top"
-                                        alt="{{ $paket->nama_paket }}">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ $paket->nama_paket }}</h5>
-                                        <p class="card-text">{{ $paket->isi_paket }}</p>
-                                        <p class="card-text"><strong>Harga: Rp.
-                                                {{ number_format($paket->harga_paket, 0, ',', '.') }}</strong></p>
-                                        <form class="add-to-cart-form" data-paket-id="{{ $paket->id }}">
-                                            @csrf
-                                            <input type="hidden" name="paket_id" value="{{ $paket->id }}">
-                                            <button type="submit" class="btn btn-primary btn-block">Tambah ke
-                                                Keranjang</button>
-                                        </form>
-                                    </div>
+                    <li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="collapse"
+                        data-target="#katering-list" aria-expanded="false" aria-controls="katering-list">
+                        <div>
+                            <i class="fas fa-concierge-bell"></i> Katering
+                        </div>
+                        <i class="fas fa-chevron-down dropdown-icon"></i>
+                    </li>
+                    <ul class="list-group collapse nested-list" id="katering-list">
+                        @foreach ($jenis as $data)
+                            @if (!$data->is_prasmanan)
+                                <li class="list-group-item">
+                                    <a href="{{ url('/paket?jenis_id=' . $data->nama_jenis) }}">{{ $data->nama_jenis }}</a>
+                                </li>
+                            @endif
+                        @endforeach
+                    </ul>
+                </ul>
+            </div>
+            <!-- Main content area for packages -->
+            <div class="col-md-9">
+                <div class="row">
+                    @foreach ($pakets as $paket)
+                        <div class="col-md-4 mb-4 px-2">
+                            <div class="card h-100 shadow-sm">
+                                <img src="{{ asset('storage/images/' . $paket->gambar_paket) }}" class="card-img-top"
+                                    alt="{{ $paket->nama_paket }}">
+                                <div class="card-body">
+                                    <h5 class="card-title font-weight-bold">{{ $paket->nama_paket }}</h5>
+                                    <p class="card-text">{{ $paket->isi_paket }}</p>
+                                    <p class="card-text text-danger"><strong>Harga: Rp.
+                                            {{ number_format($paket->harga_paket, 0, ',', '.') }}</strong></p>
+                                    <form class="add-to-cart-form" data-paket-id="{{ $paket->id }}">
+                                        @csrf
+                                        <input type="hidden" name="paket_id" value="{{ $paket->id }}">
+                                        <button type="submit" class="btn btn-primary btn-block">Tambah ke
+                                            Keranjang</button>
+                                    </form>
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
-                    <div class="d-flex justify-content-center m-3">
-                        {!! $pakets->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
-                    </div>
+                        </div>
+                    @endforeach
+                </div>
+                <div class="d-flex justify-content-center m-3">
+                    {!! $pakets->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
                 </div>
             </div>
         </div>
@@ -236,6 +234,7 @@
                 });
             });
         });
+
         document.addEventListener('DOMContentLoaded', function() {
             const collapsibleItems = document.querySelectorAll('.list-group-item[data-toggle="collapse"]');
 
@@ -266,16 +265,15 @@
                 });
             });
         });
+
+        function toggleFilter() {
+            const filterSection = document.querySelector('.filter-section');
+            filterSection.style.display = filterSection.style.display === 'none' ? 'block' : 'none';
+        }
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-    <script>
-        function toggleFilter() {
-            const filterSection = document.querySelector('.filter-section');
-            filterSection.style.display = filterSection.style.display === 'none' ? 'block' : 'none';
-        }
-    </script>
 @endsection

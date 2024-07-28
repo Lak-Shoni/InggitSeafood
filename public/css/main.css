@@ -1228,6 +1228,12 @@ section {
   position: relative;
 }
 
+.gallery-image {
+  width: 300px; /* Set a fixed width */
+  height: 150px; /* Set a fixed height */
+  object-fit: cover; /* Ensure the image covers the entire area without stretching */
+}
+
 .gallery .swiper-pagination .swiper-pagination-bullet {
   width: 12px;
   height: 12px;
@@ -1254,6 +1260,14 @@ section {
     background: #fff;
     z-index: 1;
     transform: scale(1.2);
+  }
+}
+
+@media (max-width: 640px) {
+  .gallery-image {
+    width: 380px; /* Set a fixed width */
+    height: 300px; /* Set a fixed height */
+    object-fit: cover; /* Ensure the image covers the entire area without stretching */
   }
 }
 
@@ -1576,6 +1590,7 @@ section {
 }
 
 /* menu favorit */
+/* menu favorit */
 .fav-menu {
   text-align: center;
   padding: 20px;
@@ -1590,6 +1605,7 @@ section {
   margin-top: 20px;
   background-color: #01562C;
   border: none;
+  color: #fff;
 }
 
 .wrapper {
@@ -1604,31 +1620,36 @@ section {
   position: absolute;
   text-align: center;
   line-height: 50px;
-  background: #fff;
+  background: #01562C;
+  color: #fff;
   border-radius: 50%;
   box-shadow: 0 3px 6px rgba(0,0,0,0.23);
   transform: translateY(-50%);
-  transition: transform 0.1s linear;
+  transition: transform 0.1s linear, background-color 0.3s;
 }
-.wrapper i:active{
+.wrapper i:active {
   transform: translateY(-50%) scale(0.85);
 }
-.wrapper i:first-child{
+.wrapper i:first-child {
   left: -50px;
 }
-.wrapper i:last-child{
+.wrapper i:last-child {
   right: -50px;
 }
-.wrapper .carousel{
+.wrapper i:hover {
+  background-color: #013d1f;
+}
+.wrapper .carousel {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: calc((100% / 4));
+  grid-auto-columns: calc((100% / 4) - 16px);
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   gap: 16px;
   border-radius: 0;
   scroll-behavior: smooth;
   scrollbar-width: none;
+  padding-top:15px;
 }
 .carousel::-webkit-scrollbar {
   display: none;
@@ -1651,34 +1672,48 @@ section {
 }
 .carousel .card {
   scroll-snap-align: start;
-  height: 400px;
+  height: 450px;
   list-style: none;
   background: #fff;
   cursor: pointer;
   padding-bottom: 15px;
   flex-direction: column;
-  border-radius: 0;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.carousel .card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 .card .img img {
-  border-radius: 0;
+  border-radius: 10px 10px 0 0;
   width: 200px;
   object-fit: cover;
   border: 4px solid #fff;
+  transition: transform 0.3s;
+}
+.card .img:hover img {
+  transform: scale(1.05);
 }
 .carousel .card h2 {
-  font-weight: 500;
+  font-weight: 700;
   font-size: 1.5rem;
   color: #AD343E;
+  margin: 10px 0;
 }
 .carousel .card h1 {
   font-weight: 500;
   font-size: 1.2rem;
+  margin: 5px 0;
 }
 .carousel .card p {
   font-weight: 200;
   font-size: 1rem;
   padding: 0 15px;
+  margin-bottom: 10px;
 }
+
 
 
 
