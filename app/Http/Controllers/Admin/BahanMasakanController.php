@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BahanMasakan;
+use App\Models\Notification;
 use App\Models\Transaksi;
 
 class BahanMasakanController extends Controller
@@ -15,6 +17,8 @@ class BahanMasakanController extends Controller
     {
 
         $query = BahanMasakan::query();
+        $notifications = Notification::where('is_read', false)->get();
+        $unreadNotificationsCount = $notifications->count();
 
         // Sorting
         if ($request->has('sort_by')) {
@@ -28,7 +32,7 @@ class BahanMasakanController extends Controller
 
         $bahanMasakan = $query->paginate(10); // Sesuaikan dengan jumlah data per halaman
 
-        return view('admin.bahan_masakan.index', compact('bahanMasakan'))
+        return view('admin.bahan_masakan.index', compact('bahanMasakan','notifications','unreadNotificationsCount'))
             ->with('i', (request()->input('page', 1) - 1) * 10);
     }
 
@@ -68,6 +72,8 @@ class BahanMasakanController extends Controller
     {
         $selectedBahan = BahanMasakan::findOrFail($id);
         $bahanMasakanList = BahanMasakan::all();
+        $notifications = Notification::where('is_read', false)->get();
+        $unreadNotificationsCount = $notifications->count();
         $query = Transaksi::where('bahan_masakan_id', $id);
 
         if ($request->has('sort_by')) {
@@ -81,7 +87,7 @@ class BahanMasakanController extends Controller
 
         $transaksiList = $query->paginate(10);
 
-        return view('admin.bahan_masakan.show', compact('selectedBahan', 'bahanMasakanList', 'transaksiList'))
+        return view('admin.bahan_masakan.show', compact('selectedBahan', 'bahanMasakanList', 'transaksiList','notifications','unreadNotificationsCount'))
             ->with('i', (request()->input('page', 1) - 1) * 10);
     }
 

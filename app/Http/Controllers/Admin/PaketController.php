@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Jenis_Paket;
+use App\Models\Notification;
 use App\Models\Paket;
 use Illuminate\Http\Request;
 
@@ -13,6 +14,8 @@ class PaketController extends Controller
     {
         $query = Paket::query();
         $jenis = Jenis_Paket::all();
+        $notifications = Notification::where('is_read', false)->get();
+        $unreadNotificationsCount = $notifications->count();
 
         // Sorting
         if ($request->has('sort_by')) {
@@ -26,7 +29,7 @@ class PaketController extends Controller
 
         $pakets = $query->paginate(5); // Sesuaikan dengan jumlah data per halaman
 
-        return view('admin.pakets.index', compact('pakets', 'jenis'))
+        return view('admin.pakets.index', compact('pakets', 'jenis','unreadNotificationsCount','notifications'))
             ->with('i', (request()->input('page', 1) - 1) * 10);
     }
 

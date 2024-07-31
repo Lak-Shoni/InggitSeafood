@@ -6,13 +6,14 @@ use App\Http\Controllers\Client\ClientpaketController;
 use App\Http\Controllers\Admin\paketController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\InventoryController;
-use App\Http\Controllers\BahanMasakanController;
+use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\BahanMasakanController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\KeuanganController;
+use App\Http\Controllers\Admin\KeuanganController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -69,6 +70,9 @@ Route::middleware(['auth'])->group(function () {
     // Rute yang memerlukan peran admin
     Route::middleware(['admin'])->group(function () {
         Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+        Route::post('/mark-as-read/{id}', [NotificationController::class, 'markAsRead']);
+        Route::get('/get-notifications', [NotificationController::class, 'getNotifications']);
+
         Route::prefix('admin')->name('admin.')->group(function () {
             Route::resource('pakets', paketController::class);
             Route::get('/admin/pakets/{id}/edit', [PaketController::class, 'edit'])->name('admin.pakets.edit');
@@ -77,7 +81,9 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/admin/inventories/{id}/edit', [InventoryController::class, 'edit'])->name('admin.inventories.edit');
             
             Route::resource('bahan_masakan', BahanMasakanController::class);
-            Route::resource('keuangan', KeuanganController::class);
+            // Route::resource('keuangan', KeuanganController::class);
+            Route::resource('keuangan', KeuanganController::class)->except(['show']);
+
             Route::get('bahan_masakan/{id}/bahan_masuk', [BahanMasakanController::class, 'bahanMasuk'])->name('bahan_masakan.bahan_masuk');
             Route::post('bahan_masakan/{id}/bahan_masuk', [BahanMasakanController::class, 'storeBahanMasuk'])->name('bahan_masakan.store_bahan_masuk');
             Route::get('bahan_masakan/{id}/bahan_keluar', [BahanMasakanController::class, 'bahanKeluar'])->name('bahan_masakan.bahan_keluar');
@@ -92,5 +98,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('keuangan/{id}/edit', [KeuanganController::class, 'edit'])->name('keuangan.edit');
         Route::get('/admin/keuangan/getOmset/{date}', [KeuanganController::class, 'getOmset']);
+        Route::get('admin/keuangan/download-pdf', [KeuanganController::class, 'generateMonthlyReportPDF'])->name('admin.keuangan.download_pdf');
+
     });
 });

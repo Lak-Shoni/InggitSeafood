@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Inventory;
+use App\Models\Notification;
 
 class InventoryController extends Controller
 {
@@ -13,6 +15,8 @@ class InventoryController extends Controller
     public function index(Request $request)
     {
         $query = Inventory::query();
+        $notifications = Notification::where('is_read', false)->get();
+        $unreadNotificationsCount = $notifications->count();
 
         // Sorting
         if ($request->has('sort_by')) {
@@ -26,7 +30,7 @@ class InventoryController extends Controller
 
         $inventories = $query->paginate(10); // Sesuaikan dengan jumlah data per halaman
 
-        return view('admin.inventories.index', compact('inventories'))
+        return view('admin.inventories.index', compact('inventories','unreadNotificationsCount','notifications'))
             ->with('i', (request()->input('page', 1) - 1) * 10);
     }
 

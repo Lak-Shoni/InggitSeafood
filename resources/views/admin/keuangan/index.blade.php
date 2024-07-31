@@ -25,35 +25,41 @@
                                     <input type="date" class="form-control" id="transaction_date" name="transaction_date"
                                         required>
                                 </div>
-                                
+
                                 <div class="form-group">
                                     <label for="purchasing">Purchasing</label>
-                                    <input type="text" inputmode="numeric" class="form-control" id="purchasing" name="purchasing" required>
+                                    <input type="text" inputmode="numeric" class="form-control" id="purchasing"
+                                        name="purchasing" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="tenagaKerja">Tenaga Kerja</label>
-                                    <input type="text" inputmode="numeric" class="form-control" id="tenagaKerja" name="tenaga_kerja"
-                                        required>
+                                    <input type="text" inputmode="numeric" class="form-control" id="tenagaKerja"
+                                        name="tenaga_kerja" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="pln">PLN</label>
-                                    <input type="text" inputmode="numeric" class="form-control" id="pln" name="pln" required>
+                                    <input type="text" inputmode="numeric" class="form-control" id="pln"
+                                        name="pln" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="akomodasi">Akomodasi</label>
-                                    <input type="text" inputmode="numeric" class="form-control" id="akomodasi" name="akomodasi" required>
+                                    <input type="text" inputmode="numeric" class="form-control" id="akomodasi"
+                                        name="akomodasi" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="sewaAlat">Sewa Alat</label>
-                                    <input type="text" inputmode="numeric" class="form-control" id="sewaAlat" name="sewa_alat" required>
+                                    <input type="text" inputmode="numeric" class="form-control" id="sewaAlat"
+                                        name="sewa_alat" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="omset">Omset</label>
-                                    <input type="text" inputmode="numeric" class="form-control" id="omset" name="omset" readonly>
+                                    <input type="text" inputmode="numeric" class="form-control" id="omset"
+                                        name="omset" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label for="profit">Profit</label>
-                                    <input type="text" inputmode="numeric" class="form-control" id="profit" name="profit" readonly>
+                                    <input type="text" inputmode="numeric" class="form-control" id="profit"
+                                        name="profit" readonly>
                                 </div>
                                 <button type="submit" id="submitButton" class="btn btn-primary">Tambah Data</button>
                             </form>
@@ -61,6 +67,51 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="printModal" tabindex="-1" role="dialog" aria-labelledby="printModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="printModalLabel">Cetak Rekap Keuangan</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ route('admin.keuangan.download_pdf') }}" method="GET">
+                                <div class="d-flex">
+                                    <div class="form-group col-4">
+                                        <label for="month">Bulan</label>
+                                        <select name="month" id="month" class="form-control">
+                                            @for ($m = 1; $m <= 12; $m++)
+                                                <option value="{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}"
+                                                    {{ $m == date('m') ? 'selected' : '' }}>
+                                                    {{ date('F', mktime(0, 0, 0, $m, 1)) }}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-4">
+                                        <label for="year">Tahun</label>
+                                        <select name="year" id="year" class="form-control">
+                                            @for ($y = date('Y'); $y >= date('Y') - 5; $y--)
+                                                <option value="{{ $y }}"
+                                                    {{ $y == date('Y') ? 'selected' : '' }}>
+                                                    {{ $y }}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Download Rekap Keuangan PDF</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="container-fluid">
                 <div class="row">
@@ -79,9 +130,12 @@
                                     </script>
                                 @endif
                                 <h2>Data Keuangan</h2>
-                                
+
                                 <button class="btn btn-success mb-3" data-toggle="modal" data-target="#dataModal"
                                     id="addDataButton">Tambah Data</button>
+                                <button class="btn btn-success mb-3" data-toggle="modal" data-target="#printModal"
+                                    id="printButton">Cetak Rekap Keuangan</button>
+
 
                                 <div class="d-flex justify-content-end align-items-end mb-4 mr-2">
                                     <form id="searchForm" method="GET" action="{{ route('admin.keuangan.index') }}"
@@ -339,6 +393,8 @@
                 $('#dataForm')[0].reset();
                 $('#submitButton').text('Tambah Data');
             });
+
+
 
             // Populate the modal with data when editing
             $('.editButton').click(function() {

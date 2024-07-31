@@ -1,9 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Keuangan;
+use App\Models\Notification;
 use App\Models\Order;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class KeuanganController extends Controller
@@ -11,6 +15,8 @@ class KeuanganController extends Controller
     public function index(Request $request)
     {
         $query = Keuangan::query();
+        $notifications = Notification::where('is_read', false)->get();
+        $unreadNotificationsCount = $notifications->count();
 
         // Sorting
         if ($request->has('sort_by')) {
@@ -24,7 +30,7 @@ class KeuanganController extends Controller
 
         $dataKeuangan = $query->paginate(10); // Adjust the number of items per page as needed
 
-        return view('admin.keuangan.index', compact('dataKeuangan'))
+        return view('admin.keuangan.index', compact('dataKeuangan', 'notifications', 'unreadNotificationsCount'))
             ->with('i', (request()->input('page', 1) - 1) * 10);
     }
 
@@ -85,9 +91,27 @@ class KeuanganController extends Controller
     {
         // Hitung total pendapatan penjualan pada tanggal tersebut
         $omset = Order::where('payment_status', 'paid')
-                      ->whereDate('created_at', $date)
-                      ->sum('total_price');
+            ->whereDate('created_at', $date)
+            ->sum('total_price');
 
         return response()->json($omset);
+    }
+
+
+    public function generateMonthlyReportPDF(Request $request)
+    {
+        $month = $request->input('month', date('m')); // Ambil bulan dari request atau gunakan bulan saat ini
+        $year = $request->input('year', date('Y')); // Ambil tahun dari request atau gunakan tahun saat ini
+
+        // Ambil data keuangan berdasarkan bulan dan tahun dari transaction_date
+        $dataKeuangan = Keuangan::whereYear('transaction_date', $year)
+            ->whereMonth('transaction_date', $month)
+            ->get();
+
+        // Buat PDF dengan menggunakan view 'admin.keuangan.rekapBulanan'
+        $pdf = PDF::loadView('admin.keuangan.rekapBulanan', compact('dataKeuangan', 'month', 'year'));
+
+        // Download PDF dengan nama file yang sesuai
+        return $pdf->download("rekap_bulanan_{$year}_{$month}.pdf");
     }
 }

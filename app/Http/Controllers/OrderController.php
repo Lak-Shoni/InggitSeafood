@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\OrderCreated;
 use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\Hutang;
 use App\Models\Order;
 use App\Models\Paket;
-use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Illuminate\Support\Facades\Auth;
 use Midtrans\Config;
 use Midtrans\Snap;
@@ -58,7 +58,7 @@ class OrderController extends Controller
 
         $cart_ids = $request->input('cart_ids');
 
-        // Convert cart_ids to array
+        // Convert cart_ids to array 
         if (is_string($cart_ids)) {
             $cart_ids = json_decode($cart_ids, true);
         }
@@ -143,6 +143,7 @@ class OrderController extends Controller
                 $hutang->save();
             }
 
+            event(new OrderCreated($order));
             // Clear session data
             session()->forget(['order_data', 'cart_ids']);
 

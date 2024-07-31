@@ -251,9 +251,9 @@
                                                 </a>
                                             @endif
                                         @endif
-                                        {{-- <a href="{{ route('orders.pdf', $order->id) }}" class="btn btn-success">
+                                        <a href="{{ route('orders.pdf', $order->id) }}" class="btn btn-success">
                                             <i class="fa-solid fa-file-pdf"></i> Download Invoice
-                                        </a> --}}
+                                        </a>
                                         <button class="btn btn-primary detail_pesanan" data-bs-toggle="modal"
                                             data-bs-target="#orderDetailModal"
                                             data-id="{{ $order->id }}">Detail</button>

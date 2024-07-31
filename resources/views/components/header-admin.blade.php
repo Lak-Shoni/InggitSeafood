@@ -28,41 +28,70 @@
     }
 </style>
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-    <!-- Left navbar links -->
-    <ul class="navbar-nav m-2">
-        <div class="row">
-            <div class="col">
-                @include('components.breadcrumb')
-            </div>
+    <ul class="navbar-nav">
+        <!-- Breadcrumb on the left -->
+        <li class="nav-item">
+            @include('components.breadcrumb')
+        </li>
+    </ul>
+
+    <ul class="navbar-nav ml-auto">
+        <!-- Notification Icon on the right -->
+        <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
-                <li class="nav-item dropdown">
-                    <i class="far fa-bell"></i>
-                    <span class="badge badge-warning navbar-badge">15</span>
+                <i class="far fa-bell"></i>
+                @if ($unreadNotificationsCount > 0)
+                    <span class="badge badge-warning navbar-badge">{{ $unreadNotificationsCount }}</span>
+                @endif
             </a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                <span class="dropdown-item dropdown-header">15 Notifications</span>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-envelope mr-2"></i> 4 new messages
-                    <span class="float-right text-muted text-sm">3 mins</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-users mr-2"></i> 8 friend requests
-                    <span class="float-right text-muted text-sm">12 hours</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-file mr-2"></i> 3 new reports
-                    <span class="float-right text-muted text-sm">2 days</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+                @foreach ($notifications as $notification)
+                    <a href="#" class="dropdown-item">
+                        <!-- Notification Start -->
+                        <div class="media">
+                            <div class="media-body">
+                                <h3 class="dropdown-item-title">
+                                    Pesanan Baru
+                                </h3>
+                                <p class="text-sm">Pesanan ID: {{ $notification->order_code }}</p>
+                            </div>
+                        </div>
+                        <!-- Notification End -->
+                    </a>
+                @endforeach
             </div>
-        </div>
-
         </li>
-
     </ul>
 </nav>
+
 <!-- /.navbar -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Contoh AJAX untuk mendapatkan notifikasi baru setiap beberapa detik
+        setInterval(function() {
+            fetch('/get-notifications')
+                .then(response => response.json())
+                .then(data => {
+                    const notificationDropdown = document.querySelector('.dropdown-menu');
+                    notificationDropdown.innerHTML = '';
+                    data.notifications.forEach(notification => {
+                        notificationDropdown.innerHTML += `
+                            <a href="#" class="dropdown-item">
+                                <div class="media">
+                                    <div class="media-body">
+                                        <h3 class="dropdown-item-title">
+                                            Pesanan Baru
+                                        </h3>
+                                        <p class="text-sm">Pesanan ID: ${notification.order_id}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        `;
+                    });
+
+                    const badge = document.querySelector('.navbar-badge');
+                    badge.textContent = data.unreadNotificationsCount;
+                });
+        }, 30000); // Update setiap 30 detik
+    });
+</script>
