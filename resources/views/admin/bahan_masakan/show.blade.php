@@ -96,7 +96,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="bahan_masuk">Jumlah Bahan Masuk</label>
-                            <input type="text" inputmode="numeric" class="form-control" id="bahan_masuk" name="bahan_masuk" required>
+                            <input type="number" inputmode="numeric" class="form-control" id="bahan_masuk" name="bahan_masuk" required>
                         </div>
                         <div class="form-group">
                             <label for="tanggal_transaksi_masuk">Tanggal Transaksi</label>
@@ -130,7 +130,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="bahan_keluar">Jumlah Bahan Keluar</label>
-                            <input type="text" inputmode="numeric" class="form-control" id="bahan_keluar" name="bahan_keluar" required>
+                            <input type="number" inputmode="numeric" class="form-control" id="bahan_keluar" name="bahan_keluar" required>
                         </div>
                         <div class="form-group">
                             <label for="tanggal_transaksi_keluar">Tanggal Transaksi</label>

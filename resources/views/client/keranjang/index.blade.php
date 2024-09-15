@@ -61,64 +61,74 @@
                 });
             </script>
         @endif
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Nama Paket</th>
-                    <th>Jumlah</th>
-                    <th>Harga</th>
-                    <th>Total</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($carts as $cart)
+        @if ($carts->isEmpty())
+            <div class="col-12 text-center">
+                <img src="{{ asset('img/cart-no-found0.png') }}" alt="Menu tidak ditemukan" style="max-width: 300px;"
+                    class="img-fluid mb-3">
+                <h5 class="text-muted">Oops! Keranjang Kosong.</h5>
+                <p class="text-muted">Kamu belum memasukkan paket ke dalam keranjang. <a href="{{ route('client.paket.index') }}" style="font-weight: 600">Lihat Paket Disini</a></p>
+            </div>
+        @else
+            <table class="table table-bordered">
+                <thead>
                     <tr>
-                        <td>
-                            <input type="checkbox" class="cart-checkbox mr-2" style="transform: scale(2);"
-                                value="{{ $cart->id }}" data-id="{{ $cart->id }}">
-                            {{ ucwords($cart->paket->nama_paket) }}
-                        </td>
-                        <td>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <button class="btn btn-outline-secondary decrement" data-id="{{ $cart->id }}"
-                                        type="button">-</button>
-                                </div>
-                                <input type="input" class="form-control quantity" data-id="{{ $cart->id }}"
-                                    value="{{ $cart->quantity }}" style="width: 1px; text-align: center;">
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary increment" data-id="{{ $cart->id }}"
-                                        type="button">+</button>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Rp. {{ number_format($cart->paket->harga_paket, 0, ',', '.') }}</td>
-                        <td class="total" data-id="{{ $cart->id }}">Rp.
-                            {{ number_format($cart->paket->harga_paket * $cart->quantity, 0, ',', '.') }}</td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <form action="{{ route('cart.delete', $cart->id) }}" method="POST" class="delete-form"
-                                    style="display:inline;">
-                                    @csrf
-
-                                    <button type="button" class="btn btn-danger delete-btn">Hapus</button>
-                                </form>
-                            </div>
-                        </td>
+                        <th>Nama Paket</th>
+                        <th>Jumlah</th>
+                        <th>Harga</th>
+                        <th>Total</th>
+                        <th>Aksi</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <div class="text-right">
-            <h4>Total Harga Semua Pesanan: <span id="grand-total"></span></h4>
-            <form id="order-form" action="{{ route('checkout.form') }}" method="GET">
-                @csrf
-                <input type="hidden" name="cart_ids" id="cart-ids">
-                <input type="hidden" name="grand_total" id="grand-total-input">
-                <button type="submit" class="btn btn-success">Buat Pesanan</button>
-            </form>
-        </div>
+                </thead>
+                <tbody>
+
+                    @foreach ($carts as $cart)
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="cart-checkbox mr-2" style="transform: scale(2);"
+                                    value="{{ $cart->id }}" data-id="{{ $cart->id }}">
+                                {{ ucwords($cart->paket->nama_paket) }}
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-outline-secondary decrement" data-id="{{ $cart->id }}"
+                                            type="button">-</button>
+                                    </div>
+                                    <input type="input" class="form-control quantity" data-id="{{ $cart->id }}"
+                                        value="{{ $cart->quantity }}" style="width: 1px; text-align: center;">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary increment" data-id="{{ $cart->id }}"
+                                            type="button">+</button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Rp. {{ number_format($cart->paket->harga_paket, 0, ',', '.') }}</td>
+                            <td class="total" data-id="{{ $cart->id }}">Rp.
+                                {{ number_format($cart->paket->harga_paket * $cart->quantity, 0, ',', '.') }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <form action="{{ route('cart.delete', $cart->id) }}" method="POST" class="delete-form"
+                                        style="display:inline;">
+                                        @csrf
+
+                                        <button type="button" class="btn btn-danger delete-btn">Hapus</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <div class="text-right">
+                <h4>Total Harga Semua Pesanan: <span id="grand-total"></span></h4>
+                <form id="order-form" action="{{ route('checkout.form') }}" method="GET">
+                    @csrf
+                    <input type="hidden" name="cart_ids" id="cart-ids">
+                    <input type="hidden" name="grand_total" id="grand-total-input">
+                    <button type="submit" class="btn btn-success">Buat Pesanan</button>
+                </form>
+            </div>
+            @endif
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 

@@ -232,7 +232,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="jumlah">Jumlah:</label>
-                                <input type="text" inputmode="numeric" class="form-control" id="jumlah"
+                                <input type="number" inputmode="numeric" class="form-control" id="jumlah"
                                     name="jumlah" required>
                             </div>
                             <div class="form-group">
@@ -250,12 +250,12 @@
                             </div>
                             <div class="form-group">
                                 <label for="harga_satuan">Harga Satuan:</label>
-                                <input type="text" inputmode="numeric" class="form-control" id="harga_satuan"
+                                <input type="number" inputmode="numeric" class="form-control" id="harga_satuan"
                                     name="harga_satuan" required>
                             </div>
                             <div class="form-group">
                                 <label for="total_harga">Total Harga:</label>
-                                <input type="text" inputmode="numeric" class="form-control" id="total_harga"
+                                <input type="number" inputmode="numeric" class="form-control" id="total_harga"
                                     name="total_harga" readonly>
                             </div>
                         </div>
@@ -294,7 +294,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="edit_jumlah">Jumlah:</label>
-                                <input type="text" inputmode="numeric" class="form-control" id="edit_jumlah"
+                                <input type="number" inputmode="numeric" class="form-control" id="edit_jumlah"
                                     name="jumlah" required>
                             </div>
                             <div class="form-group">
@@ -312,12 +312,12 @@
                             </div>
                             <div class="form-group">
                                 <label for="edit_harga_satuan">Harga Satuan:</label>
-                                <input type="text" inputmode="numeric" class="form-control" id="edit_harga_satuan"
+                                <input type="number" inputmode="numeric" class="form-control" id="edit_harga_satuan"
                                     name="harga_satuan" required>
                             </div>
                             <div class="form-group">
                                 <label for="edit_total_harga">Total Harga:</label>
-                                <input type="text" inputmode="numeric" class="form-control" id="edit_total_harga"
+                                <input type="number" inputmode="numeric" class="form-control" id="edit_total_harga"
                                     name="total_harga" readonly>
                             </div>
                         </div>

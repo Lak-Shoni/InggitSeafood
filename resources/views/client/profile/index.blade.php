@@ -125,145 +125,155 @@
         <br><br>
         <div class="col-md-12">
             <h3>Riwayat Pesanan</h3>
-            <table id="example2" class="table table-bordered table-hover">
-                <colgroup>
-                    <col style="width: 8%;">
-                    <col style="width: 10%;">
-                    <col style="width: 15%;">
-                    <col style="width: 17%;">
-                    <col style="width: 16%;">
-                    <col style="width: 12%;">
-                    <col style="width: 14%;">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>
-                            <a
-                                href="{{ route('profile', ['sort_by' => 'id', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                Kode Pesanan
-                                @if (request('sort_by') == 'id')
-                                    <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                @else
-                                    <i class="fas fa-sort"></i>
-                                @endif
-                            </a>
-                        </th>
-                        <th>
-                            <a
-                                href="{{ route('profile', ['sort_by' => 'created_at', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                Tanggal Pesanan
-                                @if (request('sort_by') == 'created_at')
-                                    <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                @else
-                                    <i class="fas fa-sort"></i>
-                                @endif
-                            </a>
-                        </th>
-                        <th>
-                            <a
-                                href="{{ route('profile', ['sort_by' => 'delivery_time', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                Waktu Pengiriman
-                                @if (request('sort_by') == 'delivery_time')
-                                    <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                @else
-                                    <i class="fas fa-sort"></i>
-                                @endif
-                            </a>
-                        </th>
-                        <th>
-                            <a
-                                href="{{ route('profile', ['sort_by' => 'payment_method', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                Metode Pembayaran
-                                @if (request('sort_by') == 'payment_method')
-                                    <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                @else
-                                    <i class="fas fa-sort"></i>
-                                @endif
-                            </a>
-                        </th>
-                        <th>
-                            <a
-                                href="{{ route('profile', ['sort_by' => 'payment_status', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                Status Pembayaran
-                                @if (request('sort_by') == 'payment_status')
-                                    <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                @else
-                                    <i class="fas fa-sort"></i>
-                                @endif
-                            </a>
-                        </th>
-                        <th>
-                            <a
-                                href="{{ route('profile', ['sort_by' => 'order_status', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                Status Pesanan
-                                @if (request('sort_by') == 'order_status')
-                                    <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                @else
-                                    <i class="fas fa-sort"></i>
-                                @endif
-                            </a>
-                        </th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($orders as $order)
-                        @if ($order->user_id == Auth::id())
-                            <tr>
-                                <td>{{ $order->order_code }}</td>
-                                <td>{{ $order->created_at }}</td>
-                                <td>{{ $order->delivery_time }}</td>
-                                <td>
-                                    @if ($order->payment_method == 'bayar_langsung')
-                                        Bayar Langsung
-                                    @elseif ($order->payment_method == 'bayar_ditempat')
-                                        Bayar di Tempat
-                                    @elseif ($order->payment_method == 'bayar_dengan_tenggat_waktu')
-                                        Bayar dengan Tenggat Waktu
+            @if ($orders->isEmpty())
+                <div class="col-12 text-center">
+                    <img src="{{ asset('img/no-order-history.png') }}" alt="Menu tidak ditemukan" style="max-width: 300px;"
+                        class="img-fluid mb-3">
+                    <h5 class="text-muted">Oops! Riwayat Kosong.</h5>
+                    <p class="text-muted">Kamu belum melakukan pemesanan</p>
+                </div>
+            @else
+                <table id="example2" class="table table-bordered table-hover">
+                    <colgroup>
+                        <col style="width: 8%;">
+                        <col style="width: 10%;">
+                        <col style="width: 15%;">
+                        <col style="width: 17%;">
+                        <col style="width: 16%;">
+                        <col style="width: 12%;">
+                        <col style="width: 14%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>
+                                <a
+                                    href="{{ route('profile', ['sort_by' => 'id', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                    Kode Pesanan
+                                    @if (request('sort_by') == 'id')
+                                        <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                    @else
+                                        <i class="fas fa-sort"></i>
                                     @endif
-                                </td>
-                                <td>
-                                    @if ($order->payment_status == 'pending')
-                                        <span class="badge badge-warning">Pending</span>
-                                    @elseif ($order->payment_status == 'paid')
-                                        <span class="badge badge-success">Lunas</span>
-                                    @elseif ($order->payment_status == 'failed')
-                                        <span class="badge badge-danger">Gagal</span>
+                                </a>
+                            </th>
+                            <th>
+                                <a
+                                    href="{{ route('profile', ['sort_by' => 'created_at', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                    Tanggal Pesanan
+                                    @if (request('sort_by') == 'created_at')
+                                        <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                    @else
+                                        <i class="fas fa-sort"></i>
                                     @endif
-                                </td>
-                                <td>
-                                    @if ($order->order_status == 'proses')
-                                        <span class="badge badge-warning">Sedang Diproses</span>
-                                    @elseif ($order->order_status == 'selesai')
-                                        <span class="badge badge-success">Selesai</span>
-                                    @elseif ($order->order_status == 'kirim')
-                                        <span class="badge badge-info">Sedang Dikirim</span>
-                                    @elseif ($order->order_status == 'terima')
-                                        <span class="badge badge-info">Diterima</span>
+                                </a>
+                            </th>
+                            <th>
+                                <a
+                                    href="{{ route('profile', ['sort_by' => 'delivery_time', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                    Waktu Pengiriman
+                                    @if (request('sort_by') == 'delivery_time')
+                                        <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                    @else
+                                        <i class="fas fa-sort"></i>
                                     @endif
-                                </td>
-                                <td>
-                                    <span style="display: flex; gap: 10px;">
-                                        @if ($order->order_status != 'proses' && $order->order_status != 'selesai')
-                                            @if ($order->order_status != 'terima')
-                                                <a href="{{ url('/order/terima/' . $order->id) }}" class="btn btn-success">
-                                                    Terima
-                                                </a>
-                                            @endif
+                                </a>
+                            </th>
+                            <th>
+                                <a
+                                    href="{{ route('profile', ['sort_by' => 'payment_method', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                    Metode Pembayaran
+                                    @if (request('sort_by') == 'payment_method')
+                                        <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                    @else
+                                        <i class="fas fa-sort"></i>
+                                    @endif
+                                </a>
+                            </th>
+                            <th>
+                                <a
+                                    href="{{ route('profile', ['sort_by' => 'payment_status', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                    Status Pembayaran
+                                    @if (request('sort_by') == 'payment_status')
+                                        <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                    @else
+                                        <i class="fas fa-sort"></i>
+                                    @endif
+                                </a>
+                            </th>
+                            <th>
+                                <a
+                                    href="{{ route('profile', ['sort_by' => 'order_status', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                    Status Pesanan
+                                    @if (request('sort_by') == 'order_status')
+                                        <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                    @else
+                                        <i class="fas fa-sort"></i>
+                                    @endif
+                                </a>
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($orders as $order)
+                            @if ($order->user_id == Auth::id())
+                                <tr>
+                                    <td>{{ $order->order_code }}</td>
+                                    <td>{{ $order->created_at }}</td>
+                                    <td>{{ $order->delivery_time }}</td>
+                                    <td>
+                                        @if ($order->payment_method == 'bayar_langsung')
+                                            Bayar Langsung
+                                        @elseif ($order->payment_method == 'bayar_ditempat')
+                                            Bayar di Tempat
+                                        @elseif ($order->payment_method == 'bayar_dengan_tenggat_waktu')
+                                            Bayar dengan Tenggat Waktu
                                         @endif
-                                        <a href="{{ route('orders.pdf', $order->id) }}" class="btn btn-success">
-                                            <i class="fa-solid fa-file-pdf"></i> Download Invoice
-                                        </a>
-                                        <button class="btn btn-primary detail_pesanan" data-bs-toggle="modal"
-                                            data-bs-target="#orderDetailModal"
-                                            data-id="{{ $order->id }}">Detail</button>
-                                    </span>
-                                </td>
-                            </tr>
-                        @endif
-                    @endforeach
-                </tbody>
-            </table>
+                                    </td>
+                                    <td>
+                                        @if ($order->payment_status == 'pending')
+                                            <span class="badge badge-warning">Pending</span>
+                                        @elseif ($order->payment_status == 'paid')
+                                            <span class="badge badge-success">Lunas</span>
+                                        @elseif ($order->payment_status == 'failed')
+                                            <span class="badge badge-danger">Gagal</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($order->order_status == 'proses')
+                                            <span class="badge badge-warning">Sedang Diproses</span>
+                                        @elseif ($order->order_status == 'selesai')
+                                            <span class="badge badge-success">Selesai</span>
+                                        @elseif ($order->order_status == 'kirim')
+                                            <span class="badge badge-info">Sedang Dikirim</span>
+                                        @elseif ($order->order_status == 'terima')
+                                            <span class="badge badge-info">Diterima</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span style="display: flex; gap: 10px;">
+                                            @if ($order->order_status != 'proses' && $order->order_status != 'selesai')
+                                                @if ($order->order_status != 'terima')
+                                                    <a href="{{ url('/order/terima/' . $order->id) }}"
+                                                        class="btn btn-success">
+                                                        Terima
+                                                    </a>
+                                                @endif
+                                            @endif
+                                            <a href="{{ route('orders.pdf', $order->id) }}" class="btn btn-success">
+                                                <i class="fa-solid fa-file-pdf"></i> Download Invoice
+                                            </a>
+                                            <button class="btn btn-primary detail_pesanan" data-bs-toggle="modal"
+                                                data-bs-target="#orderDetailModal"
+                                                data-id="{{ $order->id }}">Detail</button>
+                                        </span>
+                                    </td>
+                                </tr>
+                            @endif
+                        @endforeach
+                    </tbody>
+                </table>
+            @endif
             <div class="d-flex justify-content-center m-3">
                 {!! $orders->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
             </div>
@@ -343,7 +353,8 @@
                             '</td></tr>';
                         html += '<tr><th>No Telpon</th><td>' + response.user.no_telpon +
                             '</td></tr>';
-                        html += '<tr><th>Total Harga</th><td>' + formatRupiah(response.total_price) +
+                        html += '<tr><th>Total Harga</th><td>' + formatRupiah(response
+                                .total_price) +
                             '</td></tr>';
                         html += '<tr><th>Alamat</th><td>' + response.address + '</td></tr>';
                         html += '<tr><th>Nama Instansi</th><td>' + response.partner_name +
@@ -370,7 +381,8 @@
                             html += '<tr>';
                             html += '<td>' + item.nama_paket + '</td>';
                             html += '<td>' + item.quantity + '</td>';
-                            html += '<td>' + formatRupiah((item.total_per_item)) + '</td>';
+                            html += '<td>' + formatRupiah((item.total_per_item)) +
+                                '</td>';
                             html += '</tr>';
                         });
                         html += '</table>';

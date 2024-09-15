@@ -19,12 +19,12 @@
         }
 
         .card {
-            
+
             border-radius: 10px;
             overflow: hidden;
             transition: transform 0.3s, box-shadow 0.3s;
             background: #fff;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
             /* box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); */
         }
@@ -162,26 +162,34 @@
             <!-- Main content area for packages -->
             <div class="col-md-9">
                 <div class="row">
-                    @foreach ($pakets as $paket)
-                        <div class="col-md-4 mb-4 px-2">
-                            <div class="card h-100 shadow-sm">
-                                <img src="{{ asset('storage/images/' . $paket->gambar_paket) }}" class="card-img-top"
-                                    alt="{{ $paket->nama_paket }}">
-                                <div class="card-body">
-                                    <h5 class="card-title font-weight-bold">{{ $paket->nama_paket }}</h5>
-                                    <p class="card-text">{{ $paket->isi_paket }}</p>
-                                    <p class="card-text text-danger"><strong>Harga: Rp.
-                                            {{ number_format($paket->harga_paket, 0, ',', '.') }}</strong></p>
-                                    <form class="add-to-cart-form" data-paket-id="{{ $paket->id }}">
-                                        @csrf
-                                        <input type="hidden" name="paket_id" value="{{ $paket->id }}">
-                                        <button type="submit" class="btn btn-primary btn-block">Tambah ke
-                                            Keranjang</button>
-                                    </form>
+                    @if ($pakets->isEmpty())
+                    <div class="col-12 text-center">
+                        <img src="{{ asset('img/no-menu-found.png') }}" alt="Menu tidak ditemukan" style="max-width: 300px;" class="img-fluid mb-3">
+                        <h5 class="text-muted" style="margin-top: -60px;">Oops! Paket tidak ditemukan.</h5>
+                        <p class="text-muted">Kami belum memiliki paket untuk saat ini. Silakan cek kembali nanti.</p>
+                    </div>
+                    @else
+                        @foreach ($pakets as $paket)
+                            <div class="col-md-4 mb-4 px-2">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="{{ asset('storage/images/' . $paket->gambar_paket) }}" class="card-img-top"
+                                        alt="{{ $paket->nama_paket }}">
+                                    <div class="card-body">
+                                        <h5 class="card-title font-weight-bold">{{ $paket->nama_paket }}</h5>
+                                        <p class="card-text">{{ $paket->isi_paket }}</p>
+                                        <p class="card-text text-danger"><strong>Harga: Rp.
+                                                {{ number_format($paket->harga_paket, 0, ',', '.') }}</strong></p>
+                                        <form class="add-to-cart-form" data-paket-id="{{ $paket->id }}">
+                                            @csrf
+                                            <input type="hidden" name="paket_id" value="{{ $paket->id }}">
+                                            <button type="submit" class="btn btn-primary btn-block">Tambah ke
+                                                Keranjang</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    @endif
                 </div>
                 <div class="d-flex justify-content-center m-3">
                     {!! $pakets->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}

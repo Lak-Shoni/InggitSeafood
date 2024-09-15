@@ -21,99 +21,113 @@
                                     });
                                 </script>
                             @endif
-                            <div class="d-flex justify-content-between align-items-end mb-4">
+
+                            @if ($pakets->isEmpty())
                                 <button class="btn btn-success mb-2" data-toggle="modal" data-target="#addPaketModal">Tambah
                                     Paket</button>
-                                <form id="searchForm" method="GET" action="{{ route('admin.pakets.index') }}"
-                                    class="form-inline">
-                                    <div class="form-group mb-2 position-relative">
-                                        <label for="search" class="mr-2">Cari berdasarkan nama:</label>
-                                        <input type="text" class="form-control" id="search" name="search"
-                                            value="{{ request('search') }}">
-                                        <span id="clearSearch" class="position-absolute"
-                                            style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none;">&times;</span>
-                                    </div>
-                                </form>
-                            </div>
-                            @php
-                                function formatRupiah($number)
-                                {
-                                    return 'Rp ' . number_format($number, 0, ',', '.');
-                                }
-                            @endphp
-                            <table id="example2" class="table table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.pakets.index', ['sort_by' => 'jenis_paket', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Jenis Paket
-                                                @if (request('sort_by') == 'jenis_paket')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.pakets.index', ['sort_by' => 'nama_paket', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Nama paket
-                                                @if (request('sort_by') == 'nama_paket')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>Gambar</th>
-                                        <th>Isi paket</th>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.pakets.index', ['sort_by' => 'harga_paket', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Harga paket
-                                                @if (request('sort_by') == 'harga_paket')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
+                                <div class="col-12 text-center">
+                                    <img src="{{ asset('img/no-menu-found.png') }}" alt="Menu tidak ditemukan"
+                                        style="max-width: 300px;" class="img-fluid mb-3">
+                                    <h5 class="text-muted" style="margin-top: -60px;">Oops! Daftar Paket Kosong.</h5>
+                                    <p class="text-muted">Kamu belum memiliki paket untuk saat ini. Silakan buat paket baru</p>
+                                </div>
+                            @else
+                                <div class="d-flex justify-content-between align-items-end mb-4">
+                                    <button class="btn btn-success mb-2" data-toggle="modal"
+                                        data-target="#addPaketModal">Tambah
+                                        Paket</button>
+                                    <form id="searchForm" method="GET" action="{{ route('admin.pakets.index') }}"
+                                        class="form-inline">
+                                        <div class="form-group mb-2 position-relative">
+                                            <label for="search" class="mr-2">Cari berdasarkan nama:</label>
+                                            <input type="text" class="form-control" id="search" name="search"
+                                                value="{{ request('search') }}">
+                                            <span id="clearSearch" class="position-absolute"
+                                                style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none;">&times;</span>
+                                        </div>
+                                    </form>
+                                </div>
+                                @php
+                                    function formatRupiah($number)
+                                    {
+                                        return 'Rp ' . number_format($number, 0, ',', '.');
+                                    }
+                                @endphp
 
-                                <tbody id="dataBody">
-                                    @foreach ($pakets as $paket)
+                                <table id="example2" class="table table-bordered table-hover">
+                                    <thead>
                                         <tr>
-
-                                            <td>{{ $paket->jenis_paket }}</td>
-                                            <td>{{ $paket->nama_paket }}</td>
-                                            <td><img src="{{ asset('storage/images/' . $paket->gambar_paket) }}"
-                                                    alt="{{ $paket->nama_paket }}" width="50"></td>
-                                            <td>{{ $paket->isi_paket }}</td>
-                                            <td>{{ formatRupiah($paket->harga_paket) }}</td>
-                                            <td>
-                                                <div class="d-flex justify-content-start">
-                                                    <button class="btn btn-primary mr-2 edit-btn"
-                                                        data-id="{{ $paket->id }}" data-toggle="modal"
-                                                        data-target="#editPaketModal">Edit</button>
-                                                    <form action="{{ route('admin.pakets.destroy', $paket->id) }}"
-                                                        method="POST" class="delete-form" style="display:inline;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="button"
-                                                            class="btn btn-danger delete-btn">Hapus</button>
-                                                    </form>
-                                                </div>
-                                            </td>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.pakets.index', ['sort_by' => 'jenis_paket', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Jenis Paket
+                                                    @if (request('sort_by') == 'jenis_paket')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
+                                                    @endif
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.pakets.index', ['sort_by' => 'nama_paket', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Nama paket
+                                                    @if (request('sort_by') == 'nama_paket')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
+                                                    @endif
+                                                </a>
+                                            </th>
+                                            <th>Gambar</th>
+                                            <th>Isi paket</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.pakets.index', ['sort_by' => 'harga_paket', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Harga paket
+                                                    @if (request('sort_by') == 'harga_paket')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
+                                                    @endif
+                                                </a>
+                                            </th>
+                                            <th>Action</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+
+                                    <tbody id="dataBody">
+                                        @foreach ($pakets as $paket)
+                                            <tr>
+
+                                                <td>{{ $paket->jenis_paket }}</td>
+                                                <td>{{ $paket->nama_paket }}</td>
+                                                <td><img src="{{ asset('storage/images/' . $paket->gambar_paket) }}"
+                                                        alt="{{ $paket->nama_paket }}" width="50"></td>
+                                                <td>{{ $paket->isi_paket }}</td>
+                                                <td>{{ formatRupiah($paket->harga_paket) }}</td>
+                                                <td>
+                                                    <div class="d-flex justify-content-start">
+                                                        <button class="btn btn-primary mr-2 edit-btn"
+                                                            data-id="{{ $paket->id }}" data-toggle="modal"
+                                                            data-target="#editPaketModal">Edit</button>
+                                                        <form action="{{ route('admin.pakets.destroy', $paket->id) }}"
+                                                            method="POST" class="delete-form" style="display:inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="button"
+                                                                class="btn btn-danger delete-btn">Hapus</button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @endif
                             <div class="d-flex justify-content-center m-3">
                                 {!! $pakets->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
                             </div>
@@ -163,7 +177,8 @@
                         </div>
                         <div class="form-group">
                             <label for="harga_paket">Harga Paket</label>
-                            <input type="text" inputmode="numeric" class="form-control" id="harga_paket" name="harga_paket" required>
+                            <input type="number" inputmode="numeric" class="form-control" id="harga_paket"
+                                name="harga_paket" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -190,16 +205,22 @@
                         </button>
                     </div>
                     <div class="modal-body">
-
                         <div class="form-group">
                             <label for="edit_jenis_paket">Jenis Paket</label>
                             <select name="jenis_paket" class="form-control" id="edit_jenis_paket" required>
-                                <option value="">Pilih Jenis</option>
-                                @foreach ($jenis as $data)
-                                    <option value="{{ $data->nama_jenis }}"
-                                        {{ $paket->jenis_paket == $data->id ? 'selected' : '' }}>{{ $data->nama_jenis }}
-                                    </option>
-                                @endforeach
+                                @if ($pakets->isEmpty())
+                                    <option value="">Pilih Jenis</option>
+                                    @foreach ($jenis as $data)
+                                    @endforeach
+                                @else
+                                    <option value="">Pilih Jenis</option>
+                                    @foreach ($jenis as $data)
+                                        <option value="{{ $data->nama_jenis }}"
+                                            {{ $paket->jenis_paket == $data->id ? 'selected' : '' }}>
+                                            {{ $data->nama_jenis }}
+                                        </option>
+                                    @endforeach
+                                @endif
                             </select>
                         </div>
                         <div class="form-group">
@@ -216,8 +237,8 @@
                         </div>
                         <div class="form-group">
                             <label for="edit_harga_paket">Harga Paket</label>
-                            <input type="text" inputmode="numeric" class="form-control" id="edit_harga_paket" name="harga_paket"
-                                required>
+                            <input type="number" inputmode="numeric" class="form-control" id="edit_harga_paket"
+                                name="harga_paket" required>
                         </div>
                     </div>
                     <div class="modal-footer">

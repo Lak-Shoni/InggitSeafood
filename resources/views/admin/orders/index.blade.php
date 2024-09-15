@@ -93,189 +93,198 @@
                         <!-- /.card-header -->
                         <div class="card-body">
                             <h1>Daftar Pesanan</h1>
-                            <div class="d-flex justify-content-end align-items-end mb-4 mr-2">
-                                <form id="searchForm" method="GET" action="{{ route('admin.orders.index') }}"
-                                    class="form-inline">
-                                    <div class="form-group mb-2 position-relative">
-                                        <label for="search" class="mr-2">Cari berdasarkan kode:</label>
-                                        <input type="text" class="form-control" id="search" name="search"
-                                            value="{{ request('search') }}">
-                                        <span id="clearSearch" class="position-absolute"
-                                            style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none;">&times;</span>
-                                    </div>
-                                </form>
-                            </div>
+                            @if ($orders->isEmpty())
+                                <div class="col-12 text-center">
+                                    <img src="{{ asset('img/no-order-history.png') }}" alt="Menu tidak ditemukan"
+                                        style="max-width: 300px;" class="img-fluid mb-3">
+                                    <h5 class="text-muted" style="margin-top: -50px;">Oops! Pesanan Kosong.</h5>
+                                    <p class="text-muted">Belum ada pemesanan</p>
+                                </div>
+                            @else
+                                <div class="d-flex justify-content-end align-items-end mb-4 mr-2">
+                                    <form id="searchForm" method="GET" action="{{ route('admin.orders.index') }}"
+                                        class="form-inline">
+                                        <div class="form-group mb-2 position-relative">
+                                            <label for="search" class="mr-2">Cari berdasarkan kode:</label>
+                                            <input type="text" class="form-control" id="search" name="search"
+                                                value="{{ request('search') }}">
+                                            <span id="clearSearch" class="position-absolute"
+                                                style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none;">&times;</span>
+                                        </div>
+                                    </form>
+                                </div>
 
-                            <table id="example2" class="table table-bordered table-hover">
-                                <colgroup>
-                                    <col style="width: 8%;">
-                                    <col style="width: 10%;">
-                                    <col style="width: 15%;">
-                                    <col style="width: 17%;">
-                                    <col style="width: 16%;">
-                                    <col style="width: 12%;">
-                                    <col style="width: 14%;">
-                                </colgroup>
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.orders.index', ['sort_by' => 'id', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Kode Pesanan
-                                                @if (request('sort_by') == 'id')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.orders.index', ['sort_by' => 'created_at', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Tanggal Pesanan
-                                                @if (request('sort_by') == 'created_at')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.orders.index', ['sort_by' => 'delivery_time', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Waktu Pengiriman
-                                                @if (request('sort_by') == 'delivery_time')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.orders.index', ['sort_by' => 'payment_method', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Metode Pembayaran
-                                                @if (request('sort_by') == 'payment_method')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.orders.index', ['sort_by' => 'payment_status', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Status Pembayaran
-                                                @if (request('sort_by') == 'payment_status')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a
-                                                href="{{ route('admin.orders.index', ['sort_by' => 'order_status', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                Status Pesanan
-                                                @if (request('sort_by') == 'order_status')
-                                                    <i
-                                                        class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                @else
-                                                    <i class="fas fa-sort"></i>
-                                                @endif
-                                            </a>
-                                        </th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dataBody">
-                                    @foreach ($orders as $order)
+                                <table id="example2" class="table table-bordered table-hover">
+                                    <colgroup>
+                                        <col style="width: 8%;">
+                                        <col style="width: 10%;">
+                                        <col style="width: 15%;">
+                                        <col style="width: 17%;">
+                                        <col style="width: 16%;">
+                                        <col style="width: 12%;">
+                                        <col style="width: 14%;">
+                                    </colgroup>
+                                    <thead>
                                         <tr>
-                                            <td>{{ $order->order_code }}</td>
-                                            <td>{{ $order->created_at }}</td>
-                                            <td>{{ $order->delivery_time }}</td>
-                                            <td>
-                                                @switch($order->payment_method)
-                                                    @case('bayar_langsung')
-                                                        Bayar Langsung
-                                                    @break
-
-                                                    @case('bayar_ditempat')
-                                                        Bayar di Tempat
-                                                    @break
-
-                                                    @case('bayar_dengan_tenggat_waktu')
-                                                        Bayar dengan Tenggat Waktu
-                                                    @break
-                                                @endswitch
-                                            </td>
-                                            <td>
-                                                @switch($order->payment_status)
-                                                    @case('pending')
-                                                        <span class="badge badge-warning">Pending</span>
-                                                    @break
-
-                                                    @case('paid')
-                                                        <span class="badge badge-success">Lunas</span>
-                                                    @break
-
-                                                    @case('failed')
-                                                        <span class="badge badge-danger">Gagal</span>
-                                                    @break
-                                                @endswitch
-
-
-                                            </td>
-                                            <td>
-                                                @switch($order->order_status)
-                                                    @case('proses')
-                                                        <span class="badge badge-warning">Sedang Diproses</span>
-                                                    @break
-
-                                                    @case('terima')
-                                                        <span class="badge badge-primary">Sudah Diterima</span>
-                                                    @break
-
-                                                    @case('selesai')
-                                                        <span class="badge badge-success">Selesai</span>
-                                                    @break
-
-                                                    @case('kirim')
-                                                        <span class="badge badge-info">Sedang Dikirim</span>
-                                                    @break
-                                                @endswitch
-                                            </td>
-                                            <td>
-                                                <div class="d-flex flex-column order-actions">
-                                                    @if ($order->payment_status != 'paid')
-                                                        <a href="{{ url('/order/lunas/' . $order->id) }}"
-                                                            class="btn btn-success">Lunas</a>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.orders.index', ['sort_by' => 'id', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Kode Pesanan
+                                                    @if (request('sort_by') == 'id')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
                                                     @endif
-                                                    @if ($order->order_status == 'proses')
-                                                        <a href="{{ url('/order/kirim/' . $order->id) }}"
-                                                            class="btn btn-info">Kirim</a>
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.orders.index', ['sort_by' => 'created_at', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Tanggal Pesanan
+                                                    @if (request('sort_by') == 'created_at')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
                                                     @endif
-                                                    @if ($order->order_status == 'terima')
-                                                        <a href="{{ url('/order/selesai/' . $order->id) }}"
-                                                            class="btn btn-success">Selesai</a>
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.orders.index', ['sort_by' => 'delivery_time', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Waktu Pengiriman
+                                                    @if (request('sort_by') == 'delivery_time')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
                                                     @endif
-                                                    
-                                                    <button class="btn btn-primary detail_pesanan" data-bs-toggle="modal"
-                                                        data-bs-target="#orderDetailModal"
-                                                        data-id="{{ $order->id }}">Detail</button>
-                                                </div>
-                                            </td>
-
-
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.orders.index', ['sort_by' => 'payment_method', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Metode Pembayaran
+                                                    @if (request('sort_by') == 'payment_method')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
+                                                    @endif
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.orders.index', ['sort_by' => 'payment_status', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Status Pembayaran
+                                                    @if (request('sort_by') == 'payment_status')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
+                                                    @endif
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.orders.index', ['sort_by' => 'order_status', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                    Status Pesanan
+                                                    @if (request('sort_by') == 'order_status')
+                                                        <i
+                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                    @else
+                                                        <i class="fas fa-sort"></i>
+                                                    @endif
+                                                </a>
+                                            </th>
+                                            <th>Actions</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody id="dataBody">
+                                        @foreach ($orders as $order)
+                                            <tr>
+                                                <td>{{ $order->order_code }}</td>
+                                                <td>{{ $order->created_at }}</td>
+                                                <td>{{ $order->delivery_time }}</td>
+                                                <td>
+                                                    @switch($order->payment_method)
+                                                        @case('bayar_langsung')
+                                                            Bayar Langsung
+                                                        @break
+
+                                                        @case('bayar_ditempat')
+                                                            Bayar di Tempat
+                                                        @break
+
+                                                        @case('bayar_dengan_tenggat_waktu')
+                                                            Bayar dengan Tenggat Waktu
+                                                        @break
+                                                    @endswitch
+                                                </td>
+                                                <td>
+                                                    @switch($order->payment_status)
+                                                        @case('pending')
+                                                            <span class="badge badge-warning">Pending</span>
+                                                        @break
+
+                                                        @case('paid')
+                                                            <span class="badge badge-success">Lunas</span>
+                                                        @break
+
+                                                        @case('failed')
+                                                            <span class="badge badge-danger">Gagal</span>
+                                                        @break
+                                                    @endswitch
+
+
+                                                </td>
+                                                <td>
+                                                    @switch($order->order_status)
+                                                        @case('proses')
+                                                            <span class="badge badge-warning">Sedang Diproses</span>
+                                                        @break
+
+                                                        @case('terima')
+                                                            <span class="badge badge-primary">Sudah Diterima</span>
+                                                        @break
+
+                                                        @case('selesai')
+                                                            <span class="badge badge-success">Selesai</span>
+                                                        @break
+
+                                                        @case('kirim')
+                                                            <span class="badge badge-info">Sedang Dikirim</span>
+                                                        @break
+                                                    @endswitch
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex flex-column order-actions">
+                                                        @if ($order->payment_status != 'paid')
+                                                            <a href="{{ url('/order/lunas/' . $order->id) }}"
+                                                                class="btn btn-success">Lunas</a>
+                                                        @endif
+                                                        @if ($order->order_status == 'proses')
+                                                            <a href="{{ url('/order/kirim/' . $order->id) }}"
+                                                                class="btn btn-info">Kirim</a>
+                                                        @endif
+                                                        @if ($order->order_status == 'terima')
+                                                            <a href="{{ url('/order/selesai/' . $order->id) }}"
+                                                                class="btn btn-success">Selesai</a>
+                                                        @endif
+
+                                                        <button class="btn btn-primary detail_pesanan"
+                                                            data-bs-toggle="modal" data-bs-target="#orderDetailModal"
+                                                            data-id="{{ $order->id }}">Detail</button>
+                                                    </div>
+                                                </td>
+
+
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @endif
                             <div class="d-flex justify-content-center m-3">
                                 {!! $orders->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
                             </div>
