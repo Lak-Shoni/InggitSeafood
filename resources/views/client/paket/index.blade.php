@@ -235,8 +235,13 @@
                     error: function(xhr) {
                         Swal.fire({
                             title: "Error",
-                            text: "Terjadi kesalahan. Silakan coba lagi.",
+                            text: "Silahkan login untuk mulai memesan",
                             icon: "error",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Redirect to the cart page
+                                window.location.href = `{{ route('cart.show') }}`;
+                            }
                         });
                     }
                 });

@@ -105,7 +105,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Download Rekap Keuangan PDF</button>
+                                <button type="submit" class="btn btn-primary">Cetak Rekap Keuangan PDF</button>
                             </form>
                         </div>
                     </div>

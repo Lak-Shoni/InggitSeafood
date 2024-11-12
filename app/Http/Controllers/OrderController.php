@@ -118,7 +118,7 @@ class OrderController extends Controller
     private function createOrder()
     {
         $order_data = session('order_data');
-        $cart_ids = session('cart_ids');
+        $cart_ids = session('cart_ids'); 
 
         if ($order_data && $cart_ids) {
             $order = Order::create($order_data);
@@ -134,7 +134,7 @@ class OrderController extends Controller
                 }
             }
 
-            if ($order_data['payment_method'] == 'bayar_ditempat' || $order_data['payment_method'] == 'lainnya') {
+            if ($order_data['payment_method'] == 'bayar_ditempat' || $order_data['payment_method'] == 'bayar_termin') {
                 $hutang = new Hutang();
                 $hutang->order_id = $order->id;
                 $hutang->user_id = Auth::id();
@@ -210,7 +210,7 @@ class OrderController extends Controller
 
         return response()->json(['success' => true]);
     }
-    public function lunas(Request $request, $id)
+    public function lunas($id)
     {
         $order = Order::find($id);
         if ($order) {
@@ -226,9 +226,9 @@ class OrderController extends Controller
             }
         }
 
-        return redirect()->route('admin.orders.index')->with('success', 'Order sudah lunas');
+        return redirect()->route('admin.orders.index')->with('success', 'Pesanan sudah lunas');
     }
-    public function kirim(Request $request, $id)
+    public function kirim($id)
     {
         $order = Order::find($id);
         if ($order) {
@@ -236,10 +236,10 @@ class OrderController extends Controller
             $order->save();
         }
 
-        return redirect()->route('admin.orders.index')->with('success', 'Order sedang dikirim');
+        return redirect()->route('admin.orders.index')->with('success', 'Pesanan sedang dikirim');
     }
 
-    public function selesai(Request $request, $id)
+    public function selesai($id)
     {
         $order = Order::find($id);
         if ($order) {
@@ -247,9 +247,9 @@ class OrderController extends Controller
             $order->save();
         }
 
-        return redirect()->route('admin.orders.index')->with('success', 'Order selesai');
+        return redirect()->route('admin.orders.index')->with('success', 'Pesanan selesai');
     }
-    public function terima(Request $request, $id)
+    public function terima($id)
     {
         $order = Order::find($id);
         if ($order) {
@@ -257,7 +257,7 @@ class OrderController extends Controller
             $order->save();
         }
 
-        return redirect()->route('profile')->with('success', 'Order diterima');
+        return redirect()->route('profile')->with('success', 'Pesanan diterima');
     }
 
     public function get_detail($id)

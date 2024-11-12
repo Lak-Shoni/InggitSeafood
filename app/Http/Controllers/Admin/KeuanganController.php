@@ -76,7 +76,7 @@ class KeuanganController extends Controller
         $keuangan->update($request->all());
 
         return redirect()->route('admin.keuangan.index')
-            ->with('success', 'Data keuangan berhasil diupdate.');
+            ->with('success', 'Data keuangan berhasil diperbarui.');
     }
 
     public function destroy($id)

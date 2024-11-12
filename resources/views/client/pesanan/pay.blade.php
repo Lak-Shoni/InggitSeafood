@@ -132,7 +132,7 @@
                 } else if (className === 'error') {
                     window.location.href = '/payment/error';
                 }
-            }, 5000); // Delay for 5 seconds before redirecting
+            }, 2000); // Delay for 5 seconds before redirecting
         }
 
         function pay() {

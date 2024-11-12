@@ -46,7 +46,16 @@
                                     </div>
                                 </form>
                             </div>
-
+                            @if ($transaksiList->isEmpty())                    
+                                <div class="col-12 text-center">
+                                    <img src="{{ asset('img/bahan_masakan.png') }}" alt="Menu tidak ditemukan"
+                                        style="max-width: 300px;" class="img-fluid mb-3">
+                                    <h5 class="text-muted" style="margin-top: -60px;">Oops! Bahan Masakan Kosong.</h5>
+                                    <p class="text-muted">kamu belum memiliki bahan masakan untuk saat ini. Silakan tambah
+                                        bahan masakan baru
+                                    </p>
+                                </div>
+                            @else
                             <table id="example2" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
@@ -72,6 +81,7 @@
                             <div class="d-flex justify-content-center m-3">
                                 {!! $transaksiList->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
                             </div>
+                            @endif
                         </div>
                     </div>
                 </div>

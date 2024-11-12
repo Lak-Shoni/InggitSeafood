@@ -100,5 +100,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/keuangan/getOmset/{date}', [KeuanganController::class, 'getOmset']);
         Route::get('admin/keuangan/download-pdf', [KeuanganController::class, 'generateMonthlyReportPDF'])->name('admin.keuangan.download_pdf');
 
+        
     });
 });

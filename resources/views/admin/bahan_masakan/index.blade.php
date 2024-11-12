@@ -34,81 +34,97 @@
                                 </div>
                             @endif
 
-                            <div class="d-flex justify-content-between align-items-end mb-4">
+                            @if ($bahanMasakan->isEmpty())
                                 <button class="btn btn-success" data-toggle="modal" data-target="#tambahBahanModal">Tambah
                                     Bahan Masakan</button>
-                                <form id="searchForm" method="GET" action="{{ route('admin.bahan_masakan.index') }}"
-                                    class="form-inline">
-                                    <div class="form-group mb-2 position-relative">
-                                        <label for="search" class="mr-2">Cari berdasarkan nama:</label>
-                                        <input type="text" class="form-control" id="search" name="search"
-                                            value="{{ request('search') }}">
-                                        <span id="clearSearch" class="position-absolute"
-                                            style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none;">&times;</span>
-                                    </div>
-                                </form>
-                            </div>
+                                <div class="col-12 text-center">
+                                    <img src="{{ asset('img/bahan_masakan.png') }}" alt="Menu tidak ditemukan"
+                                        style="max-width: 300px;" class="img-fluid mb-3">
+                                    <h5 class="text-muted" style="margin-top: -60px;">Oops! Bahan Masakan Kosong.</h5>
+                                    <p class="text-muted">kamu belum memiliki bahan masakan untuk saat ini. Silakan tambah
+                                        bahan masakan baru
+                                    </p>
+                                </div>
+                            @else
+                                <div class="d-flex justify-content-between align-items-end mb-4">
+                                    <button class="btn btn-success" data-toggle="modal"
+                                        data-target="#tambahBahanModal">Tambah
+                                        Bahan Masakan</button>
+                                    <form id="searchForm" method="GET" action="{{ route('admin.bahan_masakan.index') }}"
+                                        class="form-inline">
+                                        <div class="form-group mb-2 position-relative">
+                                            <label for="search" class="mr-2">Cari berdasarkan nama:</label>
+                                            <input type="text" class="form-control" id="search" name="search"
+                                                value="{{ request('search') }}">
+                                            <span id="clearSearch" class="position-absolute"
+                                                style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none;">&times;</span>
+                                        </div>
+                                    </form>
+                                </div>
 
-                            <div class="col-12">
-                                <table id="example2" class="table table-bordered table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                <a
-                                                    href="{{ route('admin.bahan_masakan.index', ['sort_by' => 'id', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                    ID
-                                                    @if (request('sort_by') == 'id')
-                                                        <i
-                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                    @else
-                                                        <i class="fas fa-sort"></i>
-                                                    @endif
-                                                </a>
-                                            </th>
-                                            <th>
-                                                <a
-                                                    href="{{ route('admin.bahan_masakan.index', ['sort_by' => 'nama_bahan', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
-                                                    Nama Bahan
-                                                    @if (request('sort_by') == 'nama_bahan')
-                                                        <i
-                                                            class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                                    @else
-                                                        <i class="fas fa-sort"></i>
-                                                    @endif
-                                                </a>
-                                            </th>
-                                            <th>Satuan</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="dataBody">
-                                        @foreach ($bahanMasakan as $bahan)
+                                <div class="col-12">
+                                    <table id="example2" class="table table-bordered table-hover">
+                                        <thead>
                                             <tr>
-                                                <td>{{ $bahan->id }}</td>
-                                                <td>{{ $bahan->nama_bahan }}</td>
-                                                <td>{{ $bahan->satuan }}</td>
-                                                <td>
-                                                    <form action="{{ route('admin.bahan_masakan.show', $bahan->id) }}"
-                                                        method="GET" style="display:inline;">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-primary">Detail</button>
-                                                    </form>
-                                                    <form action="{{ route('admin.bahan_masakan.destroy', $bahan->id) }}"
-                                                        method="POST" style="display:inline;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                            class="btn btn-danger delete-btn">Hapus</button>
-                                                    </form>
-                                                </td>
+                                                <th>
+                                                    <a
+                                                        href="{{ route('admin.bahan_masakan.index', ['sort_by' => 'id', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                        ID
+                                                        @if (request('sort_by') == 'id')
+                                                            <i
+                                                                class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                        @else
+                                                            <i class="fas fa-sort"></i>
+                                                        @endif
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a
+                                                        href="{{ route('admin.bahan_masakan.index', ['sort_by' => 'nama_bahan', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}">
+                                                        Nama Bahan
+                                                        @if (request('sort_by') == 'nama_bahan')
+                                                            <i
+                                                                class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
+                                                        @else
+                                                            <i class="fas fa-sort"></i>
+                                                        @endif
+                                                    </a>
+                                                </th>
+                                                <th>Satuan</th>
+                                                <th>Action</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="d-flex justify-content-center m-3">
-                                {!! $bahanMasakan->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
-                            </div>
+                                        </thead>
+                                        <tbody id="dataBody">
+                                            @foreach ($bahanMasakan as $bahan)
+                                                <tr>
+                                                    <td>{{ $bahan->id }}</td>
+                                                    <td>{{ $bahan->nama_bahan }}</td>
+                                                    <td>{{ $bahan->satuan }}</td>
+                                                    <td>
+                                                        <form action="{{ route('admin.bahan_masakan.show', $bahan->id) }}"
+                                                            method="GET" style="display:inline;">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-primary">Detail</button>
+                                                        </form>
+                                                        <form
+                                                            action="{{ route('admin.bahan_masakan.destroy', $bahan->id) }}"
+                                                            method="POST" class="delete-form" style="display:inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit"
+                                                                class="btn btn-danger delete-btn">Hapus</button>
+                                                        </form>
+
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="d-flex justify-content-center m-3">
+                                    {!! $bahanMasakan->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -141,7 +157,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="submit" class="btn btn-primary">Tambah</button>
                     </div>
                 </form>
             </div>

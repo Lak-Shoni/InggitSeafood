@@ -80,7 +80,7 @@
                         <select class="form-control" id="payment_method" name="payment_method" required>
                             <option value="bayar_langsung">Bayar Langsung</option>
                             <option value="bayar_ditempat">Bayar di Tempat</option>
-                            <option value="bayar_dengan_tenggat_waktu">Bayar dengan Tenggat Waktu</option>
+                            <option value="bayar_termin">Bayar Termin</option>
                         </select>
                     </div>
                     <div class="mb-3" id="due_date_container" style="display: none;">
@@ -139,7 +139,7 @@
             });
 
             $('#payment_method').change(function() {
-                if ($(this).val() === 'bayar_dengan_tenggat_waktu') {
+                if ($(this).val() === 'bayar_termin') {
                     $('#due_date_container').show();
                     $('#due_date').attr('required', true);
                 } else {

@@ -103,9 +103,21 @@
             cursor: pointer;
         }
     </style>
+
     <div class="container mt-5">
         <div class="profile-container">
             <div class="profile-card">
+                @if (session('success'))
+                    <script>
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: '{{ session('success') }}',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    </script>
+                @endif
                 <div class="profile-card-header">
                     <h1>Hello {{ auth()->user()->nama }}</h1>
                 </div>
@@ -398,4 +410,5 @@
             });
         });
     </script>
+
 @endsection
