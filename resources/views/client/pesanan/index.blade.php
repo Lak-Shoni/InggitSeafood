@@ -2,8 +2,8 @@
 
 @section('title', 'Buat Pesanan')
 @section('content')
-<style>
-    .custom-title {
+    <style>
+        .custom-title {
             font-size: 2.5rem;
             /* Mengatur ukuran font */
             color: #ffffff !important;
@@ -16,18 +16,18 @@
             /* Margin bawah */
             background-color: #01562C;
             /* Warna latar belakang */
-            
+
             /* Membuat sudut rounded */
             font-family: 'Roboto', sans-serif;
             /* Font family */
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
             /* Efek shadow */
         }
-</style>
+    </style>
     <div class="container" style="margin-top: 40px">
         <h1 class="mb-4 custom-title w-100">Buat Pesanan</h1>
 
-        
+
         <h2>Data Pesanan</h2>
         <br>
         @if (session()->has('error'))
@@ -35,7 +35,7 @@
                 alert("{{ session('error') }}");
             </script>
         @endif
-        <form action="{{ route('checkout.process') }}" method="POST">
+        <form action="{{ route('checkout.create') }}" method="POST">
             @csrf
             <div class="row">
                 <div class="col-lg-6">
@@ -66,21 +66,21 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="mb-3">
-                        <label for="partner_name" class="form-label">Nama Instansi</label>
-                        <input type="text" class="form-control" id="partner_name" name="partner_name" required>
+                        <label for="instansi_name" class="form-label">Nama Instansi</label>
+                        <input type="text" class="form-control" id="instansi_name" name="instansi_name" required>
                     </div>
                     <div class="mb-3">
                         <label for="delivery_time" class="form-label">Waktu Pengiriman</label>
                         <input type="datetime-local" class="form-control" id="delivery_time" name="delivery_time" required
-                            min="{{ Carbon\Carbon::now()->format('Y-m-d\Th:i:s') }}"
-                            value="{{ Carbon\Carbon::now()->format('Y-m-d\Th:i:s') }}">
+                            min="{{ Carbon\Carbon::now()->format('H:i') }}"
+                            value="{{ Carbon\Carbon::now()->format('H:i') }}">
                     </div>
                     <div class="mb-5">
                         <label for="payment_method" class="form-label">Metode Pembayaran</label>
                         <select class="form-control" id="payment_method" name="payment_method" required>
-                            <option value="bayar_langsung">Bayar Langsung</option>
+                            <option value="bayar_transfer">Transfer Sekarang</option>
                             <option value="bayar_ditempat">Bayar di Tempat</option>
-                            <option value="bayar_termin">Bayar Termin</option>
+                            {{-- <option value="bayar_termin">Bayar Termin</option> --}}
                         </select>
                     </div>
                     <div class="mb-3" id="due_date_container" style="display: none;">

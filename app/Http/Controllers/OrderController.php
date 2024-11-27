@@ -36,29 +36,23 @@ class OrderController extends Controller
         return view('client.pesanan.index', compact('user', 'carts', 'grandTotal', 'array_id_cart'));
     }
 
-    public function processCheckout(Request $request)
+
+    public function createOrder(Request $request)
     {
         $request->validate([
             'address' => 'required|string',
-            'partner_name' => 'required|string',
+            'instansi_name' => 'required|string',
             'delivery_time' => 'required|date',
             'payment_method' => 'required|string',
             'tenggat_bulan' => 'nullable|numeric',
             'grand_total' => 'required|numeric',
         ]);
 
-        $grandTotal = $request->input('grand_total');
-        if ($grandTotal === null) {
-            return redirect()->back()->with('error', 'Total harga tidak valid.');
-        }
-
         $deliveryTime = Carbon::parse($request->input('delivery_time'));
         $tenggatBulan = $request->input('tenggat_bulan', 0);
         $dueDate = $deliveryTime->copy()->addMonths($tenggatBulan);
 
         $cart_ids = $request->input('cart_ids');
-
-        // Convert cart_ids to array 
         if (is_string($cart_ids)) {
             $cart_ids = json_decode($cart_ids, true);
         }
@@ -68,21 +62,35 @@ class OrderController extends Controller
             'order_data' => [
                 'user_id' => Auth::id(),
                 'address' => $request->input('address'),
-                'partner_name' => $request->input('partner_name'),
+                'instansi_name' => $request->input('instansi_name'),
                 'delivery_time' => $deliveryTime,
                 'payment_method' => $request->input('payment_method'),
                 'due_date' => $dueDate,
                 'notes' => $request->input('notes'),
                 'items' => json_encode($cart_ids),
-                'total_price' => $grandTotal,
+                'total_price' => $request->input('grand_total'),
                 'order_status' => 'proses',
                 'payment_status' => 'pending',
             ],
             'cart_ids' => $cart_ids,
         ]);
 
-        $payment_method = $request->input('payment_method');
-        if ($payment_method == 'bayar_langsung') {
+        return redirect()->route('payment.process');
+    }
+
+    public function processPayment()
+    {
+        $order_data = session('order_data');
+        $cart_ids = session('cart_ids');
+
+        if (!$order_data || !$cart_ids) {
+            return redirect()->route('cart.show')->with('error', 'Data pesanan tidak ditemukan.');
+        }
+
+        $payment_method = $order_data['payment_method'];
+        $grandTotal = $order_data['total_price'];
+
+        if ($payment_method == 'bayar_transfer') {
             Config::$serverKey = config('services.midtrans.server_key');
             Config::$isProduction = config('services.midtrans.is_production');
             Config::$isSanitized = config('services.midtrans.is_sanitized');
@@ -98,8 +106,7 @@ class OrderController extends Controller
                 'customer_details' => [
                     'first_name' => Auth::user()->nama,
                     'phone' => Auth::user()->no_telpon,
-                ],            
-
+                ],
             ];
 
             try {
@@ -108,25 +115,12 @@ class OrderController extends Controller
             } catch (\Exception $e) {
                 return redirect()->route('order.failure')->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
             }
-        } elseif ($payment_method == 'bayar_ditempat') {
-            return $this->createOrder();
         } else {
-            return $this->createOrder();
-        }
-    }
-
-    private function createOrder()
-    {
-        $order_data = session('order_data');
-        $cart_ids = session('cart_ids'); 
-
-        if ($order_data && $cart_ids) {
+            // Proses untuk metode bayar_ditempat atau bayar_termin
             $order = Order::create($order_data);
             Cart::whereIn('id', $cart_ids)->update(['status_order' => 1]);
 
-            // Ambil paket_id dan quantity dari Cart
             $cart_items = Cart::whereIn('id', $cart_ids)->get();
-
             foreach ($cart_items as $cart_item) {
                 $paket = Paket::find($cart_item->paket_id);
                 if ($paket) {
@@ -134,7 +128,7 @@ class OrderController extends Controller
                 }
             }
 
-            if ($order_data['payment_method'] == 'bayar_ditempat' || $order_data['payment_method'] == 'bayar_termin') {
+            if (in_array($payment_method, ['bayar_ditempat', 'bayar_termin'])) {
                 $hutang = new Hutang();
                 $hutang->order_id = $order->id;
                 $hutang->user_id = Auth::id();
@@ -144,14 +138,12 @@ class OrderController extends Controller
             }
 
             event(new OrderCreated($order));
-            // Clear session data
+
             session()->forget(['order_data', 'cart_ids']);
-
-            return redirect()->route('profile')->with('success', 'Pesanan berhasil dibuat. Silakan bayar saat barang diterima.');
+            return redirect()->route('profile')->with('success', 'Pesanan berhasil dibuat.');
         }
-
-        return redirect()->route('cart.show')->with('error', 'Gagal membuat pesanan.');
     }
+
 
 
     public function paymentNotification(Request $request)
@@ -302,7 +294,7 @@ class OrderController extends Controller
             'items' => $items,
             'total_price' => $order->total_price,
             'address' => $order->address,
-            'partner_name' => $order->partner_name,
+            'instansi_name' => $order->instansi_name,
             'delivery_time' => $order->delivery_time,
             'payment_method' => $order->payment_method,
             'due_date' => $order->due_date,

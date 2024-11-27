@@ -209,8 +209,8 @@
                                                 <td>{{ $order->delivery_time }}</td>
                                                 <td>
                                                     @switch($order->payment_method)
-                                                        @case('bayar_langsung')
-                                                            Bayar Langsung
+                                                        @case('bayar_transfer')
+                                                            Bayar Transfers
                                                         @break
 
                                                         @case('bayar_ditempat')
@@ -376,7 +376,7 @@
                                 .total_price) +
                             '</td></tr>';
                         html += '<tr><th>Alamat</th><td>' + response.address + '</td></tr>';
-                        html += '<tr><th>Nama Instansi</th><td>' + response.partner_name +
+                        html += '<tr><th>Nama Instansi</th><td>' + response.instansi_name +
                             '</td></tr>';
                         html += '<tr><th>Waktu Pengiriman</th><td>' + formatDateTime(response
                             .delivery_time) + '</td></tr>';

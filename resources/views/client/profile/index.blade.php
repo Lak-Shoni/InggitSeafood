@@ -234,8 +234,8 @@
                                     <td>{{ $order->created_at }}</td>
                                     <td>{{ $order->delivery_time }}</td>
                                     <td>
-                                        @if ($order->payment_method == 'bayar_langsung')
-                                            Bayar Langsung
+                                        @if ($order->payment_method == 'bayar_transfer')
+                                            Bayar Transfer
                                         @elseif ($order->payment_method == 'bayar_ditempat')
                                             Bayar di Tempat
                                         @elseif ($order->payment_method == 'bayar_dengan_tenggat_waktu')
@@ -369,7 +369,7 @@
                                 .total_price) +
                             '</td></tr>';
                         html += '<tr><th>Alamat</th><td>' + response.address + '</td></tr>';
-                        html += '<tr><th>Nama Instansi</th><td>' + response.partner_name +
+                        html += '<tr><th>Nama Instansi</th><td>' + response.instansi_name +
                             '</td></tr>';
                         html += '<tr><th>Waktu Pengiriman</th><td>' + formatDateTime(response
                             .delivery_time) + '</td></tr>';

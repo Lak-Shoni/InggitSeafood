@@ -13,7 +13,7 @@ class Order extends Model
         'user_id',
         'order_code',
         'address',
-        'partner_name',
+        'instansi_name',
         'delivery_time',
         'payment_method',
         'due_date',

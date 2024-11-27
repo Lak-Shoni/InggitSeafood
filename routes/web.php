@@ -50,7 +50,9 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::get('/checkout', [OrderController::class, 'showCheckoutForm'])->name('checkout.form');
-    Route::post('/checkout', [OrderController::class, 'processCheckout'])->name('checkout.process');
+    Route::post('/checkout', [OrderController::class, 'createOrder'])->name('checkout.create');
+    Route::get('/checkout/payment', [OrderController::class, 'processPayment'])->name('payment.process');
+
     Route::get('/order/success', function () {
         return view('order.success');
     })->name('order.success');
