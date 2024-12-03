@@ -50,12 +50,12 @@
                             value="{{ auth()->user()->no_telpon }}" readonly>
                     </div>
                     <div class="mb-3">
-                        <label for="address" class="form-label">Alamat</label>
+                        <label for="address" class="form-label">Alamat Kirim</label>
                         <input type="text" class="form-control" id="address" name="address"
                             value="{{ auth()->user()->alamat }}" readonly>
                         <div class="form-check mt-2">
                             <input type="checkbox" class="form-check-input" id="use_different_address">
-                            <label class="form-check-label" for="use_different_address">Apakah ingin menggunakan alamat
+                            <label class="form-check-label" for="use_different_address">Apakah ingin menggunakan alamat kirim
                                 lain?</label>
                         </div>
                     </div>

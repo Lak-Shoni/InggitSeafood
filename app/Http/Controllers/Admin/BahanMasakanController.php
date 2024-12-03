@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BahanMasakan;
 use App\Models\Notification;
-use App\Models\Transaksi;
+use App\Models\Transaksi_Bahan;
 
 class BahanMasakanController extends Controller
 {
@@ -32,17 +32,10 @@ class BahanMasakanController extends Controller
 
         $bahanMasakan = $query->paginate(10); // Sesuaikan dengan jumlah data per halaman
 
-        return view('admin.bahan_masakan.index', compact('bahanMasakan','notifications','unreadNotificationsCount'))
+        return view('admin.bahan_masakan.index', compact('bahanMasakan', 'notifications', 'unreadNotificationsCount'))
             ->with('i', (request()->input('page', 1) - 1) * 10);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -65,16 +58,13 @@ class BahanMasakanController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id, Request $request)
     {
         $selectedBahan = BahanMasakan::findOrFail($id);
         $bahanMasakanList = BahanMasakan::all();
         $notifications = Notification::where('is_read', false)->get();
         $unreadNotificationsCount = $notifications->count();
-        $query = Transaksi::where('bahan_masakan_id', $id);
+        $query = Transaksi_Bahan::where('bahan_masakan_id', $id);
 
         if ($request->has('sort_by')) {
             $query->orderBy($request->sort_by, $request->get('order', 'asc'));
@@ -87,27 +77,25 @@ class BahanMasakanController extends Controller
 
         $transaksiList = $query->paginate(10);
 
-        return view('admin.bahan_masakan.show', compact('selectedBahan', 'bahanMasakanList', 'transaksiList','notifications','unreadNotificationsCount'))
+        return view('admin.bahan_masakan.show', compact('selectedBahan', 'bahanMasakanList', 'transaksiList','notifications', 'unreadNotificationsCount'))
             ->with('i', (request()->input('page', 1) - 1) * 10);
     }
 
 
 
-    public function bahanMasuk($id)
-    {
-        $bahanMasakan = BahanMasakan::findOrFail($id);
-        return view('admin.bahan_masakan.bahan_masuk', compact('bahanMasakan'));
-    }
+    // public function bahanMasuk($id)
+    // {
+    //     $bahanMasakan = BahanMasakan::findOrFail($id);
+    //     return view('admin.bahan_masakan.bahan_masuk', compact('bahanMasakan'));
+    // }
 
-    public function bahanKeluar($id)
-    {
-        $bahanMasakan = BahanMasakan::findOrFail($id);
-        return view('admin.bahan_masakan.bahan_keluar', compact('bahanMasakan'));
-    }
+    // public function bahanKeluar($id)
+    // {
+    //     $bahanMasakan = BahanMasakan::findOrFail($id);
+    //     return view('admin.bahan_masakan.bahan_keluar', compact('bahanMasakan'));
+    // }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -142,6 +130,7 @@ class BahanMasakanController extends Controller
     {
         $request->validate([
             'bahan_masuk' => 'required|integer',
+            'harga_satuan' => 'required|numeric|min:0', // Validasi harga satuan
             'tanggal_transaksi' => 'required|date',
         ]);
 
@@ -149,12 +138,18 @@ class BahanMasakanController extends Controller
         $bahanMasakan->bahan_masuk += $request->bahan_masuk;
         $bahanMasakan->jumlah_bahan += $request->bahan_masuk;
 
-        $transaksi = new Transaksi([
+
+        // Hitung total harga transaksi
+        $totalHarga = $request->bahan_masuk * $request->harga_satuan;
+
+        $transaksi = new Transaksi_Bahan([
             'bahan_masakan_id' => $bahanMasakan->id,
             'tanggal_transaksi' => $request->tanggal_transaksi,
             'bahan_masuk' => $request->bahan_masuk,
             'bahan_keluar' => 0,
             'jumlah_bahan' => $bahanMasakan->jumlah_bahan,
+            'harga_satuan' => $request->harga_satuan,
+            'total_harga' => $totalHarga,
         ]);
 
         $bahanMasakan->save();
@@ -162,6 +157,7 @@ class BahanMasakanController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Bahan Masakan Berhasil Dimasukkan']);
     }
+
 
     public function storeBahanKeluar(Request $request, $id)
     {
@@ -174,12 +170,14 @@ class BahanMasakanController extends Controller
         $bahanMasakan->bahan_keluar += $request->bahan_keluar;
         $bahanMasakan->jumlah_bahan -= $request->bahan_keluar;
 
-        $transaksi = new Transaksi([
+        $transaksi = new Transaksi_Bahan([
             'bahan_masakan_id' => $bahanMasakan->id,
             'tanggal_transaksi' => $request->tanggal_transaksi,
             'bahan_masuk' => 0,
             'bahan_keluar' => $request->bahan_keluar,
             'jumlah_bahan' => $bahanMasakan->jumlah_bahan,
+            'harga_satuan' => 0,
+            'total_harga' => 0,
         ]);
 
         $bahanMasakan->save();

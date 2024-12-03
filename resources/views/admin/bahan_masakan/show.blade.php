@@ -64,6 +64,8 @@
                                         <th>Bahan Keluar</th>
                                         <th>Jumlah Bahan</th>
                                         <th>Satuan</th>
+                                        <th>Harga Satuan</th>
+                                        <th>Total Harga</th>
                                     </tr>
                                 </thead>
                                 <tbody id="dataBody">
@@ -74,6 +76,8 @@
                                             <td>{{ $transaksi->bahan_keluar }}</td>
                                             <td>{{ $transaksi->jumlah_bahan }}</td>
                                             <td>{{ $bahan->satuan }}</td>
+                                            <td>{{ $transaksi->harga_satuan }}</td>
+                                            <td>{{ $transaksi->total_harga}}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -91,6 +95,42 @@
 
     <!-- Modal Bahan Masuk -->
     <div class="modal fade" id="bahanMasukModal" tabindex="-1" role="dialog" aria-labelledby="bahanMasukModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="bahanMasukForm" action="{{ route('admin.bahan_masakan.store_bahan_masuk', $selectedBahan->id) }}"
+                    method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="bahanMasukModalLabel">Tambah Bahan Masuk</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="bahan_masuk">Jumlah Bahan Masuk</label>
+                            <input type="number" inputmode="numeric" class="form-control" id="bahan_masuk" name="bahan_masuk" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="harga_satuan">Harga Satuan:</label>
+                            <input type="number" step="0.01" name="harga_satuan" id="harga_satuan" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tanggal_transaksi_masuk">Tanggal Transaksi</label>
+                            <input type="date" class="form-control" id="tanggal_transaksi_masuk" name="tanggal_transaksi"
+                                required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Tambah</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{-- <div class="modal fade" id="bahanMasukModal" tabindex="-1" role="dialog" aria-labelledby="bahanMasukModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -121,14 +161,14 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Modal Bahan Keluar -->
     <div class="modal fade" id="bahanKeluarModal" tabindex="-1" role="dialog" aria-labelledby="bahanKeluarModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form id="bahanKeluarForm" action="{{ route('admin.bahan_masakan.bahan_keluar', $selectedBahan->id) }}"
+                <form id="bahanKeluarForm" action="{{ route('admin.bahan_masakan.store_bahan_keluar', $selectedBahan->id) }}"
                     method="POST">
                     @csrf
                     <div class="modal-header">

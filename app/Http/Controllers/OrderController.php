@@ -116,7 +116,7 @@ class OrderController extends Controller
                 return redirect()->route('order.failure')->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
             }
         } else {
-            // Proses untuk metode bayar_ditempat atau bayar_termin
+            
             $order = Order::create($order_data);
             Cart::whereIn('id', $cart_ids)->update(['status_order' => 1]);
 
@@ -127,16 +127,13 @@ class OrderController extends Controller
                     $paket->increment('purchase_count', $cart_item->quantity);
                 }
             }
-
-            if (in_array($payment_method, ['bayar_ditempat', 'bayar_termin'])) {
-                $hutang = new Hutang();
+            $hutang = new Hutang();
                 $hutang->order_id = $order->id;
                 $hutang->user_id = Auth::id();
                 $hutang->total = $order_data['total_price'];
                 $hutang->status = 'unpaid';
                 $hutang->save();
-            }
-
+            
             event(new OrderCreated($order));
 
             session()->forget(['order_data', 'cart_ids']);
@@ -321,3 +318,6 @@ class OrderController extends Controller
         return $pdf->download('invoice_' . $order->id . '.pdf');
     }
 }
+
+
+

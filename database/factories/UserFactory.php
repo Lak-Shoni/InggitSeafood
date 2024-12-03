@@ -24,11 +24,13 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
+            'nama' => fake()->name(),
+            'no_telpon' => fake()->phoneNumber(),
+            'alamat' => fake()->address(),
             'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'is_admin' => 1, // jika ada kolom admin
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 
@@ -42,3 +44,8 @@ class UserFactory extends Factory
         ]);
     }
 }
+
+
+
+
+

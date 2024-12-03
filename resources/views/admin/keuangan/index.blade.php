@@ -27,11 +27,6 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="purchasing">Purchasing</label>
-                                    <input type="number" inputmode="numeric" class="form-control" id="purchasing"
-                                        name="purchasing" required>
-                                </div>
-                                <div class="form-group">
                                     <label for="tenagaKerja">Tenaga Kerja</label>
                                     <input type="number" inputmode="numeric" class="form-control" id="tenagaKerja"
                                         name="tenaga_kerja" required>
@@ -50,6 +45,11 @@
                                     <label for="sewaAlat">Sewa Alat</label>
                                     <input type="number" inputmode="numeric" class="form-control" id="sewaAlat"
                                         name="sewa_alat" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="purchasing">Purchasing</label>
+                                    <input type="number" inputmode="numeric" class="form-control" id="purchasing"
+                                        name="purchasing" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label for="omset">Omset</label>
@@ -402,8 +402,6 @@
                 $('#submitButton').text('Tambah Data');
             });
 
-
-
             // Populate the modal with data when editing
             $('.editButton').click(function() {
                 var id = $(this).data('id');
@@ -420,35 +418,51 @@
                     $('#akomodasi').val(data.akomodasi);
                     $('#sewaAlat').val(data.sewa_alat);
                     $('#profit').val(data.profit);
-                    $('#submitButton').text('SImpan Perubahan');
+                    $('#submitButton').text('Simpan Perubahan');
                     calculateFinancials();
                 });
             });
 
-            // Calculate omset and profit automatically when relevant fields change
-            $('#transaction_date, #purchasing, #tenagaKerja, #pln, #akomodasi, #sewaAlat').on('input change',
-                function() {
-                    calculateFinancials();
-                });
+            // Calculate omset, purchasing, and profit automatically when relevant fields change
+            $('#transaction_date, #tenagaKerja, #pln, #akomodasi, #sewaAlat').on('input change', function() {
+                calculateFinancials();
+            });
 
             function calculateFinancials() {
                 var transactionDate = $('#transaction_date').val();
-                var purchasing = parseFloat($('#purchasing').val()) || 0;
                 var tenagaKerja = parseFloat($('#tenagaKerja').val()) || 0;
                 var pln = parseFloat($('#pln').val()) || 0;
                 var akomodasi = parseFloat($('#akomodasi').val()) || 0;
                 var sewaAlat = parseFloat($('#sewaAlat').val()) || 0;
 
                 if (transactionDate) {
+                    // Get omset
                     $.get('/admin/keuangan/getOmset/' + transactionDate, function(omset) {
-                        var totalExpenses = purchasing + tenagaKerja + pln + akomodasi + sewaAlat;
-                        var profit = omset - totalExpenses;
-
                         $('#omset').val(omset);
-                        $('#profit').val(profit);
+
+                        $.get('/admin/keuangan/getPurchasing/' + transactionDate)
+                            .done(function(purchasing) {
+                                // $('#purchasing').val(purchasing);
+                                $('#purchasing').val(purchasing);
+        
+                                // Calculate profit
+                                var totalExpenses = purchasing + tenagaKerja + pln + akomodasi +
+                                    sewaAlat;
+                                var profit = omset - totalExpenses;
+        
+                                $('#profit').val(profit);
+                            })
+                            .fail(function() {
+                                alert('Gagal mengambil data purchasing. Coba lagi nanti.');
+                            });
+
+                        // Get purchasing
+                        // $.get('/admin/keuangan/getPurchasing/' + transactionDate, function(purchasing) {
+                        // });
                     });
                 }
             }
         });
     </script>
+
 @endsection

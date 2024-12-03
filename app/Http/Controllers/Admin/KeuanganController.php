@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Inventory;
 use App\Models\Keuangan;
 use App\Models\Notification;
 use App\Models\Order;
+use App\Models\Transaksi_Bahan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -95,6 +97,16 @@ class KeuanganController extends Controller
             ->sum('total_price');
 
         return response()->json($omset);
+    }
+
+    public function getPurchasing($date){
+        $inventarisPurchasing = Inventory::whereDate('tanggal_pembelian',$date)->sum('total_harga');
+        $bahanPurchasing = Transaksi_Bahan::whereDate('tanggal_transaksi',$date)->sum('total_harga');
+
+        $totalPurchasing = $inventarisPurchasing+$bahanPurchasing;
+
+        return response()->json($totalPurchasing);
+
     }
 
 

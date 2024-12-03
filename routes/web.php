@@ -86,9 +86,9 @@ Route::middleware(['auth'])->group(function () {
             // Route::resource('keuangan', KeuanganController::class);
             Route::resource('keuangan', KeuanganController::class)->except(['show']);
 
-            Route::get('bahan_masakan/{id}/bahan_masuk', [BahanMasakanController::class, 'bahanMasuk'])->name('bahan_masakan.bahan_masuk');
+            // Route::get('bahan_masakan/{id}/bahan_masuk', [BahanMasakanController::class, 'bahanMasuk'])->name('bahan_masakan.bahan_masuk');
+            // Route::get('bahan_masakan/{id}/bahan_keluar', [BahanMasakanController::class, 'bahanKeluar'])->name('bahan_masakan.bahan_keluar');
             Route::post('bahan_masakan/{id}/bahan_masuk', [BahanMasakanController::class, 'storeBahanMasuk'])->name('bahan_masakan.store_bahan_masuk');
-            Route::get('bahan_masakan/{id}/bahan_keluar', [BahanMasakanController::class, 'bahanKeluar'])->name('bahan_masakan.bahan_keluar');
             Route::post('bahan_masakan/{id}/bahan_keluar', [BahanMasakanController::class, 'storeBahanKeluar'])->name('bahan_masakan.store_bahan_keluar');
         });
         Route::get('/admin/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
@@ -100,6 +100,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('keuangan/{id}/edit', [KeuanganController::class, 'edit'])->name('keuangan.edit');
         Route::get('/admin/keuangan/getOmset/{date}', [KeuanganController::class, 'getOmset']);
+        Route::get('/admin/keuangan/getPurchasing/{date}', [KeuanganController::class, 'getPurchasing']);
         Route::get('admin/keuangan/download-pdf', [KeuanganController::class, 'generateMonthlyReportPDF'])->name('admin.keuangan.download_pdf');
 
         
