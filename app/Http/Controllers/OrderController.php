@@ -133,11 +133,9 @@ class OrderController extends Controller
                 $hutang->total = $order_data['total_price'];
                 $hutang->status = 'unpaid';
                 $hutang->save();
-            
-            event(new OrderCreated($order));
 
             session()->forget(['order_data', 'cart_ids']);
-            return redirect()->route('profile')->with('success', 'Pesanan berhasil dibuat.');
+            return redirect()->route('profile')->with('success', 'Pesanan berhasil dibuat. Silahkan bayar ketika pesanan sampai');
         }
     }
 

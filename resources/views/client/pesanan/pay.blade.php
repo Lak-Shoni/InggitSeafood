@@ -166,7 +166,7 @@
         <div id="message" class="message"></div>
         <div id="details" class="details"></div>
         <div id="retryButton" class="retry-button">
-            <button onclick="pay()">Bayar Sekarang</button>
+            {{-- <button onclick="pay()">Bayar Sekarang</button> --}}
         </div>
     </div>
 </body>
